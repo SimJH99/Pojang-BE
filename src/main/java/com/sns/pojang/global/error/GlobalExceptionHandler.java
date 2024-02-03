@@ -36,21 +36,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
-        log.error(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getMessage());
+        log.error(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode().getStatus(), e.getErrorCode().getMessage());
         ErrorResponse response = ErrorResponse.from(e.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidValueException.class)
     protected ResponseEntity<ErrorResponse> handleInvalidValueException(InvalidValueException e) {
-        log.error(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getMessage());
+        log.error(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode().getStatus(), e.getErrorCode().getMessage());
         ErrorResponse response = ErrorResponse.from(e.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PojangException.class)
     protected ResponseEntity<ErrorResponse> handlePojangException(PojangException e) {
-        log.error(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getMessage());
+        log.error(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         ErrorResponse response = ErrorResponse.from(e.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
