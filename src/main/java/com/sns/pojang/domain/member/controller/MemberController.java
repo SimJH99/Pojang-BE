@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import java.net.URI;
+
 import static com.sns.pojang.global.response.SuccessMessage.CREATE_MEMBER_SUCCESS;
 import static com.sns.pojang.global.response.SuccessMessage.LOGIN_MEMBER_SUCCESS;
 
@@ -31,9 +33,10 @@ public class MemberController {
     @PostMapping("/sign-up")
     public ResponseEntity<SuccessResponse<CreateMemberResponse>> create(
             @Valid @RequestBody CreateMemberRequest createMemberRequest){
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.CREATED.value(),
-                CREATE_MEMBER_SUCCESS.getMessage(),
-                memberService.create(createMemberRequest)));
+        return ResponseEntity.created(URI.create("/sign-up"))
+                .body(SuccessResponse.create(HttpStatus.CREATED.value(),
+                        CREATE_MEMBER_SUCCESS.getMessage(),
+                        memberService.create(createMemberRequest)));
     }
 
     @PostMapping("/login")
