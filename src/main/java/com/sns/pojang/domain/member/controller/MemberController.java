@@ -20,7 +20,7 @@ import static com.sns.pojang.global.response.SuccessMessage.CREATE_MEMBER_SUCCES
 import static com.sns.pojang.global.response.SuccessMessage.LOGIN_MEMBER_SUCCESS;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/members")
 public class MemberController {
     private final MemberService memberService;
 
