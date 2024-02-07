@@ -5,6 +5,7 @@ import com.sns.pojang.domain.member.dto.request.LoginMemberRequest;
 import com.sns.pojang.domain.member.dto.response.CreateMemberResponse;
 import com.sns.pojang.domain.member.dto.response.LoginMemberResponse;
 import com.sns.pojang.domain.member.entity.Member;
+import com.sns.pojang.domain.member.entity.Role;
 import com.sns.pojang.domain.member.exception.EmailDuplicateException;
 import com.sns.pojang.domain.member.exception.EmailNotExistException;
 import com.sns.pojang.domain.member.exception.PasswordNotMatchException;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -27,11 +31,20 @@ public class MemberService {
         this.jwtProvider = jwtProvider;
     }
 
-    public CreateMemberResponse create(CreateMemberRequest createMemberRequest) throws EmailDuplicateException{
+    public CreateMemberResponse createUser(CreateMemberRequest createMemberRequest) throws EmailDuplicateException{
         if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()){
             throw new EmailDuplicateException();
         }
-        Member newMember = createMemberRequest.toEntity(passwordEncoder);
+        Member newMember = createMemberRequest.toEntity(passwordEncoder, Role.ROLE_USER);
+
+        return CreateMemberResponse.from(memberRepository.save(newMember));
+    }
+
+    public CreateMemberResponse createOwner(CreateMemberRequest createMemberRequest) throws EmailDuplicateException{
+        if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()){
+            throw new EmailDuplicateException();
+        }
+        Member newMember = createMemberRequest.toEntity(passwordEncoder, Role.ROLE_OWNER);
 
         return CreateMemberResponse.from(memberRepository.save(newMember));
     }

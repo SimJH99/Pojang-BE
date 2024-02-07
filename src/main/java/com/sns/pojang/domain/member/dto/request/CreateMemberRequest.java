@@ -22,7 +22,7 @@ public class CreateMemberRequest {
     private String address;
     private String detailAddress;
 
-    public Member toEntity(PasswordEncoder passwordEncoder){
+    public Member toEntity(PasswordEncoder passwordEncoder, Role role){
         Address fullAddress = Address.builder()
                 .sido(postCode)
                 .sigungu(address)
@@ -33,7 +33,7 @@ public class CreateMemberRequest {
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
                 .address(fullAddress)
-                .role(Role.ROLE_USER)
+                .role(role)
                 .build();
     }
 
