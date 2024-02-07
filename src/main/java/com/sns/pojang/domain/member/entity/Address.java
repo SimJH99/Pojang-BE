@@ -10,7 +10,7 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
-    private String postCode; // 우편번호
-    private String address; // 주소: 서울 00구 00로 0길
-    private String detailAddress; // 상세주소: 0동 0호
+    private String sido; // 시/도
+    private String sigungu; // 시/군/구
+    private String query; // 도로명
 }
