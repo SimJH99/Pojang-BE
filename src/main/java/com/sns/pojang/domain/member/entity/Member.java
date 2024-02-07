@@ -46,7 +46,7 @@ public class Member extends BaseTimeEntity {
     private Role role;
 
     //삭제여부
-    @Column
+    @Column(nullable = false)
     private String deleteYn = "N";
 
     @Builder
