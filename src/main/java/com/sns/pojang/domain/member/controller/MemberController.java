@@ -9,10 +9,7 @@ import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -22,6 +19,7 @@ import static com.sns.pojang.global.response.SuccessMessage.CREATE_MEMBER_SUCCES
 import static com.sns.pojang.global.response.SuccessMessage.LOGIN_MEMBER_SUCCESS;
 
 @RestController
+@RequestMapping("/api")
 public class MemberController {
     private final MemberService memberService;
 
