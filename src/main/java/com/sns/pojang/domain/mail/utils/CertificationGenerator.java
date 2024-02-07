@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 @Component
-public class CertificationNumber {
+public class CertificationGenerator {
     public String createCertificationNumber() throws NoSuchAlgorithmException {
         String result;
 
