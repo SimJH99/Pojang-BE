@@ -24,9 +24,9 @@ public class CreateMemberRequest {
 
     public Member toEntity(PasswordEncoder passwordEncoder){
         Address fullAddress = Address.builder()
-                .postCode(postCode)
-                .address(address)
-                .detailAddress(detailAddress)
+                .sido(postCode)
+                .sigungu(address)
+                .query(detailAddress)
                 .build();
         return Member.builder()
                 .email(email)
