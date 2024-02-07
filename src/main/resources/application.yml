@@ -11,6 +11,22 @@ spring:
     hibernate:
       ddl-auto: update
     show_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jongseunghan5@gmail.com
+    password: uezisesgftbxlxvb
+    properties:
+      mail:
+        debug: true
+        smtp.auth: true
+        smtp.timeout: 50000 # SMTP 서버에 연결을 시도하고 응답을 기다리는 최대 시간이 50,000ms
+        smtp.starttls.enable: true
+  data:
+    redis:
+      mail:
+        host: localhost
+        port: 6379
 jwt:
   expiration: 30 # 30분
   secretKey: mySecret
