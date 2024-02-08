@@ -20,7 +20,7 @@ import java.net.URI;
 import static com.sns.pojang.global.response.SuccessMessage.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/members")
 public class MemberController {
     private final MemberService memberService;
 
