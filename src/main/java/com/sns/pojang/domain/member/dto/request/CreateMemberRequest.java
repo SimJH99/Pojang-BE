@@ -18,6 +18,8 @@ public class CreateMemberRequest {
     private String password;
     @NotEmpty(message = "닉네임이 비어있으면 안됩니다.")
     private String nickname;
+    @NotEmpty(message = "전화번호는 비어있으면 안됩니다.")
+    private String phoneNumber;
     private String postCode;
     private String address;
     private String detailAddress;
@@ -32,9 +34,9 @@ public class CreateMemberRequest {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
+                .phoneNumber(phoneNumber)
                 .address(fullAddress)
                 .role(role)
-                .delYn("N")
                 .build();
     }
 

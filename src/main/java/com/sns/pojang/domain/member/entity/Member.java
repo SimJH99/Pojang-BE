@@ -50,10 +50,11 @@ public class Member extends BaseTimeEntity {
     private String deleteYn = "N";
 
     @Builder
-    public Member(String email, String password, String nickname, Address address, Role role) {
+    public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
     }

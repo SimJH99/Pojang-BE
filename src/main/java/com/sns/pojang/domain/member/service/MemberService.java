@@ -59,7 +59,7 @@ public class MemberService {
                 .orElseThrow(EmailNotExistException::new);
 
         // 계정 삭제 여부 Check
-        if(findMember.getDelYn().equals("Y")) {
+        if(findMember.getDeleteYn().equals("Y")) {
             throw new MemberNotFoundException();
         }
 
@@ -83,10 +83,9 @@ public class MemberService {
         return MyInfoMemberResponse.from(member);
     }
 
-    public Object withdraw() {
+    public void withdraw() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.withdraw();
-        return null;
     }
 }

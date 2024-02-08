@@ -58,7 +58,7 @@ public class MemberController {
     }
 
 //    내 정보 조회
-    @GetMapping("/member/my-info")
+    @GetMapping("/my-info")
     public ResponseEntity<SuccessResponse<MyInfoMemberResponse>> myInfo() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 MY_INFO_MEMBER_SUCCESS.getMessage(), memberService.myInfo()));
@@ -66,9 +66,10 @@ public class MemberController {
 
 //    회원 탈퇴
     @DeleteMapping("/withdraw")
-    public ResponseEntity<SuccessResponse> withdraw() {
+    public ResponseEntity<SuccessResponse<Void>> withdraw() {
+        memberService.withdraw();
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                DELETE_MEMBER_SUCCESS.getMessage(), memberService.withdraw()));
+                DELETE_MEMBER_SUCCESS.getMessage()));
         // 회원탈퇴 시 Authentication 객체 제거해야하나? - 프론트에서 필요
 
         // ++ 회원탈퇴 후 기존 계정으로 회원가입 시 처리방안 필요
