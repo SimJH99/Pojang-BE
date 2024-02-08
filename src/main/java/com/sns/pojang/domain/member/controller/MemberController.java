@@ -29,6 +29,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
+//    일반 유저 회원가입
     @PostMapping("/sign-up/user")
     public ResponseEntity<SuccessResponse<CreateMemberResponse>> createUser(
             @Valid @RequestBody CreateMemberRequest createMemberRequest){
@@ -38,6 +39,7 @@ public class MemberController {
                         memberService.createUser(createMemberRequest)));
     }
 
+//    사장 계정 회원가입
     @PostMapping("/sign-up/owner")
     public ResponseEntity<SuccessResponse<CreateMemberResponse>> createOwner(
             @Valid @RequestBody CreateMemberRequest createMemberRequest){
@@ -47,6 +49,7 @@ public class MemberController {
                         memberService.createOwner(createMemberRequest)));
     }
 
+//    로그인
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse<LoginMemberResponse>> login(
             @Valid @RequestBody LoginMemberRequest loginMemberRequest){
@@ -54,10 +57,23 @@ public class MemberController {
                 LOGIN_MEMBER_SUCCESS.getMessage(), memberService.login(loginMemberRequest)));
     }
 
+//    내 정보 조회
     @GetMapping("/member/my-info")
     public ResponseEntity<SuccessResponse<MyInfoMemberResponse>> myInfo() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                MYINFO_MEMBER_SUCCESS.getMessage(), memberService.myInfo()));
+                MY_INFO_MEMBER_SUCCESS.getMessage(), memberService.myInfo()));
+    }
+
+//    회원 탈퇴
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<SuccessResponse> withdraw() {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                DELETE_MEMBER_SUCCESS.getMessage(), memberService.withdraw()));
+        // 회원탈퇴 시 Authentication 객체 제거해야하나? - 프론트에서 필요
+
+        // ++ 회원탈퇴 후 기존 계정으로 회원가입 시 처리방안 필요
+        // 1. 스케쥴러 사용 - 30일 지난 탈퇴 계정 삭제 여부 결정
+        // 2. 탈퇴된 이메일로 회원가입 시 예외처리 - '30일동안 회원가입 불가'
     }
 
 }

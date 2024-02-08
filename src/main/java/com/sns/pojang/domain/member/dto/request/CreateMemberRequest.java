@@ -34,6 +34,7 @@ public class CreateMemberRequest {
                 .nickname(nickname)
                 .address(fullAddress)
                 .role(role)
+                .delYn("N")
                 .build();
     }
 

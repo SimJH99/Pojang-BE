@@ -34,12 +34,21 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "delete_YN")
+    private String delYn;
+
     @Builder
-    public Member(String email, String password, String nickname, Address address, Role role){
+    public Member(String email, String password, String nickname, Address address, Role role, String delYn){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.address = address;
         this.role = role;
+        this.delYn = delYn;
+    }
+
+//    회원 탈퇴
+    public void withdraw() {
+        this.delYn = "Y";
     }
 }

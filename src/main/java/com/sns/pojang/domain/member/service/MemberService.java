@@ -9,6 +9,7 @@ import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.entity.Role;
 import com.sns.pojang.domain.member.exception.EmailDuplicateException;
 import com.sns.pojang.domain.member.exception.EmailNotExistException;
+import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.exception.PasswordNotMatchException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
@@ -57,6 +58,11 @@ public class MemberService {
         Member findMember = memberRepository.findByEmail(loginMemberRequest.getEmail())
                 .orElseThrow(EmailNotExistException::new);
 
+        // 계정 삭제 여부 Check
+        if(findMember.getDelYn().equals("Y")) {
+            throw new MemberNotFoundException();
+        }
+
         // Password 일치 여부 Check
         if (!passwordEncoder.matches(loginMemberRequest.getPassword(), findMember.getPassword())){
             throw new PasswordNotMatchException();
@@ -75,5 +81,12 @@ public class MemberService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
         return MyInfoMemberResponse.from(member);
+    }
+
+    public Object withdraw() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        member.withdraw();
+        return null;
     }
 }
