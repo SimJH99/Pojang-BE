@@ -79,13 +79,13 @@ public class MemberService {
 
     public MyInfoMemberResponse myInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         return MyInfoMemberResponse.from(member);
     }
 
     public Object withdraw() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.withdraw();
         return null;
     }
