@@ -4,6 +4,7 @@ import com.sns.pojang.domain.mail.dto.CertificateEmailRequest;
 import com.sns.pojang.domain.mail.dto.CertificateEmailResponse;
 import com.sns.pojang.domain.mail.service.MailService;
 import com.sns.pojang.global.response.SuccessResponse;
+import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,12 @@ import static com.sns.pojang.global.response.SuccessMessage.VERIFY_CERTIFICATION
 @RequestMapping("/api/mail")
 public class MailController {
     private final MailService mailService;
+    private final CertificationService certificationService;
 
     @Autowired
-    public MailController(MailService mailService){
+    public MailController(MailService mailService, CertificationService certificationService){
         this.mailService = mailService;
+        this.certificationService = certificationService;
     }
 
     @PostMapping("/send-certification")
@@ -36,7 +39,7 @@ public class MailController {
     @GetMapping("/verify")
     public ResponseEntity<SuccessResponse<Void>> createUser(@RequestParam(name = "email") String email,
                                                             @RequestParam(name = "certificationNumber") String certificationNumber) {
-        mailService.verifyEmail(email, certificationNumber);
+        certificationService.verifyKey(email, certificationNumber);
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 VERIFY_CERTIFICATION_SUCCESS.getMessage()));
     }

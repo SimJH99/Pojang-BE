@@ -1,10 +1,8 @@
 package com.sns.pojang.domain.mail.service;
 
 import com.sns.pojang.domain.mail.dto.CertificateEmailResponse;
-import com.sns.pojang.domain.mail.exception.InvalidCertificatedNumberException;
-import com.sns.pojang.domain.mail.repository.CertificationNumberRepository;
-import com.sns.pojang.domain.mail.utils.CertificationGenerator;
-import com.sns.pojang.domain.member.exception.EmailNotExistException;
+import com.sns.pojang.global.utils.CertificationNumberRepository;
+import com.sns.pojang.global.utils.CertificationGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -39,25 +37,5 @@ public class MailService {
         helper.setSubject(MAIL_TITLE_CERTIFICATION);
         helper.setText(content);
         mailSender.send(mimeMessage);
-    }
-
-    public void verifyEmail(String email, String certificationNumber) {
-        if (!isVerify(email, certificationNumber)) {
-            throw new InvalidCertificatedNumberException();
-        }
-        certificationNumberRepository.removeCertificationNumber(email);
-    }
-
-    private boolean isVerify(String email, String certificationNumber) {
-        boolean validatedEmail = isEmailExists(email);
-        if (!isEmailExists(email)) {
-            throw new EmailNotExistException();
-        }
-        return (validatedEmail &&
-                certificationNumberRepository.getCertificationNumber(email).equals(certificationNumber));
-    }
-
-    private boolean isEmailExists(String email) {
-        return certificationNumberRepository.hasKey(email);
     }
 }
