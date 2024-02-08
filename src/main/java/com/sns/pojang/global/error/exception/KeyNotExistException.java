@@ -1,10 +1,9 @@
-package com.sns.pojang.domain.member.exception;
+package com.sns.pojang.global.error.exception;
 
 import com.sns.pojang.global.error.ErrorCode;
-import com.sns.pojang.global.error.exception.InvalidValueException;
 
-public class EmailNotExistException extends InvalidValueException {
-    public EmailNotExistException() {
-        super(ErrorCode.EMAIL_NOT_EXIST);
+public class KeyNotExistException extends InvalidValueException {
+    public KeyNotExistException() {
+        super(ErrorCode.KEY_NOT_EXIST);
     }
 }

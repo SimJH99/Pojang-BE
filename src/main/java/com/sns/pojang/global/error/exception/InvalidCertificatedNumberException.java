@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.mail.exception;
+package com.sns.pojang.global.error.exception;
 
 import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.exception.InvalidValueException;

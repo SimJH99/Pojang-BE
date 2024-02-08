@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.mail.utils;
+package com.sns.pojang.global.utils;
 
 import org.springframework.stereotype.Component;
 

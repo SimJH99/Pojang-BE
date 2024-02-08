@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.mail.repository;
+package com.sns.pojang.global.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -10,24 +10,24 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class CertificationNumberRepository {
     private final StringRedisTemplate redisTemplate;
-    public static final int EMAIL_VERIFICATION_LIMIT_IN_SECONDS = 180; // 3분 유효시간
+    public static final int VERIFICATION_LIMIT_IN_SECONDS = 180; // 3분 유효시간
 
-    public void saveCertificationNumber(String email, String certificationNumber) {
+    public void saveCertificationNumber(String key, String certificationNumber) {
         redisTemplate.opsForValue()
-                .set(email, certificationNumber,
-                        Duration.ofSeconds(EMAIL_VERIFICATION_LIMIT_IN_SECONDS));
+                .set(key, certificationNumber,
+                        Duration.ofSeconds(VERIFICATION_LIMIT_IN_SECONDS));
     }
 
-    public String getCertificationNumber(String email) {
-        return redisTemplate.opsForValue().get(email);
+    public String getCertificationNumber(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
-    public void removeCertificationNumber(String email) {
-        redisTemplate.delete(email);
+    public void removeCertificationNumber(String key) {
+        redisTemplate.delete(key);
     }
 
-    public boolean hasKey(String email) {
-        Boolean keyExists = redisTemplate.hasKey(email);
+    public boolean hasKey(String key) {
+        Boolean keyExists = redisTemplate.hasKey(key);
         return keyExists != null && keyExists;
     }
 }
