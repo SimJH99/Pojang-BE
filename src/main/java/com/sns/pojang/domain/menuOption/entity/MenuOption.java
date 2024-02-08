@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "MenuOptions")
+@Table(name = "menuOptions")
 public class MenuOption extends BaseTimeEntity {
     //PK
     @Id

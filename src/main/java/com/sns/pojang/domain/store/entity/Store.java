@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.store.entity;
 
 import com.sns.pojang.global.config.BaseTimeEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "stores")
 public class Store extends BaseTimeEntity {
     //PK
@@ -21,7 +22,7 @@ public class Store extends BaseTimeEntity {
     private String name;
 
     //가게사진
-    private String storeUrl;
+    private String imageUrl;
 
     //음식카테고리
     @Column(nullable = false)

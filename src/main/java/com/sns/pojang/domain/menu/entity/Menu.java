@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.menu.entity;
 
 import com.sns.pojang.global.config.BaseTimeEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,8 +9,8 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@Table(name = "Menus")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "menus")
 public class Menu extends BaseTimeEntity{
     //PK
     @Id
@@ -35,6 +36,6 @@ public class Menu extends BaseTimeEntity{
     private String soldOutYn = "N";
 
     //삭제여부
-    @Column
+    @Column(nullable = false)
     private String deleteYn = "N";
 }

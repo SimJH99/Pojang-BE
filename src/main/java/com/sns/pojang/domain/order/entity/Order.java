@@ -20,7 +20,7 @@ public class Order extends BaseTimeEntity {
     //주문 상태
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private  StatusMenu statusMenu = StatusMenu.WAIT;
+    private StatusMenu statusMenu = StatusMenu.PENDING;
 
     //결제수단
     @Column(nullable = false)
