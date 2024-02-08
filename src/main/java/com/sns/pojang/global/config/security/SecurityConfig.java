@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeRequests()
                 // Authentication 객체 없어도 실행되는 URL 패턴
-                .antMatchers("/api/sign-up/*", "/api/login", "/api/mail/*", "/items", "/item/*/image")
+                .antMatchers("/api/members/sign-up/*", "/api/members/login", "/items", "/item/*/image")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()

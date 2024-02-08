@@ -4,17 +4,21 @@ import com.sns.pojang.domain.member.dto.request.CreateMemberRequest;
 import com.sns.pojang.domain.member.dto.request.LoginMemberRequest;
 import com.sns.pojang.domain.member.dto.response.CreateMemberResponse;
 import com.sns.pojang.domain.member.dto.response.LoginMemberResponse;
+import com.sns.pojang.domain.member.dto.response.MyInfoMemberResponse;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.entity.Role;
 import com.sns.pojang.domain.member.exception.EmailDuplicateException;
 import com.sns.pojang.domain.member.exception.EmailNotExistException;
+import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.exception.PasswordNotMatchException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 @Service
@@ -54,6 +58,11 @@ public class MemberService {
         Member findMember = memberRepository.findByEmail(loginMemberRequest.getEmail())
                 .orElseThrow(EmailNotExistException::new);
 
+        // 계정 삭제 여부 Check
+        if(findMember.getDeleteYn().equals("Y")) {
+            throw new MemberNotFoundException();
+        }
+
         // Password 일치 여부 Check
         if (!passwordEncoder.matches(loginMemberRequest.getPassword(), findMember.getPassword())){
             throw new PasswordNotMatchException();
@@ -66,5 +75,17 @@ public class MemberService {
                 .id(findMember.getId())
                 .token(token)
                 .build();
+    }
+
+    public MyInfoMemberResponse myInfo() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        return MyInfoMemberResponse.from(member);
+    }
+
+    public void withdraw() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        member.withdraw();
     }
 }
