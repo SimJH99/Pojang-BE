@@ -1,9 +1,9 @@
-package com.sns.pojang.domain.menuOption.controller;
+package com.sns.pojang.domain.menuCategoryName.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/menu-options")
-public class MenuOptionController {
+@RequestMapping("/api/menu-category-names")
+public class MenuCategoryNameController {
 }
