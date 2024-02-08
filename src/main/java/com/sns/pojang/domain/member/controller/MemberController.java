@@ -4,6 +4,7 @@ import com.sns.pojang.domain.member.dto.request.CreateMemberRequest;
 import com.sns.pojang.domain.member.dto.request.LoginMemberRequest;
 import com.sns.pojang.domain.member.dto.response.CreateMemberResponse;
 import com.sns.pojang.domain.member.dto.response.LoginMemberResponse;
+import com.sns.pojang.domain.member.dto.response.MyInfoMemberResponse;
 import com.sns.pojang.domain.member.entity.Role;
 import com.sns.pojang.domain.member.service.MemberService;
 import com.sns.pojang.global.response.SuccessResponse;
@@ -16,8 +17,7 @@ import javax.validation.Valid;
 
 import java.net.URI;
 
-import static com.sns.pojang.global.response.SuccessMessage.CREATE_MEMBER_SUCCESS;
-import static com.sns.pojang.global.response.SuccessMessage.LOGIN_MEMBER_SUCCESS;
+import static com.sns.pojang.global.response.SuccessMessage.*;
 
 @RestController
 @RequestMapping("/api")
@@ -53,4 +53,11 @@ public class MemberController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 LOGIN_MEMBER_SUCCESS.getMessage(), memberService.login(loginMemberRequest)));
     }
+
+    @GetMapping("/member/my-info")
+    public ResponseEntity<SuccessResponse<MyInfoMemberResponse>> myInfo() {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                MYINFO_MEMBER_SUCCESS.getMessage(), memberService.myInfo()));
+    }
+
 }

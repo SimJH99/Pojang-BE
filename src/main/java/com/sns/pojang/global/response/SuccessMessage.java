@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum SuccessMessage {
     // Member
     CREATE_MEMBER_SUCCESS("회원가입에 성공하였습니다."),
-    LOGIN_MEMBER_SUCCESS("로그인에 성공하였습니다.");
+    LOGIN_MEMBER_SUCCESS("로그인에 성공하였습니다."),
+    MYINFO_MEMBER_SUCCESS("회원정보조회에 성공하였습니다.");
 
     private final String message;
 }
