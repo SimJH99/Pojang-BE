@@ -43,8 +43,4 @@ public class MailController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 VERIFY_CERTIFICATION_SUCCESS.getMessage()));
     }
-
-
-
-
 }
