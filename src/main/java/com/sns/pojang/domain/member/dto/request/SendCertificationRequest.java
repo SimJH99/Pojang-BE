@@ -3,7 +3,6 @@ package com.sns.pojang.domain.member.dto.request;
 import lombok.Data;
 
 @Data
-public class SmsCertificationRequest {
+public class SendCertificationRequest {
     private String phoneNumber;
-    private String certificationNumber;
 }

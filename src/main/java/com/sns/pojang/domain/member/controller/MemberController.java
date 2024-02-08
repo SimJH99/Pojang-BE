@@ -2,12 +2,15 @@ package com.sns.pojang.domain.member.controller;
 
 import com.sns.pojang.domain.member.dto.request.CreateMemberRequest;
 import com.sns.pojang.domain.member.dto.request.LoginMemberRequest;
+import com.sns.pojang.domain.member.dto.request.SendCertificationRequest;
+import com.sns.pojang.domain.member.dto.request.VerifyCertificationRequest;
 import com.sns.pojang.domain.member.dto.response.CreateMemberResponse;
 import com.sns.pojang.domain.member.dto.response.LoginMemberResponse;
 import com.sns.pojang.domain.member.dto.response.MyInfoMemberResponse;
-import com.sns.pojang.domain.member.entity.Role;
+import com.sns.pojang.domain.member.dto.response.SmsCertificationResponse;
 import com.sns.pojang.domain.member.service.MemberService;
 import com.sns.pojang.global.response.SuccessResponse;
+import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +26,12 @@ import static com.sns.pojang.global.response.SuccessMessage.*;
 @RequestMapping("/api/members")
 public class MemberController {
     private final MemberService memberService;
+    private final CertificationService certificationService;
 
     @Autowired
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, CertificationService certificationService) {
         this.memberService = memberService;
+        this.certificationService = certificationService;
     }
 
 //    일반 유저 회원가입
@@ -77,5 +82,22 @@ public class MemberController {
         // 2. 탈퇴된 이메일로 회원가입 시 예외처리 - '30일동안 회원가입 불가'
     }
 
+    // 인증 번호 발송
+    @PostMapping("/send-sms")
+    public ResponseEntity<SuccessResponse<SmsCertificationResponse>> sendSms(
+            @RequestBody SendCertificationRequest sendCertificationRequest) throws Exception {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                SEND_CERTIFICATION_SUCCESS.getMessage(), memberService.sendSms(sendCertificationRequest)));
+    }
+
+    //인증 번호 확인
+    @PostMapping("/confirm-sms")
+    public ResponseEntity<SuccessResponse<Void>> SmsVerification(
+            @RequestBody VerifyCertificationRequest verifyCertificationRequest) throws Exception{
+        certificationService.verifyKey(verifyCertificationRequest.getPhoneNumber(),
+                verifyCertificationRequest.getCertificationNumber());
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                VERIFY_CERTIFICATION_SUCCESS.getMessage()));
+    }
 }
 

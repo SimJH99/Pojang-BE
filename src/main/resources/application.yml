@@ -27,6 +27,10 @@ spring:
       mail:
         host: localhost
         port: 6379
+  coolsms:
+      apiKey: NCSW9W1WPRODZ9JV
+      apiSecret: FIJRCGDMA1Y8XTJ5HY8XO3SM4N9YPJ61
+      sender: 010-6717-1351
 jwt:
   expiration: 30 # 30분
   secretKey: mySecret
