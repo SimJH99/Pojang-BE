@@ -6,5 +6,5 @@ import javax.transaction.Transactional;
 
 @Service
 @Transactional
-public class MenuCategoryNameService {
+public class MenuCategoryService {
 }
