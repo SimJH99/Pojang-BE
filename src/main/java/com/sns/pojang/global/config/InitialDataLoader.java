@@ -29,6 +29,7 @@ public class InitialDataLoader implements CommandLineRunner {
                     .nickname("admin")
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("1234"))
+                    .phoneNumber("010-1234-5678")
                     .role(Role.ROLE_ADMIN)
                     .build();
             memberRepository.save(adminMember);
