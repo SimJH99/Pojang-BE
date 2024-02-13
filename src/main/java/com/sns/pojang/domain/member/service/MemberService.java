@@ -19,12 +19,15 @@ import com.sns.pojang.global.config.security.jwt.JwtProvider;
 import com.sns.pojang.global.utils.CertificationGenerator;
 import com.sns.pojang.global.utils.CertificationNumberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +92,18 @@ public class MemberService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.withdraw();
+    }
+
+    // 회원탈퇴 30일 이후 회원정보 삭제 - 재가입 방지
+    @Scheduled(cron = "0 0/1 * * * *") // 매분마다 실행
+    public void memberSchedule() {
+        List<Member> members = memberRepository.findByDeleteYn("Y");
+        for(Member m : members) {
+            // 회원탈퇴 후 3분 뒤 삭제
+            if(m.getUpdatedTime().plusMinutes(3).isBefore(LocalDateTime.now())) {
+                memberRepository.delete(m);
+            }
+        }
     }
 
     public SmsCertificationResponse sendSms(SendCertificationRequest sendCertificationRequest) throws NoSuchAlgorithmException {
