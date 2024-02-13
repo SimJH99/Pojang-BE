@@ -19,7 +19,10 @@ public enum ErrorCode {
     EMAIL_DUPLICATION(400, "이미 존재하는 이메일입니다."),
     MEMBER_NOT_FOUND(400, "존재하지 않는 회원입니다."),
     PASSWORD_NOT_MATCH(400, "비밀번호가 일치하지 않습니다."),
-    NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다.");
+    NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다."),
+
+    // Store
+    BUSINESS_NUMBER_DUPLICATION(400, "이미 존재하는 사업자 번호입니다.");
 
     private int status;
     private String message;
