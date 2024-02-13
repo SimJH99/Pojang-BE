@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.menuOption.entity;
+package com.sns.pojang.domain.categoryOption.entity;
 
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -10,24 +10,21 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "menuOptions")
-public class MenuOption extends BaseTimeEntity {
+@Table(name = "categoryOptions")
+public class CategoryOption extends BaseTimeEntity {
     //PK
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //옵션이름
+    //카테고리 옵션 이름
     @Column(nullable = false)
-    private String option;
+    private String categoryOptionName;
 
-    //내용
-    @Column(nullable = false)
-    private String content;
 
-    //가격
+    //추가 금액
     @Column(nullable = false)
-    private int price;
+    private int additionalPrice;
 
     //삭제여부
     @Column(nullable = false)
