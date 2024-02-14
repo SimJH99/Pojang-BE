@@ -19,7 +19,17 @@ public enum ErrorCode {
     EMAIL_DUPLICATION(400, "이미 존재하는 이메일입니다."),
     MEMBER_NOT_FOUND(400, "존재하지 않는 회원입니다."),
     PASSWORD_NOT_MATCH(400, "비밀번호가 일치하지 않습니다."),
-    NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다.");
+    NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다."),
+
+    // Store
+    STORE_NOT_FOUND(400, "가게를 찾을 수 없습니다."),
+
+    // Order
+    INVALID_TOTAL_PRICE(400, "최종 주문 금액이 일치하지 않습니다."),
+
+    // Menu
+    MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
+    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다.");
 
     private int status;
     private String message;
