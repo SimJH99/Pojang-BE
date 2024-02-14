@@ -17,7 +17,6 @@ import java.net.URI;
 import static com.sns.pojang.global.response.SuccessMessage.CREATE_STORE_SUCCESS;
 
 @RestController
-@PreAuthorize("hasRole('ROLE_OWNER')")
 @RequestMapping("/api/stores")
 public class StoreController {
 
@@ -28,6 +27,7 @@ public class StoreController {
     }
 
     //    매장 생성
+    @PreAuthorize("hasRole('ROLE_OWNER')")
     @PostMapping("/create")
     public ResponseEntity<SuccessResponse<CreateStoreResponse>> createStore(
             @Valid CreateStoreRequest createStoreRequest) {

@@ -22,7 +22,8 @@ public enum ErrorCode {
     NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다."),
 
     // Store
-    BUSINESS_NUMBER_DUPLICATION(400, "이미 존재하는 사업자 번호입니다.");
+    BUSINESS_NUMBER_DUPLICATION(400, "이미 등록된 사업자 번호입니다."), 
+    BUSINESS_NUMBER_NOTFOUND(400, "존재하지 않는 사업자 번호입니다.");
 
     private int status;
     private String message;

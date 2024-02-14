@@ -17,7 +17,7 @@ public class BusinessNumber extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String businessNumber;
 
     //삭제여부
