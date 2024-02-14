@@ -3,6 +3,7 @@ package com.sns.pojang.domain.store.dto.request;
 import com.sns.pojang.domain.store.entity.Address;
 import com.sns.pojang.domain.store.entity.Store;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
@@ -20,6 +21,7 @@ public class CreateStoreRequest {
     private String operationTime;
     @NotEmpty(message = "사업자번호는 비어있으면 안됩니다.")
     private String businessNumber;
+    @Nullable
     private MultipartFile imageUrl;
     private String sido;
     private String sigungu;
@@ -27,9 +29,7 @@ public class CreateStoreRequest {
     private String addressDetail;
     private String introduction;
 
-    public Store toEntity() {
-        MultipartFile multipartFile = this.imageUrl;
-        String fileName = multipartFile.getOriginalFilename();
+    public Store toEntity(String path) {
         Address fullAddress = Address.builder()
                 .sido(this.sido)
                 .sigungu(this.sigungu)
@@ -38,7 +38,7 @@ public class CreateStoreRequest {
                 .build();
         return Store.builder()
                 .name(this.name)
-                .imageUrl(fileName)
+                .imageUrl(path)
                 .category(this.category)
                 .address(fullAddress)
                 .storeNumber(this.storeNumber)

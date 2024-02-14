@@ -36,4 +36,13 @@ public class StoreController {
                         CREATE_STORE_SUCCESS.getMessage(),
                         storeService.createStore(createStoreRequest)));
     }
+
+    // 매장 정보 수정
+//    @PreAuthorize("hasRole('ROLE_OWNER')")
+//    @PostMapping("/{id}/update")
+//    public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
+//            @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
+//        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+//                UPDATE_MEMBER_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
+//    }
 }

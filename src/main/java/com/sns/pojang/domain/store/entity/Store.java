@@ -68,4 +68,15 @@ public class Store extends BaseTimeEntity {
         this.operationTime = operationTime;
         this.businessNumber = businessNumber;
     }
+
+
+    public void updateStore(String name, String imageUrl, String category, Address address, String storeNumber, String introduction, String operationTime){
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.address = address;
+        this.storeNumber = storeNumber;
+        this.introduction = introduction;
+        this.operationTime = operationTime;
+    }
 }

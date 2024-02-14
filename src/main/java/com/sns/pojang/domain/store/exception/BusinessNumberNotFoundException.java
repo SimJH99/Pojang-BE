@@ -4,5 +4,5 @@ import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
 
 public class BusinessNumberNotFoundException extends EntityNotFoundException {
-    public BusinessNumberNotFoundException(){super(ErrorCode.BUSINESS_NUMBER_NOTFOUND);}
+    public BusinessNumberNotFoundException(){super(ErrorCode.BUSINESS_NUMBER_NOT_FOUND);}
 }
