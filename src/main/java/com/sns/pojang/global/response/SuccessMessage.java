@@ -15,7 +15,11 @@ public enum SuccessMessage {
     CREATE_MEMBER_SUCCESS("회원가입에 성공하였습니다."),
     LOGIN_MEMBER_SUCCESS("로그인에 성공하였습니다."),
     MY_INFO_MEMBER_SUCCESS("회원정보조회에 성공하였습니다."),
-    DELETE_MEMBER_SUCCESS("회원 탈퇴되었습니다.");
+    DELETE_MEMBER_SUCCESS("회원 탈퇴되었습니다."),
+
+    // Store
+    CREATE_STORE_SUCCESS("매장 신청 되었습니다."),
+    UPDATE_MEMBER_SUCCESS("매장 정보 수정이 성공하였습니다.");
 
     private final String message;
 }
