@@ -70,13 +70,19 @@ public class Store extends BaseTimeEntity {
     }
 
 
-    public void updateStore(String name, String imageUrl, String category, Address address, String storeNumber, String introduction, String operationTime){
+    public void updateStore(String name, String category, String sido, String sigungu, String query, String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl){
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
-        this.address = address;
+        this.address = Address.builder()
+                .sido(sido)
+                .sigungu(sigungu)
+                .query(query)
+                .addressDetail(addressDetail)
+                .build();
         this.storeNumber = storeNumber;
         this.introduction = introduction;
         this.operationTime = operationTime;
+        this.imageUrl = imageUrl;
     }
 }

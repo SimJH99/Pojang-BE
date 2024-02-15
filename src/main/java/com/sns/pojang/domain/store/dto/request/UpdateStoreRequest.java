@@ -1,6 +1,5 @@
 package com.sns.pojang.domain.store.dto.request;
 
-import com.sns.pojang.domain.store.entity.Address;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,23 +15,10 @@ public class UpdateStoreRequest {
     private String storeNumber;
     @NotEmpty(message = "운영시간은 비어있으면 안됩니다.")
     private String operationTime;
-
     private MultipartFile imageUrl;
     private String sido;
     private String sigungu;
     private String query;
     private String addressDetail;
     private String introduction;
-
-    String fileName = imageUrl.getOriginalFilename();
-
-    Address fullAddress = Address.builder()
-            .sido(this.sido)
-            .sigungu(this.sigungu)
-            .query(this.query)
-            .addressDetail(this.addressDetail)
-            .build();
-
-
-
 }

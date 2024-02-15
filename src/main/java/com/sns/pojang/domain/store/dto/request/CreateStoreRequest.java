@@ -31,20 +31,20 @@ public class CreateStoreRequest {
 
     public Store toEntity(String path) {
         Address fullAddress = Address.builder()
-                .sido(this.sido)
-                .sigungu(this.sigungu)
-                .query(this.query)
-                .addressDetail(this.addressDetail)
+                .sido(sido)
+                .sigungu(sigungu)
+                .query(query)
+                .addressDetail(addressDetail)
                 .build();
         return Store.builder()
-                .name(this.name)
+                .name(name)
                 .imageUrl(path)
-                .category(this.category)
+                .category(category)
                 .address(fullAddress)
-                .storeNumber(this.storeNumber)
-                .introduction(this.introduction)
-                .operationTime(this.operationTime)
-                .businessNumber(this.businessNumber)
+                .storeNumber(storeNumber)
+                .introduction(introduction)
+                .operationTime(operationTime)
+                .businessNumber(businessNumber)
                 .build();
     }
 }
