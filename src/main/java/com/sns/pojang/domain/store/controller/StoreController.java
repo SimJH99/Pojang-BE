@@ -43,7 +43,7 @@ public class StoreController {
     public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
             @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                UPDATE_MEMBER_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
+                UPDATE_STORE_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
     }
 
     // 매장 삭제
