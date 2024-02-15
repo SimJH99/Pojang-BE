@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 
-import static com.sns.pojang.global.response.SuccessMessage.CREATE_STORE_SUCCESS;
-import static com.sns.pojang.global.response.SuccessMessage.UPDATE_MEMBER_SUCCESS;
+import static com.sns.pojang.global.response.SuccessMessage.*;
 
 @RestController
 @RequestMapping("/api/stores")
@@ -45,5 +44,14 @@ public class StoreController {
             @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 UPDATE_MEMBER_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
+    }
+
+    // 매장 삭제
+    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<SuccessResponse<Void>> deleteStore(@PathVariable Long id){
+        storeService.deleteStore(id);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                DELETE_STORE_SUCCESS.getMessage()));
     }
 }
