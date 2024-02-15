@@ -13,14 +13,14 @@ public class MyInfoMemberResponse {
     private Long id;
     private String nickName;
     private String email;
-    private Address address;
+    private String phoneNumber;
 
     public static MyInfoMemberResponse from(Member member){
         return MyInfoMemberResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickName(member.getNickname())
-                .address(member.getAddress())
+                .phoneNumber(member.getPhoneNumber())
                 .build();
     }
 }

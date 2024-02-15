@@ -21,6 +21,7 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(400, "비밀번호가 일치하지 않습니다."),
     NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다.");
 
+
     private int status;
     private String message;
 

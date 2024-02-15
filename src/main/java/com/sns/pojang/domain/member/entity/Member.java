@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.member.entity;
 
+import com.sns.pojang.domain.member.dto.request.MyInfoMemberRequest;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,7 +50,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String deleteYn = "N";
 
-    @Builder
+    @Builder(toBuilder = true)
     public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {
         this.email = email;
         this.password = password;
@@ -63,4 +64,23 @@ public class Member extends BaseTimeEntity {
     public void withdraw() {
         this.deleteYn = "Y";
     }
+
+//    마이페이지 수정
+    public void myInfoUpdate(String nickname, String password, String phoneNumber) {
+        this.nickname = nickname;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+    }
+
+//    주소 수정
+    public void addressUpdate(String sido, String sigungu, String query) {
+        Address fullAddress = Address.builder()
+                .sido(sido)
+                .sigungu(sigungu)
+                .query(query)
+                .build();
+        this.address = fullAddress;
+    }
+
 }
+

@@ -1,17 +1,12 @@
 package com.sns.pojang.domain.member.controller;
 
-import com.sns.pojang.domain.member.dto.request.CreateMemberRequest;
-import com.sns.pojang.domain.member.dto.request.LoginMemberRequest;
-import com.sns.pojang.domain.member.dto.request.SendCertificationRequest;
-import com.sns.pojang.domain.member.dto.request.VerifyCertificationRequest;
-import com.sns.pojang.domain.member.dto.response.CreateMemberResponse;
-import com.sns.pojang.domain.member.dto.response.LoginMemberResponse;
-import com.sns.pojang.domain.member.dto.response.MyInfoMemberResponse;
-import com.sns.pojang.domain.member.dto.response.SmsCertificationResponse;
+import com.sns.pojang.domain.member.dto.request.*;
+import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.service.MemberService;
 import com.sns.pojang.global.response.SuccessResponse;
 import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +63,30 @@ public class MemberController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 MY_INFO_MEMBER_SUCCESS.getMessage(), memberService.myInfo()));
     }
+
+//    마이페이지 수정
+    @PatchMapping("/my-info")
+    public ResponseEntity<SuccessResponse<MyInfoMemberResponse>> myInfoUpdate(
+            @Valid @RequestBody MyInfoMemberRequest myInfoMemberRequest) {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                MY_INFO_UPDATE_MEMBER_SUCCESS.getMessage(), memberService.myInfoUpdate(myInfoMemberRequest)));
+    }
+
+//    내 주소 조회
+    @GetMapping("/address")
+    public ResponseEntity<SuccessResponse<AddressMemberResponse>> myAddress() {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                ADDRESS_MEMBER_SUCCESS.getMessage(), memberService.myAddress()));
+    }
+
+//    내 주소 수정
+    @PatchMapping("/address")
+    public ResponseEntity<SuccessResponse<AddressMemberResponse>> addressUpdate(
+            @Valid @RequestBody AddressMemberRequest addressMemberRequest) {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                ADDRESS_UPDATE_MEMBER_SUCCESS.getMessage(), memberService.addressUpdate(addressMemberRequest)));
+    }
+
 
 //    회원 탈퇴
     @DeleteMapping("/withdraw")
