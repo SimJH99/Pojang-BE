@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.member.service;
 
+
 import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.entity.Member;
@@ -84,33 +85,33 @@ public class MemberService {
                 .build();
     }
 
-    public MyInfoMemberResponse myInfo() {
+    public FindMyInfoResponse findMyInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        return MyInfoMemberResponse.from(member);
+        return FindMyInfoResponse.from(member);
     }
 
-    public MyInfoMemberResponse myInfoUpdate(MyInfoMemberRequest myInfoMemberRequest) throws NicknameDuplicateException{
-        if(memberRepository.findByNickname(myInfoMemberRequest.getNickname()).isPresent()) {
+    public FindMyInfoResponse updateMyInfo(UpdateMyInfoRequest updateMyInfoRequest) throws NicknameDuplicateException{
+        if(memberRepository.findByNickname(updateMyInfoRequest.getNickname()).isPresent()) {
             throw new NicknameDuplicateException();
         }
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        member.myInfoUpdate(myInfoMemberRequest.getNickname(), myInfoMemberRequest.getPassword(), myInfoMemberRequest.getPhoneNumber());
-        return MyInfoMemberResponse.from(member);
+        member.updateMyInfo(updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPassword(), updateMyInfoRequest.getPhoneNumber());
+        return FindMyInfoResponse.from(member);
     }
 
-    public AddressMemberResponse myAddress() {
+    public FindAddressResponse findMyAddress() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        return AddressMemberResponse.from(member);
+        return FindAddressResponse.from(member);
     }
 
-    public AddressMemberResponse addressUpdate(AddressMemberRequest addressMemberRequest) {
+    public FindAddressResponse updateMyAddress(UpdateAddressRequest updateAddressRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        member.addressUpdate(addressMemberRequest.getSido(), addressMemberRequest.getSigungu(), addressMemberRequest.getQuery());
-        return AddressMemberResponse.from(member);
+        member.updateAddress(updateAddressRequest.getSido(), updateAddressRequest.getSigungu(), updateAddressRequest.getQuery());
+        return FindAddressResponse.from(member);
     }
 
 

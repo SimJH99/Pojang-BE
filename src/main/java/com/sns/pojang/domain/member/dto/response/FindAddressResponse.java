@@ -7,11 +7,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class AddressMemberResponse {
+public class FindAddressResponse {
     private Address address;
 
-    public static AddressMemberResponse from(Member member){
-        return AddressMemberResponse.builder()
+    public static FindAddressResponse from(Member member){
+        return FindAddressResponse.builder()
                 .address(member.getAddress())
                 .build();
     }

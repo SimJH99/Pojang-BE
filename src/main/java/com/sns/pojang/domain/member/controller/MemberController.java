@@ -6,7 +6,6 @@ import com.sns.pojang.domain.member.service.MemberService;
 import com.sns.pojang.global.response.SuccessResponse;
 import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,32 +58,32 @@ public class MemberController {
 
 //    내 정보 조회
     @GetMapping("/my-info")
-    public ResponseEntity<SuccessResponse<MyInfoMemberResponse>> myInfo() {
+    public ResponseEntity<SuccessResponse<FindMyInfoResponse>> findMyInfo() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                MY_INFO_MEMBER_SUCCESS.getMessage(), memberService.myInfo()));
+                FIND_MY_INFO_SUCCESS.getMessage(), memberService.findMyInfo()));
     }
 
 //    마이페이지 수정
     @PatchMapping("/my-info")
-    public ResponseEntity<SuccessResponse<MyInfoMemberResponse>> myInfoUpdate(
-            @Valid @RequestBody MyInfoMemberRequest myInfoMemberRequest) {
+    public ResponseEntity<SuccessResponse<FindMyInfoResponse>> updateMyInfo(
+            @Valid @RequestBody UpdateMyInfoRequest updateMyInfoRequest) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                MY_INFO_UPDATE_MEMBER_SUCCESS.getMessage(), memberService.myInfoUpdate(myInfoMemberRequest)));
+                UPDATE_MY_INFO_SUCCESS.getMessage(), memberService.updateMyInfo(updateMyInfoRequest)));
     }
 
 //    내 주소 조회
     @GetMapping("/address")
-    public ResponseEntity<SuccessResponse<AddressMemberResponse>> myAddress() {
+    public ResponseEntity<SuccessResponse<FindAddressResponse>> findMyAddress() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                ADDRESS_MEMBER_SUCCESS.getMessage(), memberService.myAddress()));
+                FIND_ADDRESS_SUCCESS.getMessage(), memberService.findMyAddress()));
     }
 
 //    내 주소 수정
     @PatchMapping("/address")
-    public ResponseEntity<SuccessResponse<AddressMemberResponse>> addressUpdate(
-            @Valid @RequestBody AddressMemberRequest addressMemberRequest) {
+    public ResponseEntity<SuccessResponse<FindAddressResponse>> updateMyAddress(
+            @Valid @RequestBody UpdateAddressRequest updateAddressRequest) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                ADDRESS_UPDATE_MEMBER_SUCCESS.getMessage(), memberService.addressUpdate(addressMemberRequest)));
+                UPDATE_ADDRESS_SUCCESS.getMessage(), memberService.updateMyAddress(updateAddressRequest)));
     }
 
 
