@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.menuCategoryName.entity;
+package com.sns.pojang.domain.menuCategory.entity;
 
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;

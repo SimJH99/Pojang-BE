@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.menuCategoryName.service;
+package com.sns.pojang.domain.menuCategory.service;
 
 import org.springframework.stereotype.Service;
 

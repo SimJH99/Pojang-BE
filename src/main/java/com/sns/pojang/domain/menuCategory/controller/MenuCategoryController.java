@@ -1,4 +1,4 @@
-package com.sns.pojang.domain.menuCategoryName.controller;
+package com.sns.pojang.domain.menuCategory.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
