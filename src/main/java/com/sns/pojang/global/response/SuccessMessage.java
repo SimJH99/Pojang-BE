@@ -19,7 +19,9 @@ public enum SuccessMessage {
 
     // Store
     CREATE_STORE_SUCCESS("매장 신청 되었습니다."),
-    UPDATE_MEMBER_SUCCESS("매장 정보 수정이 성공하였습니다.");
+    UPDATE_MEMBER_SUCCESS("매장 정보 수정이 성공하였습니다."),
+    SEARCH_STORE_SUCCESS("매장 조회를 완료했습니다.");
+
 
     private final String message;
 }
