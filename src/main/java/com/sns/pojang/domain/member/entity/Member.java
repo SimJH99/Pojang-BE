@@ -52,6 +52,9 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String deleteYn = "N";
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<Favorite> Favorites = new ArrayList<>();
+
     @Builder
     public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {
         this.email = email;

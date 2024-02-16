@@ -1,9 +1,12 @@
 package com.sns.pojang.domain.favorite.service;
 
+import com.sns.pojang.domain.favorite.dto.response.CountFavoriteResponse;
 import com.sns.pojang.domain.favorite.dto.response.CreateFavoriteResponse;
 import com.sns.pojang.domain.favorite.entity.Favorite;
+import com.sns.pojang.domain.favorite.exception.FavoriteDuplicateException;
 import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
 import com.sns.pojang.domain.member.entity.Member;
+import com.sns.pojang.domain.member.exception.EmailDuplicateException;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.store.entity.Store;
@@ -14,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 
 @Service
@@ -35,6 +39,9 @@ public class FavoriteService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(favoriteRepository.findByMemberAndStore(member, store).isPresent()) {
+            throw new FavoriteDuplicateException();
+        }
         Favorite favorite = Favorite.builder()
                 .member(member)
                 .store(store)
@@ -48,5 +55,12 @@ public class FavoriteService {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         Favorite favorite = favoriteRepository.findByMemberAndStore(member, store).orElseThrow();
         favorite.deleteFavorite();
+    }
+
+    public CountFavoriteResponse countFavorite(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        int count = favoriteRepository.findByStore(store).size();
+        return CountFavoriteResponse.from(count, store);
+
     }
 }

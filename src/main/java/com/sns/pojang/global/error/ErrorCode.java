@@ -27,7 +27,8 @@ public enum ErrorCode {
     STORE_NOT_FOUND(400, "등록된 매장이 아닙니다."),
 
     // Favorite
-    FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다.");
+    FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다."),
+    FAVORITE_DUPLICATION(400, "이미 찜한 가게입니다.");
 
     private int status;
     private String message;
