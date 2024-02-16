@@ -14,8 +14,6 @@ public enum SuccessMessage {
     // Member
     CREATE_MEMBER_SUCCESS("회원가입에 성공하였습니다."),
     LOGIN_MEMBER_SUCCESS("로그인에 성공하였습니다."),
-    MY_INFO_MEMBER_SUCCESS("회원정보조회에 성공하였습니다."),
-    DELETE_MEMBER_SUCCESS("회원 탈퇴되었습니다."),
     FIND_ADDRESS_SUCCESS("주소 조회에 성공하였습니다."),
     UPDATE_ADDRESS_SUCCESS("주소 수정에 성공하였습니다."),
     UPDATE_MY_INFO_SUCCESS("회원정보 수정에 성공하였습니다."),
@@ -26,7 +24,7 @@ public enum SuccessMessage {
     CREATE_MENU_SUCCESS("메뉴가 등록되었습니다."),
 
     // Order
-    CREATE_ORDER_SUCCESS("주문이 완료되었습니다.");
+    CREATE_ORDER_SUCCESS("주문이 완료되었습니다."),
 
     // Store
     CREATE_STORE_SUCCESS("매장 신청 되었습니다."),

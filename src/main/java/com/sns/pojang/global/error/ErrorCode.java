@@ -22,7 +22,6 @@ public enum ErrorCode {
     NICKNAME_DUPLICATION( 400, "이미 존재하는 닉네임입니다."),
 
     // Store
-    STORE_NOT_FOUND(400, "가게를 찾을 수 없습니다."),
     BUSINESS_NUMBER_DUPLICATION(400, "이미 등록된 사업자 번호입니다."), 
     BUSINESS_NUMBER_NOT_FOUND(400, "존재하지 않는 사업자 번호입니다."),
     STORE_NOT_FOUND(400, "등록된 매장이 아닙니다."),
