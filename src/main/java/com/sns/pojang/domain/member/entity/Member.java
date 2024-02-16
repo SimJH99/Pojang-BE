@@ -49,7 +49,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String deleteYn = "N";
 
-    @Builder(toBuilder = true)
+    @Builder
     public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {
         this.email = email;
         this.password = password;
