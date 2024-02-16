@@ -85,4 +85,8 @@ public class Store extends BaseTimeEntity {
         this.operationTime = operationTime;
         this.imageUrl = imageUrl;
     }
+
+    public void isDelete() {
+        this.deleteYn = "Y";
+    }
 }

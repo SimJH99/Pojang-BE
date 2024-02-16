@@ -21,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import static com.sns.pojang.global.error.ErrorCode.STORE_NOT_FOUND;
+
 @Service
 @Transactional
 public class StoreService {
@@ -65,7 +67,7 @@ public class StoreService {
     }
 
     public UpdateStoreResponse updateStore(Long id, UpdateStoreRequest updateStoreRequest) {
-        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.STORE_NOT_FOUND));
+        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
 
         MultipartFile multipartFile = updateStoreRequest.getImageUrl();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
@@ -95,5 +97,10 @@ public class StoreService {
                 path != null ? path.toString() : null);
 
         return UpdateStoreResponse.from(storeRepository.save(store));
+    }
+
+    public void deleteStore(Long id) {
+        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
+        store.isDelete();
     }
 }
