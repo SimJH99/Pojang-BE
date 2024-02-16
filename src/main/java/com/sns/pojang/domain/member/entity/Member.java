@@ -63,4 +63,23 @@ public class Member extends BaseTimeEntity {
     public void withdraw() {
         this.deleteYn = "Y";
     }
+
+//    마이페이지 수정
+    public void updateMyInfo(String nickname, String password, String phoneNumber) {
+        this.nickname = nickname;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+    }
+
+//    주소 수정
+    public void updateAddress(String sido, String sigungu, String query) {
+        Address fullAddress = Address.builder()
+                .sido(sido)
+                .sigungu(sigungu)
+                .query(query)
+                .build();
+        this.address = fullAddress;
+    }
+
 }
+
