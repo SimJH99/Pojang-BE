@@ -3,19 +3,19 @@ package com.sns.pojang.domain.menu.controller;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.service.MenuService;
-import com.sns.pojang.domain.order.dto.request.OrderRequest;
-import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 import static com.sns.pojang.global.response.SuccessMessage.CREATE_MENU_SUCCESS;
-import static com.sns.pojang.global.response.SuccessMessage.CREATE_ORDER_SUCCESS;
 
 @RestController
 @RequestMapping("/api/menus")
@@ -27,6 +27,7 @@ public class MenuController {
         this.menuService = menuService;
     }
 
+    @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/{storeId}/create")
     public ResponseEntity<SuccessResponse<MenuResponse>> createMenu(
             @PathVariable Long storeId, MenuRequest menuRequest){
