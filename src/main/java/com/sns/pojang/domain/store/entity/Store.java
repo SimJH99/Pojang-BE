@@ -49,6 +49,7 @@ public class Store extends BaseTimeEntity {
 
     //오픈여부
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Status status = Status.CLOSED;
 
     //삭제여부
