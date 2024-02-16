@@ -1,7 +1,9 @@
 package com.sns.pojang.domain.menu.entity;
 
+import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +29,7 @@ public class Menu extends BaseTimeEntity{
     @Column(nullable = false)
     private int price;
 
-    //메뉴 사진
+    //메뉴 이미지 경로
     private String imageUrl;
 
     //매진여부
@@ -37,4 +39,17 @@ public class Menu extends BaseTimeEntity{
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
+
+    @Builder
+    public Menu(String name, String menuInfo, int price, String imageUrl, Store store){
+        this.name = name;
+        this.menuInfo = menuInfo;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.store = store;
+    }
 }

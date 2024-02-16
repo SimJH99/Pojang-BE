@@ -17,6 +17,9 @@ public enum SuccessMessage {
     MY_INFO_MEMBER_SUCCESS("회원정보조회에 성공하였습니다."),
     DELETE_MEMBER_SUCCESS("회원 탈퇴되었습니다."),
 
+    // Menu
+    CREATE_MENU_SUCCESS("메뉴가 등록되었습니다."),
+
     // Order
     CREATE_ORDER_SUCCESS("주문이 완료되었습니다.");
 
