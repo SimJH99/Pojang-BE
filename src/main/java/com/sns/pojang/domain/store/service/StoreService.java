@@ -11,6 +11,7 @@ import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,9 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final BusinessNumberRepository businessNumberRepository;
+
+    @Value("${image.path}")
+    private String imagePath;
 
     public StoreService(StoreRepository storeRepository, BusinessNumberRepository businessNumberRepository) {
         this.storeRepository = storeRepository;
@@ -51,7 +55,7 @@ public class StoreService {
         Path path = null;
 
         if (fileName != null) {
-            path = Paths.get("C:/Users/Playdata/Desktop/tmp", "_" + fileName);
+            path = Paths.get(imagePath, fileName);
 
             try {
                 byte[] bytes = multipartFile.getBytes();
@@ -75,7 +79,7 @@ public class StoreService {
         Path path = null;
 
         if (fileName != null) {
-            path = Paths.get("C:/Users/Playdata/Desktop/tmp", "_" + fileName);
+            path = Paths.get(imagePath, fileName);
 
             try {
                 byte[] bytes = multipartFile.getBytes();
