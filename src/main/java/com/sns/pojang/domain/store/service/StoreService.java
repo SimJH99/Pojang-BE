@@ -1,15 +1,16 @@
 package com.sns.pojang.domain.store.service;
 
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
+import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
+import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
 import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
-import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,11 @@ public class StoreService {
         this.businessNumberRepository = businessNumberRepository;
     }
 
+    public BusinessNumber registerBusinessNumber(RegisterBusinessNumberRequest registerBusinessNumberRequest){
+        BusinessNumber businessNumber = new BusinessNumber(registerBusinessNumberRequest.getBusinessNumber());
+        return businessNumberRepository.save(businessNumber);
+    }
+
     public CreateStoreResponse createStore(CreateStoreRequest createStoreRequest) throws BusinessNumberDuplicateException {
         //사업자 번호 대조
         if (businessNumberRepository.findByBusinessNumber(createStoreRequest.getBusinessNumber()).isEmpty()) {
@@ -49,7 +55,7 @@ public class StoreService {
             throw new BusinessNumberDuplicateException();
         }
 
-        MultipartFile multipartFile = createStoreRequest.getImageUrl();
+        MultipartFile multipartFile = createStoreRequest.getStoreImage();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
 
         Path path = null;
