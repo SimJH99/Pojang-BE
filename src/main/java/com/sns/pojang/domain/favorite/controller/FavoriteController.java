@@ -36,7 +36,6 @@ public class FavoriteController {
     }
 
     // 찜 취소
-    // repository.delete가 나을지
     @DeleteMapping("/{storeId}")
     public ResponseEntity<SuccessResponse<Void>> cancelFavorite(
             @PathVariable Long storeId) {
@@ -46,8 +45,6 @@ public class FavoriteController {
     }
 
     // 찜 수 조회
-    // 매장 조회 시 찜 개수도 같이 조회하도록 하는 게 나을까
-    // store에 mappedBy로 넣어서 바로 세는 게 나을까, count를 따로 관리해서 +(create), -(delete) 해주는 게 나을까
     @GetMapping("/{storeId}")
     public ResponseEntity<SuccessResponse<CountFavoriteResponse>> countFavorite(
             @PathVariable Long storeId) {
