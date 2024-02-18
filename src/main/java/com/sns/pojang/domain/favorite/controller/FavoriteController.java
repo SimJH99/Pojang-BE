@@ -36,10 +36,11 @@ public class FavoriteController {
     }
 
     // 찜 취소
+    // repository.delete가 나을지
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<SuccessResponse<Void>> deleteFavorite(
+    public ResponseEntity<SuccessResponse<Void>> cancelFavorite(
             @PathVariable Long storeId) {
-        favoriteService.deleteFavorite(storeId);
+        favoriteService.cancelFavorite(storeId);
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                         DELETE_FAVORITE_SUCCESS.getMessage()));
     }
@@ -54,4 +55,7 @@ public class FavoriteController {
                         COUNT_FAVORITE_SUCCESS.getMessage(),
                         favoriteService.countFavorite(storeId)));
     }
+
+
+
 }

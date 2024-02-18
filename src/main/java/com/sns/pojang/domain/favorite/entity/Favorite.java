@@ -41,8 +41,13 @@ public class Favorite extends BaseTimeEntity {
     }
 
     // 찜 취소
-    public void deleteFavorite() {
+    public void cancelFavorite() {
         this.favoriteYn = "N";
+    }
+
+    // 찜 설정
+    public void updateFavorite() {
+        this.favoriteYn = "Y";
     }
 
 

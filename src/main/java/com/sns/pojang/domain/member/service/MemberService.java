@@ -1,6 +1,9 @@
 package com.sns.pojang.domain.member.service;
 
 
+import com.sns.pojang.domain.favorite.entity.Favorite;
+import com.sns.pojang.domain.favorite.exception.FavoriteNotFoundException;
+import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
 import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.entity.Member;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,6 +35,7 @@ import java.util.List;
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final FavoriteRepository favoriteRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final CertificationNumberRepository certificationNumberRepository;
@@ -140,5 +145,23 @@ public class MemberService {
         certificationNumberRepository.saveCertificationNumber(to,certificationNumber);
 
         return new SmsCertificationResponse(to, certificationNumber);
+    }
+
+    public List<FindFavoritesResponse> findFavorites() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        List<Favorite> favorites = favoriteRepository.findByMemberAndFavoriteYn(member, "Y");
+        if(favorites.isEmpty()) {
+            throw new FavoriteNotFoundException();
+        }
+        List<FindFavoritesResponse> findFavoritesResponses= new ArrayList<>();
+        for(Favorite favorite : favorites) {
+            if (favorite.getFavoriteYn().equals("N")) {
+                continue;
+            }
+            FindFavoritesResponse favoritesResponse = FindFavoritesResponse.from(favorite);
+            findFavoritesResponses.add(favoritesResponse);
+        }
+        return findFavoritesResponses;
     }
 }
