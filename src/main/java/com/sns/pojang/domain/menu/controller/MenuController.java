@@ -5,7 +5,10 @@ import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +53,13 @@ public class MenuController {
         menuService.deleteMenu(storeId, menuId);
         return ResponseEntity.ok(SuccessResponse.delete(HttpStatus.OK.value(),
                 DELETE_MENU_SUCCESS.getMessage()));
+    }
+
+    @GetMapping("/{storeId}/menus/{menuId}/image")
+    public ResponseEntity<Resource> findImage(@PathVariable Long storeId, @PathVariable Long menuId){
+        Resource resource = menuService.findImage(storeId, menuId);
+        HttpHeaders headers = new HttpHeaders(); // 파일의 타입을 스프링에 알려주기 위함
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }

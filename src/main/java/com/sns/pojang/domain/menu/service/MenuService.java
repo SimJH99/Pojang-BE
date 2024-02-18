@@ -12,11 +12,15 @@ import com.sns.pojang.domain.store.repository.StoreRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -93,6 +97,25 @@ public class MenuService {
         validateStoreId(storeId, findMenu);
 
         findMenu.updateDeleteYn();
+    }
+
+    @Transactional
+    public Resource findImage(Long storeId, Long menuId) {
+        Menu findMenu = findMenu(menuId);
+        validateStoreId(storeId, findMenu);
+        // 삭제된 메뉴는 조회 불가
+        if (findMenu.getDeleteYn().equals("Y")){
+            throw new MenuNotFoundException();
+        }
+        String imagePath = findMenu.getImageUrl();
+        Path path = Paths.get(imagePath);
+        Resource resource;
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Url Form Is Not Valid");
+        }
+        return resource;
     }
 
     private Store findStore(Long storeId){
