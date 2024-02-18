@@ -156,9 +156,6 @@ public class MemberService {
         }
         List<FindFavoritesResponse> findFavoritesResponses= new ArrayList<>();
         for(Favorite favorite : favorites) {
-            if (favorite.getFavoriteYn().equals("N")) {
-                continue;
-            }
             FindFavoritesResponse favoritesResponse = FindFavoritesResponse.from(favorite);
             findFavoritesResponses.add(favoritesResponse);
         }
