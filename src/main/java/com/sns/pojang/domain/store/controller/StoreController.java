@@ -30,10 +30,10 @@ public class StoreController {
 
     //    매장 생성
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<SuccessResponse<CreateStoreResponse>> createStore(
             @Valid CreateStoreRequest createStoreRequest) {
-        return ResponseEntity.created(URI.create("/create"))
+        return ResponseEntity.created(URI.create(""))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_STORE_SUCCESS.getMessage(),
                         storeService.createStore(createStoreRequest)));
@@ -50,7 +50,7 @@ public class StoreController {
 
     // 매장 정보 수정
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @PatchMapping("/{id}/update")
+    @PatchMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
             @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
@@ -59,7 +59,7 @@ public class StoreController {
 
     // 매장 삭제
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<Void>> deleteStore(@PathVariable Long id){
         storeService.deleteStore(id);
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),

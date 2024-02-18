@@ -28,7 +28,7 @@ public class MenuController {
     @PostMapping("/{storeId}/menus")
     public ResponseEntity<SuccessResponse<MenuResponse>> createMenu(
             @PathVariable Long storeId, MenuRequest menuRequest){
-        return ResponseEntity.created(URI.create("/create"))
+        return ResponseEntity.created(URI.create("/" + storeId + "/menus"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_MENU_SUCCESS.getMessage(),
                         menuService.createMenu(storeId, menuRequest)));
