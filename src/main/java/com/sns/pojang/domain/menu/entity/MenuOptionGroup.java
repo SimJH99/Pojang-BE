@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,4 +25,16 @@ public class MenuOptionGroup extends BaseTimeEntity {
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
+
+    @OneToMany(mappedBy = "menuOptionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MenuOption> menuOptions = new ArrayList<>();
+
+    public MenuOptionGroup(String name, Menu menu){
+        this.name = name;
+        this.menu = menu;
+    }
 }

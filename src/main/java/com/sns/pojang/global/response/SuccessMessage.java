@@ -22,6 +22,7 @@ public enum SuccessMessage {
 
     // Menu
     CREATE_MENU_SUCCESS("메뉴가 등록되었습니다."),
+    CREATE_MENU_OPTION_GROUP_SUCCESS("메뉴 옵션 그룹이 등록되었습니다."),
     UPDATE_MENU_SUCCESS("메뉴가 수정되었습니다."),
     DELETE_MENU_SUCCESS("메뉴가 삭제되었습니다."),
     GET_MENUS_SUCCESS("메뉴 목록을 조회하였습니다."),

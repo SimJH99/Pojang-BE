@@ -27,4 +27,8 @@ public class MenuOption extends BaseTimeEntity {
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_option_group_id", nullable = false)
+    private MenuOptionGroup menuOptionGroup;
 }

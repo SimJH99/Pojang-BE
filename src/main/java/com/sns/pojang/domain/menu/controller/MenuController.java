@@ -1,6 +1,8 @@
 package com.sns.pojang.domain.menu.controller;
 
+import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
+import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
 import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -32,7 +35,7 @@ public class MenuController {
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/{storeId}/menus")
     public ResponseEntity<SuccessResponse<MenuResponse>> createMenu(
-            @PathVariable Long storeId, MenuRequest menuRequest){
+            @PathVariable Long storeId, @Valid MenuRequest menuRequest){
         return ResponseEntity.created(URI.create("/" + storeId + "/menus"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_MENU_SUCCESS.getMessage(),
@@ -40,9 +43,21 @@ public class MenuController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
+    @PostMapping("/{storeId}/menus/{menuId}/option-groups")
+    public ResponseEntity<SuccessResponse<List<CreateMenuOptionGroupResponse>>> createMenuOptionGroup(
+            @PathVariable Long storeId,
+            @PathVariable Long menuId,
+            @Valid @RequestBody List<CreateMenuOptionGroupRequest> createMenuOptionGroupRequests){
+        return ResponseEntity.created(URI.create("/" + storeId + "/menus" + + menuId + "/optionGroups"))
+                .body(SuccessResponse.create(HttpStatus.CREATED.value(),
+                        CREATE_MENU_OPTION_GROUP_SUCCESS.getMessage(),
+                        menuService.createMenuOptionGroup(storeId, menuId, createMenuOptionGroupRequests)));
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{storeId}/menus/{menuId}")
     public ResponseEntity<SuccessResponse<MenuResponse>> updateMenu(
-            @PathVariable Long storeId, @PathVariable Long menuId, MenuRequest menuRequest){
+            @PathVariable Long storeId, @PathVariable Long menuId, @Valid MenuRequest menuRequest){
         return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                         UPDATE_MENU_SUCCESS.getMessage(),
                         menuService.updateMenu(storeId, menuId, menuRequest)));
