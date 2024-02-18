@@ -32,7 +32,9 @@ public enum ErrorCode {
 
     // Menu
     MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
-    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다.");
+    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다."),
+    MENU_OPTION_GROUP_NOT_FOUND(400, "메뉴 옵션 그룹을 찾을 수 없습니다."),
+    MENU_ID_NOT_EQUAL(400, "메뉴 옵션 그룹의 menuId와 입력된 menuId가 일치하지 않습니다.");
 
     private int status;
     private String message;

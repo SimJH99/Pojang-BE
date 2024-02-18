@@ -4,13 +4,19 @@ import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
+import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
+import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionResponse;
 import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.entity.Menu;
+import com.sns.pojang.domain.menu.entity.MenuOption;
 import com.sns.pojang.domain.menu.entity.MenuOptionGroup;
+import com.sns.pojang.domain.menu.exception.MenuIdNotEqualException;
 import com.sns.pojang.domain.menu.exception.MenuNotFoundException;
+import com.sns.pojang.domain.menu.exception.MenuOptionGroupNotFoundException;
 import com.sns.pojang.domain.menu.repository.MenuOptionGroupRepository;
+import com.sns.pojang.domain.menu.repository.MenuOptionRepository;
 import com.sns.pojang.domain.menu.repository.MenuRepository;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.StoreIdNotEqualException;
@@ -49,6 +55,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
     private final MenuOptionGroupRepository menuOptionGroupRepository;
+    private final MenuOptionRepository menuOptionRepository;
     private final MemberRepository memberRepository;
     @Value("${image.path}")
     private String imagePath;
@@ -87,7 +94,7 @@ public class MenuService {
         Store findStore = findStore(storeId);
         validateOwner(findStore);
         Menu findMenu = findMenu(menuId);
-        validateStoreId(findStore.getId(), findMenu);
+        validateStore(findStore.getId(), findMenu);
         List<CreateMenuOptionGroupResponse> responses = new ArrayList<>();
 
         for (CreateMenuOptionGroupRequest request : createMenuOptionGroupRequests){
@@ -106,6 +113,27 @@ public class MenuService {
         return responses;
     }
 
+    // 메뉴 옵션 등록
+    public List<CreateMenuOptionResponse> createMenuOption(
+            Long storeId, Long menuId, Long menuOptionGroupId,
+            List<CreateMenuOptionRequest> createMenuOptionRequests) {
+        Store findStore = findStore(storeId);
+        validateOwner(findStore);
+        Menu findMenu = findMenu(menuId);
+        validateStore(findStore.getId(), findMenu);
+        MenuOptionGroup findMenuOptionGroup = findMenuOptionGroup(menuOptionGroupId);
+
+        List<CreateMenuOptionResponse> responses = new ArrayList<>();
+
+        for (CreateMenuOptionRequest request : createMenuOptionRequests){
+            MenuOption menuOption = request.toEntity(findMenuOptionGroup);
+            findMenuOptionGroup.getMenuOptions().add(menuOptionRepository.save(menuOption));
+            responses.add(CreateMenuOptionResponse.from(menuOption));
+        }
+
+        return responses;
+    }
+
     // 메뉴 수정
     @Transactional
     public MenuResponse updateMenu(Long storeId, Long menuId, MenuRequest menuRequest)
@@ -115,7 +143,7 @@ public class MenuService {
         Menu findMenu = findMenu(menuId);
 
         // 입력된 storeId와 수정할 메뉴의 storeId의 일치 여부 확인
-        validateStoreId(storeId, findMenu);
+        validateStore(storeId, findMenu);
 
         // dto에서 얻은 image는 null일 수 없으므로, null 처리 안함
         // OWNER가 메뉴 등록 시 이미지를 첨부하지 않았어도, 기본 이미지가 세팅되기 때문
@@ -140,7 +168,7 @@ public class MenuService {
         Store findStore = findStore(storeId);
         validateOwner(findStore);
         Menu findMenu = findMenu(menuId);
-        validateStoreId(storeId, findMenu);
+        validateStore(storeId, findMenu);
         findMenu.updateDeleteYn();
     }
 
@@ -148,7 +176,7 @@ public class MenuService {
     @Transactional
     public Resource findImage(Long storeId, Long menuId) {
         Menu findMenu = findMenu(menuId);
-        validateStoreId(storeId, findMenu);
+        validateStore(storeId, findMenu);
         // 삭제된 메뉴는 조회 불가
         if (findMenu.getDeleteYn().equals("Y")){
             throw new MenuNotFoundException();
@@ -166,7 +194,7 @@ public class MenuService {
 
     // 특정 가게의 메뉴 목록 조회
     @Transactional
-    public List<MenuResponse> findMenus(Long storeId, Pageable pageable) throws StoreNotFoundException{
+    public List<MenuResponse> getMenus(Long storeId, Pageable pageable) throws StoreNotFoundException{
         Store findStore = findStore(storeId);
         // deleteYn이 N인 메뉴들만 조회
         Page<Menu> menus = menuRepository.findByDeleteYnAndStoreId("N", findStore.getId(), pageable);
@@ -185,11 +213,24 @@ public class MenuService {
                 .orElseThrow(MenuNotFoundException::new);
     }
 
+    private MenuOptionGroup findMenuOptionGroup(Long menuOptionGroupId){
+        return menuOptionGroupRepository.findById(menuOptionGroupId)
+                .orElseThrow(MenuOptionGroupNotFoundException::new);
+    }
+
     // 메뉴의 storeId와 입력 storeId 일치 여부 검증
-    private void validateStoreId(Long inputStoreId, Menu menu){
+    private void validateStore(Long storeId, Menu menu){
         Store store = menu.getStore();
-        if (!inputStoreId.equals(store.getId())){
+        if (!storeId.equals(store.getId())){
             throw new StoreIdNotEqualException();
+        }
+    }
+
+    // 메뉴의 storeId와 입력 storeId 일치 여부 검증
+    private void validateMenu(Long menuId, MenuOptionGroup menuOptionGroup){
+        Menu menu = menuOptionGroup.getMenu();
+        if (!menuId.equals(menu.getId())){
+            throw new MenuIdNotEqualException();
         }
     }
 
@@ -202,4 +243,6 @@ public class MenuService {
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
     }
+
+
 }

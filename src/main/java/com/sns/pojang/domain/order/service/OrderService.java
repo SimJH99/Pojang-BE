@@ -67,7 +67,7 @@ public class OrderService {
             for (SelectedMenuOptionRequest selectedMenuOptionRequest : selectedMenuRequest.getSelectedMenuOptions()){
                 for (Long menuOptionId : selectedMenuOptionRequest.getSelectedMenuOptions()){
                     MenuOption menuOption = findMenuOption(menuOptionId);
-                    menuOptionTotal += menuOption.getAdditionalPrice();
+                    menuOptionTotal += menuOption.getPrice();
                 }
             }
             calculatedTotalPrice += menu.getPrice() + menuOptionTotal;

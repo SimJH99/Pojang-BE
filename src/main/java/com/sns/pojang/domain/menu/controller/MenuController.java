@@ -1,8 +1,10 @@
 package com.sns.pojang.domain.menu.controller;
 
 import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
+import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
+import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionResponse;
 import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
@@ -48,10 +50,24 @@ public class MenuController {
             @PathVariable Long storeId,
             @PathVariable Long menuId,
             @Valid @RequestBody List<CreateMenuOptionGroupRequest> createMenuOptionGroupRequests){
-        return ResponseEntity.created(URI.create("/" + storeId + "/menus" + + menuId + "/optionGroups"))
+        return ResponseEntity.created(URI.create("/" + storeId + "/menus" + + menuId + "/option-groups"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_MENU_OPTION_GROUP_SUCCESS.getMessage(),
                         menuService.createMenuOptionGroup(storeId, menuId, createMenuOptionGroupRequests)));
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @PostMapping("/{storeId}/menus/{menuId}/option-groups/{menuOptionGroupId}/menuOptions")
+    public ResponseEntity<SuccessResponse<List<CreateMenuOptionResponse>>> createMenuOption(
+            @PathVariable Long storeId,
+            @PathVariable Long menuId,
+            @PathVariable Long menuOptionGroupId,
+            @Valid @RequestBody List<CreateMenuOptionRequest> createMenuOptionRequests){
+        return ResponseEntity.created(URI.create("/" + storeId + "/menus" + menuId +
+                        "/option-groups" + menuOptionGroupId + "/menuOptions"))
+                .body(SuccessResponse.create(HttpStatus.CREATED.value(),
+                        CREATE_MENU_OPTION_SUCCESS.getMessage(),
+                        menuService.createMenuOption(storeId, menuId, menuOptionGroupId, createMenuOptionRequests)));
     }
 
     @PreAuthorize("hasRole('OWNER')")
@@ -82,9 +98,9 @@ public class MenuController {
 
     @GetMapping("/{storeId}/menus")
     // Page size default: 20, 0번 페이지부터 시작
-    public ResponseEntity<SuccessResponse<List<MenuResponse>>> findItems(@PathVariable Long storeId, Pageable pageable){
+    public ResponseEntity<SuccessResponse<List<MenuResponse>>> findMenus(@PathVariable Long storeId, Pageable pageable){
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MENUS_SUCCESS.getMessage(),
-                menuService.findMenus(storeId, pageable)));
+                menuService.getMenus(storeId, pageable)));
     }
 }
