@@ -14,10 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -25,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -116,6 +119,16 @@ public class MenuService {
             throw new IllegalArgumentException("Url Form Is Not Valid");
         }
         return resource;
+    }
+
+    // 특정 가게의 메뉴 목록 조회
+    public List<MenuResponse> findMenus(Long storeId, Pageable pageable) throws StoreNotFoundException{
+        Store findStore = findStore(storeId);
+        // deleteYn이 N인 메뉴들만 조회
+        Page<Menu> menus = menuRepository.findByDeleteYnAndStoreId("N", findStore.getId(), pageable);
+        List<Menu> menuList = menus.getContent();
+
+        return menuList.stream().map(MenuResponse::from).collect(Collectors.toList());
     }
 
     private Store findStore(Long storeId){

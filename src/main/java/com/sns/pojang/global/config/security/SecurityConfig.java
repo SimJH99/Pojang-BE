@@ -46,7 +46,7 @@ public class SecurityConfig {
                         "/api/members/confirm-sms",
                         "/api/mail/*",
                         "/api/stores/*/menus/*/image",
-                        "/item/*/image")
+                        "/api/stores/*/menus")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
