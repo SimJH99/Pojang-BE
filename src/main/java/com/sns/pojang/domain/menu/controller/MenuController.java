@@ -8,17 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-import static com.sns.pojang.global.response.SuccessMessage.CREATE_MENU_SUCCESS;
+import static com.sns.pojang.global.response.SuccessMessage.*;
 
 @RestController
-@RequestMapping("/api/menus")
+@RequestMapping("/api/stores")
 public class MenuController {
     private final MenuService menuService;
 
@@ -28,12 +25,21 @@ public class MenuController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @PostMapping("/{storeId}/create")
+    @PostMapping("/{storeId}/menus")
     public ResponseEntity<SuccessResponse<MenuResponse>> createMenu(
             @PathVariable Long storeId, MenuRequest menuRequest){
         return ResponseEntity.created(URI.create("/create"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_MENU_SUCCESS.getMessage(),
                         menuService.createMenu(storeId, menuRequest)));
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @PatchMapping("/{storeId}/menus/{menuId}")
+    public ResponseEntity<SuccessResponse<MenuResponse>> updateMenu(
+            @PathVariable Long storeId, @PathVariable Long menuId, MenuRequest menuRequest){
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                        UPDATE_MENU_SUCCESS.getMessage(),
+                        menuService.updateMenu(storeId, menuId, menuRequest)));
     }
 }

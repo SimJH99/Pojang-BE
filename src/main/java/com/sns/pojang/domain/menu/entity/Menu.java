@@ -52,4 +52,18 @@ public class Menu extends BaseTimeEntity{
         this.imageUrl = imageUrl;
         this.store = store;
     }
+
+    public Menu updateMenu(String name,
+                           String menuInfo,
+                           int price,
+                           String imageUrl,
+                           Store store){
+        this.name = name;
+        this.menuInfo = menuInfo;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.store = store;
+
+        return this;
+    }
 }
