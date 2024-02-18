@@ -66,4 +66,8 @@ public class Menu extends BaseTimeEntity{
 
         return this;
     }
+
+    public void updateDeleteYn(){
+        this.deleteYn = "Y";
+    }
 }

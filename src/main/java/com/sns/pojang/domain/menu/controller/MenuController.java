@@ -42,4 +42,13 @@ public class MenuController {
                         UPDATE_MENU_SUCCESS.getMessage(),
                         menuService.updateMenu(storeId, menuId, menuRequest)));
     }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @DeleteMapping("/{storeId}/menus/{menuId}")
+    public ResponseEntity<SuccessResponse<Void>> deleteMenu(
+            @PathVariable Long storeId, @PathVariable Long menuId){
+        menuService.deleteMenu(storeId, menuId);
+        return ResponseEntity.ok(SuccessResponse.delete(HttpStatus.OK.value(),
+                DELETE_MENU_SUCCESS.getMessage()));
+    }
 }

@@ -87,6 +87,14 @@ public class MenuService {
         return MenuResponse.from(updatedMenu);
     }
 
+    @Transactional
+    public void deleteMenu(Long storeId, Long menuId) {
+        Menu findMenu = findMenu(menuId);
+        validateStoreId(storeId, findMenu);
+
+        findMenu.updateDeleteYn();
+    }
+
     private Store findStore(Long storeId){
         return storeRepository.findById(storeId)
                 .orElseThrow(StoreNotFoundException::new);
