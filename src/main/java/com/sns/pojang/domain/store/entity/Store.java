@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.store.entity;
 
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -53,13 +54,18 @@ public class Store extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.CLOSED;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
 
     @Builder
     public Store(String name, String imageUrl, String category, Address address, 
-                 String storeNumber, String introduction, String operationTime, String businessNumber) {
+                 String storeNumber, String introduction, String operationTime,
+                 String businessNumber, Member member) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -68,6 +74,7 @@ public class Store extends BaseTimeEntity {
         this.introduction = introduction;
         this.operationTime = operationTime;
         this.businessNumber = businessNumber;
+        this.member = member;
     }
 
     public void updateStore(String name, String category, String sido, String sigungu, String query, 

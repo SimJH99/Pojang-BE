@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.store.dto.request;
 
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.store.entity.Address;
 import com.sns.pojang.domain.store.entity.Store;
 import lombok.Data;
@@ -29,7 +30,7 @@ public class CreateStoreRequest {
     private String addressDetail;
     private String introduction;
 
-    public Store toEntity(String path) {
+    public Store toEntity(String path, Member member) {
         Address fullAddress = Address.builder()
                 .sido(sido)
                 .sigungu(sigungu)
@@ -45,6 +46,7 @@ public class CreateStoreRequest {
                 .introduction(introduction)
                 .operationTime(operationTime)
                 .businessNumber(businessNumber)
+                .member(member)
                 .build();
     }
 }

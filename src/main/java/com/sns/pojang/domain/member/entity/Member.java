@@ -1,13 +1,15 @@
 package com.sns.pojang.domain.member.entity;
 
+import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,6 +49,9 @@ public class Member extends BaseTimeEntity {
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Store> stores = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {
