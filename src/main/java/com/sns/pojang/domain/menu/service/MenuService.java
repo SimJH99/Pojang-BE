@@ -68,7 +68,7 @@ public class MenuService {
         Menu findMenu = findMenu(menuId);
 
         // 입력된 storeId와 수정할 메뉴의 storeId의 일치 여부 확인
-        validateShopId(storeId, findMenu);
+        validateStoreId(storeId, findMenu);
 
         // dto에서 얻은 image는 null일 수 없으므로, null 처리 안함
         // OWNER가 메뉴 등록 시 이미지를 첨부하지 않았어도, 기본 이미지가 세팅되기 때문
@@ -105,7 +105,7 @@ public class MenuService {
                 .orElseThrow(MenuNotFoundException::new);
     }
 
-    private void validateShopId(Long inputStoreId, Menu menu){
+    private void validateStoreId(Long inputStoreId, Menu menu){
         Store store = menu.getStore();
         if (!inputStoreId.equals(store.getId())){
             throw new StoreIdNotEqualException();
