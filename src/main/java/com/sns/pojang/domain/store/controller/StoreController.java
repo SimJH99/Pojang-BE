@@ -53,7 +53,7 @@ public class StoreController {
     @PatchMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
             @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                 UPDATE_STORE_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
     }
 
@@ -62,7 +62,7 @@ public class StoreController {
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<Void>> deleteStore(@PathVariable Long id){
         storeService.deleteStore(id);
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.delete(HttpStatus.OK.value(),
                 DELETE_STORE_SUCCESS.getMessage()));
     }
 }

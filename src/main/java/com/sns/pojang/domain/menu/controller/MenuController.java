@@ -38,7 +38,7 @@ public class MenuController {
     @PatchMapping("/{storeId}/menus/{menuId}")
     public ResponseEntity<SuccessResponse<MenuResponse>> updateMenu(
             @PathVariable Long storeId, @PathVariable Long menuId, MenuRequest menuRequest){
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                         UPDATE_MENU_SUCCESS.getMessage(),
                         menuService.updateMenu(storeId, menuId, menuRequest)));
     }
