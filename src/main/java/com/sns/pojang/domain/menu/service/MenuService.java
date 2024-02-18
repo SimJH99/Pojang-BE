@@ -43,6 +43,7 @@ public class MenuService {
         this.storeRepository = storeRepository;
     }
 
+    // 메뉴 등록
     @Transactional
     public MenuResponse createMenu(Long storeId, MenuRequest menuRequest) {
         Store findStore = findStore(storeId);
@@ -68,6 +69,7 @@ public class MenuService {
         return MenuResponse.from(menuRepository.save(newMenu));
     }
 
+    // 메뉴 수정
     @Transactional
     public MenuResponse updateMenu(Long storeId, Long menuId, MenuRequest menuRequest)
             throws StoreIdNotEqualException{
@@ -94,6 +96,7 @@ public class MenuService {
         return MenuResponse.from(updatedMenu);
     }
 
+    // 메뉴 삭제
     @Transactional
     public void deleteMenu(Long storeId, Long menuId) {
         Menu findMenu = findMenu(menuId);
@@ -102,6 +105,7 @@ public class MenuService {
         findMenu.updateDeleteYn();
     }
 
+    // 메뉴 이미지 조회
     @Transactional
     public Resource findImage(Long storeId, Long menuId) {
         Menu findMenu = findMenu(menuId);
@@ -141,6 +145,7 @@ public class MenuService {
                 .orElseThrow(MenuNotFoundException::new);
     }
 
+    // 메뉴의 storeId와 입력 storeId 일치 여부 검증
     private void validateStoreId(Long inputStoreId, Menu menu){
         Store store = menu.getStore();
         if (!inputStoreId.equals(store.getId())){
