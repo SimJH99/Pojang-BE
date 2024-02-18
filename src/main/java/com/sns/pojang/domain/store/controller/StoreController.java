@@ -1,9 +1,11 @@
 package com.sns.pojang.domain.store.controller;
 
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
+import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
+import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.service.StoreService;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,15 @@ public class StoreController {
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_STORE_SUCCESS.getMessage(),
                         storeService.createStore(createStoreRequest)));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/register/business-number")
+    public ResponseEntity<SuccessResponse<BusinessNumber>> registerBusinessNumber(
+            @Valid @RequestBody RegisterBusinessNumberRequest registerBusinessNumberRequest) {
+        return ResponseEntity.created(URI.create("/register/business-number"))
+                .body(SuccessResponse.create(HttpStatus.CREATED.value(), REGISTER_BUSINESS_NUMBER_SUCCESS.getMessage(),
+                        storeService.registerBusinessNumber(registerBusinessNumberRequest)));
     }
 
     // 매장 정보 수정

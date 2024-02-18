@@ -1,16 +1,18 @@
 package com.sns.pojang.domain.store.service;
 
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
+import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
+import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
 import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
-import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,9 +32,17 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final BusinessNumberRepository businessNumberRepository;
 
+    @Value("${image.path}")
+    private String imagePath;
+
     public StoreService(StoreRepository storeRepository, BusinessNumberRepository businessNumberRepository) {
         this.storeRepository = storeRepository;
         this.businessNumberRepository = businessNumberRepository;
+    }
+
+    public BusinessNumber registerBusinessNumber(RegisterBusinessNumberRequest registerBusinessNumberRequest){
+        BusinessNumber businessNumber = new BusinessNumber(registerBusinessNumberRequest.getBusinessNumber());
+        return businessNumberRepository.save(businessNumber);
     }
 
     public CreateStoreResponse createStore(CreateStoreRequest createStoreRequest) throws BusinessNumberDuplicateException {
@@ -45,13 +55,13 @@ public class StoreService {
             throw new BusinessNumberDuplicateException();
         }
 
-        MultipartFile multipartFile = createStoreRequest.getImageUrl();
+        MultipartFile multipartFile = createStoreRequest.getStoreImage();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
 
         Path path = null;
 
         if (fileName != null) {
-            path = Paths.get("C:/Users/Playdata/Desktop/tmp", "_" + fileName);
+            path = Paths.get(imagePath, fileName);
 
             try {
                 byte[] bytes = multipartFile.getBytes();
@@ -75,7 +85,7 @@ public class StoreService {
         Path path = null;
 
         if (fileName != null) {
-            path = Paths.get("C:/Users/Playdata/Desktop/tmp", "_" + fileName);
+            path = Paths.get(imagePath, fileName);
 
             try {
                 byte[] bytes = multipartFile.getBytes();

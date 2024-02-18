@@ -28,7 +28,14 @@ public enum ErrorCode {
 
     // Favorite
     FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다."),
-    FAVORITE_DUPLICATION(400, "이미 찜한 가게입니다.");
+    FAVORITE_DUPLICATION(400, "이미 찜한 가게입니다."),
+
+    // Order
+    INVALID_TOTAL_PRICE(400, "최종 주문 금액이 일치하지 않습니다."),
+
+    // Menu
+    MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
+    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다.");
 
     private int status;
     private String message;

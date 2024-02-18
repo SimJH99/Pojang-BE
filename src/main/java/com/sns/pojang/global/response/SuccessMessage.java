@@ -20,10 +20,17 @@ public enum SuccessMessage {
     FIND_MY_INFO_SUCCESS("회원정보 조회에 성공하였습니다."),
     DELETE_MEMBER_SUCCESS("회원 탈퇴되었습니다."),
 
+    // Menu
+    CREATE_MENU_SUCCESS("메뉴가 등록되었습니다."),
+
+    // Order
+    CREATE_ORDER_SUCCESS("주문이 완료되었습니다."),
+
     // Store
-    CREATE_STORE_SUCCESS("매장 신청 되었습니다."),
-    UPDATE_STORE_SUCCESS("매장 정보 수정이 성공하였습니다."),
-    DELETE_STORE_SUCCESS("매장 삭제를 성공하였습니다."),
+    REGISTER_BUSINESS_NUMBER_SUCCESS("사업자 등록번호가 등록되었습니다."),
+    CREATE_STORE_SUCCESS("매장이 등록 되었습니다."),
+    UPDATE_STORE_SUCCESS("매장 정보를 수정하였습니다."),
+    DELETE_STORE_SUCCESS("매장을 삭제하였습니다."),
 
     // Favorite
     CREATE_FAVORITE_SUCCESS("찜 완료했습니다."),

@@ -52,7 +52,4 @@ public class FavoriteController {
                         COUNT_FAVORITE_SUCCESS.getMessage(),
                         favoriteService.countFavorite(storeId)));
     }
-
-
-
 }
