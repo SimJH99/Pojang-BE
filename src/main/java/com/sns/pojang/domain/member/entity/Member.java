@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.member.entity;
 
+import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,6 +50,9 @@ public class Member extends BaseTimeEntity {
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<Favorite> Favorites = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {

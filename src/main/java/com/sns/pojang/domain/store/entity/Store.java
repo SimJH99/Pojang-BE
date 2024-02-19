@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.store.entity;
 
+import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter

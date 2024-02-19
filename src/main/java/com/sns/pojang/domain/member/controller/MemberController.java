@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.net.URI;
+import java.util.List;
 
 import static com.sns.pojang.global.response.SuccessMessage.*;
 
@@ -117,6 +118,13 @@ public class MemberController {
                 verifyCertificationRequest.getCertificationNumber());
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 VERIFY_CERTIFICATION_SUCCESS.getMessage()));
+    }
+
+    // 내 찜 목록 조회
+    @GetMapping("/favorites")
+    public ResponseEntity<SuccessResponse<List<FindFavoritesResponse>>> findFavorites() {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                FIND_FAVORITE_SUCCESS.getMessage(), memberService.findFavorites()));
     }
 }
 

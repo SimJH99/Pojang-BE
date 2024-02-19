@@ -28,6 +28,10 @@ public enum ErrorCode {
     MY_STORE_NOT_FOUND(400, "등록한 매장이 없습니다."),
     NOT_INVALID_VALUE_MEMBER(400, "회원과 매장이 일치하지 않습니다."),
 
+    // Favorite
+    FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다."),
+    FAVORITE_DUPLICATION(400, "이미 찜한 가게입니다."),
+
     // Order
     INVALID_TOTAL_PRICE(400, "최종 주문 금액이 일치하지 않습니다."),
 
