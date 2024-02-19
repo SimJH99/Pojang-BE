@@ -3,6 +3,8 @@ package com.sns.pojang.domain.review.service;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
+import com.sns.pojang.domain.menu.entity.Menu;
+import com.sns.pojang.domain.menu.exception.MenuNotFoundException;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderStatus;
 import com.sns.pojang.domain.order.exception.OrderNotConfirmException;
@@ -15,6 +17,8 @@ import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -95,5 +100,18 @@ public class ReviewService {
     public void deleteReview(Long orderId) {
         Review review = reviewRepository.findByOrderIdAndDeleteYn(orderId, "N").orElseThrow(ReviewNotFoundException::new);
         review.delete();
+    }
+
+    public Resource findImage(Long orderId) {
+        Review review = reviewRepository.findByOrderIdAndDeleteYn(orderId, "N").orElseThrow(ReviewNotFoundException::new);
+        String imagePath = review.getImageUrl();
+        Path path = Paths.get(imagePath);
+        Resource resource;
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Url Form Is Not Valid");
+        }
+        return resource;
     }
 }

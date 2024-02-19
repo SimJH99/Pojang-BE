@@ -55,4 +55,13 @@ public class ReviewController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 DELETE_REVIEW_SUCCESS.getMessage()));
     }
+
+    // 리뷰 이미지 조회
+    @GetMapping("/{orderId}/reviews/image")
+    public ResponseEntity<Resource> findImage(@PathVariable Long orderId){
+        Resource resource = reviewService.findImage(orderId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
 }
