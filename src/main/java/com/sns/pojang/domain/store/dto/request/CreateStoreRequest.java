@@ -11,7 +11,6 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class CreateStoreRequest {
-
     @NotEmpty(message = "가게상호명을 입력하시오.")
     private String name;
     @NotEmpty(message = "카테고리를 선택하시오.")

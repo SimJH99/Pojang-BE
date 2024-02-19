@@ -1,6 +1,8 @@
 package com.sns.pojang.domain.store.entity;
 
 import com.sns.pojang.domain.member.entity.Member;
+import com.sns.pojang.domain.favorite.entity.Favorite;
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -64,8 +68,7 @@ public class Store extends BaseTimeEntity {
 
     @Builder
     public Store(String name, String imageUrl, String category, Address address, 
-                 String storeNumber, String introduction, String operationTime,
-                 String businessNumber, Member member) {
+                 String storeNumber, String introduction, String operationTime, String businessNumber, Member member) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
