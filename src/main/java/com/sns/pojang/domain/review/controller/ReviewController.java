@@ -6,7 +6,10 @@ import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.service.ReviewService;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +32,7 @@ public class ReviewController {
     // 리뷰 등록
     @PostMapping("/{orderId}/reviews")
     public ResponseEntity<SuccessResponse<ReviewResponse>> createReview(
-            @PathVariable Long orderId, @Valid @RequestBody ReviewRequest reviewRequest) {
+            @PathVariable Long orderId, @Valid ReviewRequest reviewRequest) {
         return ResponseEntity.created(URI.create("/" + orderId + "/reviews"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_REVIEW_SUCCESS.getMessage(),

@@ -41,22 +41,23 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false)
     private int rating;
 
-//    //메뉴 이미지 경로
-//    private String imageUrl;
+    // 이미지 경로
+    private String imageUrl;
 
     // 내용
     @Column(length = 300, nullable = false)
     private String contents;
 
-    // 삭제여부
+    // 삭제 여부
     @Column(nullable = false)
     private String deleteYn = "N";
 
     @Builder
-    public Review(Order order, Store store, Member member, int rating, String contents) {
+    public Review(Order order, Store store, Member member, String imageUrl, int rating, String contents) {
         this.order = order;
         this.store = store;
         this.member = member;
+        this.imageUrl = imageUrl;
         this.rating = rating;
         this. contents = contents;
     }
@@ -68,6 +69,7 @@ public class Review extends BaseTimeEntity {
         this.deleteYn = "N";
     }
 
+    // 리뷰 삭제
     public void delete() {
         this.deleteYn = "Y";
     }

@@ -14,11 +14,18 @@ import com.sns.pojang.domain.review.exception.ReviewDuplicateException;
 import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 @Service
 @Transactional
@@ -33,6 +40,9 @@ public class ReviewService {
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
     }
+
+    @Value("${image.path}")
+    private String imagePath;
 
     public ReviewResponse createReview(Long orderId, ReviewRequest reviewRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -53,7 +63,20 @@ public class ReviewService {
                 return ReviewResponse.from(review);
             }
         }
-        Review review = reviewRequest.toEntity(order, order.getStore(), order.getMember(), reviewRequest.getRating(), reviewRequest.getContents());
+        Path path = null;
+        if (reviewRequest.getImage() != null){
+            MultipartFile Image = reviewRequest.getImage();
+            String fileName = Image.getOriginalFilename(); // 확장자 포함한 파일명 추출
+            path = Paths.get(imagePath, fileName);
+            try {
+                byte[] bytes = Image.getBytes(); // 이미지 파일을 바이트로 변환
+                // 해당 경로의 폴더에 이미지 파일 추가. 이미 동일 파일이 있으면 덮어 쓰기(Write), 없으면 Create
+                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Image Not Available");
+            }
+        }
+        Review review = reviewRequest.toEntity(order, order.getStore(), order.getMember(), reviewRequest.getRating(), reviewRequest.getContents(), path);
         return ReviewResponse.from(reviewRepository.save(review));
     }
 
