@@ -7,6 +7,7 @@ import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
+import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
@@ -213,6 +214,9 @@ public class StoreService {
             throw new StoreNotFoundException();
         }
         List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+        if(reviews.isEmpty()) {
+            throw new ReviewNotFoundException();
+        }
         List<ReviewResponse> reviewResponses = new ArrayList<>();
         for(Review review : reviews) {
             ReviewResponse reviewResponse = ReviewResponse.from(review);

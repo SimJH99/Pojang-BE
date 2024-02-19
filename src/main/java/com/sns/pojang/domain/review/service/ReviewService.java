@@ -53,7 +53,7 @@ public class ReviewService {
                 return ReviewResponse.from(review);
             }
         }
-        Review review = reviewRequest.toEntity(order, order.getStore(), reviewRequest.getRating(), reviewRequest.getContents());
+        Review review = reviewRequest.toEntity(order, order.getStore(), order.getMember(), reviewRequest.getRating(), reviewRequest.getContents());
         return ReviewResponse.from(reviewRepository.save(review));
     }
 

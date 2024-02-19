@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.review.dto.request;
 
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.store.entity.Store;
@@ -19,10 +20,11 @@ public class ReviewRequest {
     @NotEmpty(message = "리뷰를 작성해주세요.")
     private String contents;
 
-    public Review toEntity(Order order, Store store, int rating, String contents){
+    public Review toEntity(Order order, Store store, Member member, int rating, String contents){
         return Review.builder()
                 .order(order)
                 .store(store)
+                .member(member)
                 .rating(rating)
                 .contents(contents)
                 .build();
