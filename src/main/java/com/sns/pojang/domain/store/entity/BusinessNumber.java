@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "businessNumbers")
 public class BusinessNumber extends BaseTimeEntity {
     //PK
     @Id
@@ -23,4 +22,8 @@ public class BusinessNumber extends BaseTimeEntity {
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    public BusinessNumber(String businessNumber){
+        this.businessNumber = businessNumber;
+    }
 }

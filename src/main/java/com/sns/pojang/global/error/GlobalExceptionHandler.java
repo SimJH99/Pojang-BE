@@ -6,6 +6,7 @@ import com.sns.pojang.global.error.exception.PojangException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,10 +25,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+        log.error("AccessDeniedException", e);
+        ErrorResponse response = ErrorResponse.from(ErrorCode.ACCESS_DENIED);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     // @Valid, @RequestBody를 선언한 Method에서 Binding Error 발생
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.error("MethodArgumentNotValidException Exception", e);
+        log.error("MethodArgumentNotValidException", e);
         BindingResult bindingResult = e.getBindingResult();
         ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, bindingResult);
 

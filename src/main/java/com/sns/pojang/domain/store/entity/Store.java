@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "stores")
 public class Store extends BaseTimeEntity {
     //PK
     @Id
@@ -51,6 +50,7 @@ public class Store extends BaseTimeEntity {
 
     //오픈여부
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Status status = Status.CLOSED;
 
     //삭제여부
@@ -58,7 +58,8 @@ public class Store extends BaseTimeEntity {
     private String deleteYn = "N";
 
     @Builder
-    public Store(String name, String imageUrl, String category, Address address, String storeNumber, String introduction, String operationTime, String businessNumber) {
+    public Store(String name, String imageUrl, String category, Address address, 
+                 String storeNumber, String introduction, String operationTime, String businessNumber) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -69,8 +70,8 @@ public class Store extends BaseTimeEntity {
         this.businessNumber = businessNumber;
     }
 
-
-    public void updateStore(String name, String category, String sido, String sigungu, String query, String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl){
+    public void updateStore(String name, String category, String sido, String sigungu, String query, 
+                            String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl){
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -84,5 +85,9 @@ public class Store extends BaseTimeEntity {
         this.introduction = introduction;
         this.operationTime = operationTime;
         this.imageUrl = imageUrl;
+    }
+
+    public void isDelete() {
+        this.deleteYn = "Y";
     }
 }

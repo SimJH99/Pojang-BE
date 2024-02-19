@@ -1,11 +1,13 @@
 package com.sns.pojang.domain.store.controller;
 
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
+import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
+import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.service.StoreService;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import static com.sns.pojang.global.response.SuccessMessage.CREATE_STORE_SUCCESS
 import static com.sns.pojang.global.response.SuccessMessage.UPDATE_MEMBER_SUCCESS;
 import static com.sns.pojang.global.response.SuccessMessage.SEARCH_STORE_SUCCESS;
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 
 @RestController
 @RequestMapping("/api/stores")
@@ -44,13 +47,31 @@ public class StoreController {
                         storeService.createStore(createStoreRequest)));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/register/business-number")
+    public ResponseEntity<SuccessResponse<BusinessNumber>> registerBusinessNumber(
+            @Valid @RequestBody RegisterBusinessNumberRequest registerBusinessNumberRequest) {
+        return ResponseEntity.created(URI.create("/register/business-number"))
+                .body(SuccessResponse.create(HttpStatus.CREATED.value(), REGISTER_BUSINESS_NUMBER_SUCCESS.getMessage(),
+                        storeService.registerBusinessNumber(registerBusinessNumberRequest)));
+    }
+
     // 매장 정보 수정
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @PatchMapping("/{id}/update")
     public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
             @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                UPDATE_MEMBER_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
+                UPDATE_STORE_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
+    }
+
+    // 매장 삭제
+    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<SuccessResponse<Void>> deleteStore(@PathVariable Long id){
+        storeService.deleteStore(id);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                DELETE_STORE_SUCCESS.getMessage()));
     }
     // 카테고리 별 매장조회
     @GetMapping("/categories")
@@ -58,5 +79,4 @@ public class StoreController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEARCH_STORE_SUCCESS.getMessage(), storeService.findStores(searchStoreRequest, pageable)));
     }
-
 }

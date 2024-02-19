@@ -24,7 +24,14 @@ public enum ErrorCode {
     // Store
     BUSINESS_NUMBER_DUPLICATION(400, "이미 등록된 사업자 번호입니다."), 
     BUSINESS_NUMBER_NOT_FOUND(400, "존재하지 않는 사업자 번호입니다."),
-    STORE_NOT_FOUND(400, "등록된 매장이 아닙니다.");
+    STORE_NOT_FOUND(400, "등록된 매장이 아닙니다."),
+
+    // Order
+    INVALID_TOTAL_PRICE(400, "최종 주문 금액이 일치하지 않습니다."),
+
+    // Menu
+    MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
+    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다.");
 
     private int status;
     private String message;

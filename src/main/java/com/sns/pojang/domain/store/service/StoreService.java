@@ -1,21 +1,23 @@
 package com.sns.pojang.domain.store.service;
 
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
+import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
+import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
 import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
-import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sns.pojang.global.error.ErrorCode.STORE_NOT_FOUND;
+
 @Service
 @Transactional
 public class StoreService {
@@ -40,9 +44,17 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final BusinessNumberRepository businessNumberRepository;
 
+    @Value("${image.path}")
+    private String imagePath;
+
     public StoreService(StoreRepository storeRepository, BusinessNumberRepository businessNumberRepository) {
         this.storeRepository = storeRepository;
         this.businessNumberRepository = businessNumberRepository;
+    }
+
+    public BusinessNumber registerBusinessNumber(RegisterBusinessNumberRequest registerBusinessNumberRequest){
+        BusinessNumber businessNumber = new BusinessNumber(registerBusinessNumberRequest.getBusinessNumber());
+        return businessNumberRepository.save(businessNumber);
     }
 
     public CreateStoreResponse createStore(CreateStoreRequest createStoreRequest) throws BusinessNumberDuplicateException {
@@ -55,13 +67,13 @@ public class StoreService {
             throw new BusinessNumberDuplicateException();
         }
 
-        MultipartFile multipartFile = createStoreRequest.getImageUrl();
+        MultipartFile multipartFile = createStoreRequest.getStoreImage();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
 
         Path path = null;
 
         if (fileName != null) {
-            path = Paths.get("C:/Users/Playdata/Desktop/tmp", "_" + fileName);
+            path = Paths.get(imagePath, fileName);
 
             try {
                 byte[] bytes = multipartFile.getBytes();
@@ -77,7 +89,7 @@ public class StoreService {
     }
 
     public UpdateStoreResponse updateStore(Long id, UpdateStoreRequest updateStoreRequest) {
-        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.STORE_NOT_FOUND));
+        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
 
         MultipartFile multipartFile = updateStoreRequest.getImageUrl();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
@@ -85,7 +97,7 @@ public class StoreService {
         Path path = null;
 
         if (fileName != null) {
-            path = Paths.get("C:/Users/Playdata/Desktop/tmp", "_" + fileName);
+            path = Paths.get(imagePath, fileName);
 
             try {
                 byte[] bytes = multipartFile.getBytes();
@@ -108,6 +120,7 @@ public class StoreService {
 
         return UpdateStoreResponse.from(storeRepository.save(store));
     }
+  
 //    가게 조회 및 검색기능
     public List<SearchStoreResponse> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
 //        검색을 위해 Specification 객체 사용
@@ -143,5 +156,10 @@ public class StoreService {
                 .build()
         ).collect(Collectors.toList());
         return searchStoreResponses;
+    }
+  
+    public void deleteStore(Long id) {
+        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
+        store.isDelete();
     }
 }
