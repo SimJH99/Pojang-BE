@@ -27,6 +27,7 @@ public enum SuccessMessage {
     UPDATE_MENU_SUCCESS("메뉴가 수정되었습니다."),
     DELETE_MENU_SUCCESS("메뉴가 삭제되었습니다."),
     GET_MENUS_SUCCESS("메뉴 목록을 조회하였습니다."),
+    GET_MENU_DETAIL_SUCCESS("메뉴를 상세 조회합니다."),
 
     // Order
     CREATE_ORDER_SUCCESS("주문이 완료되었습니다."),
