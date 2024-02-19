@@ -4,6 +4,8 @@ import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
+import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
+import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Store;
@@ -12,16 +14,26 @@ import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sns.pojang.global.error.ErrorCode.STORE_NOT_FOUND;
 
@@ -108,7 +120,44 @@ public class StoreService {
 
         return UpdateStoreResponse.from(storeRepository.save(store));
     }
+  
+//    가게 조회 및 검색기능
+    public List<SearchStoreResponse> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
+//        검색을 위해 Specification 객체 사용
 
+        Specification<Store> spec = new Specification<Store>() {
+            @Override
+            public Predicate toPredicate(Root<Store> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (searchStoreRequest.getName() != null) {
+                    predicates.add(criteriaBuilder.like(root.get("name"), "%" + searchStoreRequest.getName() + "%"));
+                }
+                if (searchStoreRequest.getCategory() != null) {
+                    predicates.add(criteriaBuilder.like(root.get("category"), "%" + searchStoreRequest.getCategory() + "%"));
+                }
+//                predicates.add(criteriaBuilder.equal(root.get("delYn"), "N"));
+                Predicate[] predicatesArr = new Predicate[predicates.size()];
+                for (int i = 0; i < predicates.size(); i++) {
+                    predicatesArr[i] = predicates.get(i);
+                }
+                Predicate predicate = criteriaBuilder.and(predicatesArr);
+                return predicate;
+            }
+        };
+
+        Page<Store> stores = storeRepository.findAll(spec , pageable);
+        List<Store> storeList = stores.getContent();
+        List<SearchStoreResponse> searchStoreResponses = new ArrayList<>();
+        searchStoreResponses = storeList.stream().map(i -> SearchStoreResponse.builder()
+                .name(i.getName())
+                .category(i.getCategory())
+                .imageUrl(i.getImageUrl())
+                .status(i.getStatus())
+                .build()
+        ).collect(Collectors.toList());
+        return searchStoreResponses;
+    }
+  
     public void deleteStore(Long id) {
         Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
         store.isDelete();

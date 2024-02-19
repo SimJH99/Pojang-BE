@@ -27,6 +27,9 @@ public enum SuccessMessage {
     CREATE_ORDER_SUCCESS("주문이 완료되었습니다."),
 
     // Store
+    CREATE_STORE_SUCCESS("매장 신청 되었습니다."),
+    UPDATE_MEMBER_SUCCESS("매장 정보 수정이 성공하였습니다."),
+    SEARCH_STORE_SUCCESS("매장 조회를 완료했습니다."),
     REGISTER_BUSINESS_NUMBER_SUCCESS("사업자 등록번호가 등록되었습니다."),
     CREATE_STORE_SUCCESS("매장이 등록 되었습니다."),
     UPDATE_STORE_SUCCESS("매장 정보를 수정하였습니다."),
