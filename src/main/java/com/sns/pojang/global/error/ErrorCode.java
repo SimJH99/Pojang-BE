@@ -39,7 +39,7 @@ public enum ErrorCode {
 
     // Order
     INVALID_TOTAL_PRICE(400, "최종 주문 금액이 일치하지 않습니다."),
-    ORDER_NOT_FOUND(400, "존재하지 않는 주문입니다."),
+    ORDER_NOT_CONFIRM(400, "확정되지 않은 주문입니다."),
 
     // Menu
     MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),

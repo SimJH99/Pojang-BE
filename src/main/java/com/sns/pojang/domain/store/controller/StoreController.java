@@ -1,5 +1,7 @@
 package com.sns.pojang.domain.store.controller;
 
+import com.sns.pojang.domain.favorite.dto.response.CountFavoriteResponse;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
@@ -83,5 +85,14 @@ public class StoreController {
     public ResponseEntity<SuccessResponse<List<SearchStoreResponse>>> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEARCH_STORE_SUCCESS.getMessage(), storeService.findStores(searchStoreRequest, pageable)));
+    }
+
+    // 매장 리뷰 조회
+    @GetMapping("/{storeId}/reviews")
+    public ResponseEntity<SuccessResponse<List<ReviewResponse>>> findReviews(
+            @PathVariable Long storeId) {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                FIND_REVIEW_SUCCESS.getMessage(),
+                storeService.findReviews(storeId)));
     }
 }

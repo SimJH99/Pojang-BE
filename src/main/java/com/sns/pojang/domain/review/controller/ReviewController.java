@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.review.controller;
 
+import com.sns.pojang.domain.favorite.dto.response.CountFavoriteResponse;
 import com.sns.pojang.domain.review.dto.request.ReviewRequest;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.service.ReviewService;

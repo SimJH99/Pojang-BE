@@ -38,6 +38,7 @@ public enum SuccessMessage {
     CREATE_STORE_SUCCESS("매장이 등록 되었습니다."),
     UPDATE_STORE_SUCCESS("매장 정보를 수정하였습니다."),
     DELETE_STORE_SUCCESS("매장을 삭제하였습니다."),
+    FIND_REVIEW_SUCCESS("매장 리뷰를 조회했습니다."),
 
     // Favorite
     CREATE_FAVORITE_SUCCESS("찜 완료했습니다."),

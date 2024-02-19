@@ -3,6 +3,11 @@ package com.sns.pojang.domain.store.service;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
+import com.sns.pojang.domain.order.entity.Order;
+import com.sns.pojang.domain.order.repository.OrderRepository;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
+import com.sns.pojang.domain.review.entity.Review;
+import com.sns.pojang.domain.review.repository.ReviewRepository;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
@@ -15,6 +20,7 @@ import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
 import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
+import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
@@ -54,6 +60,8 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
     private final BusinessNumberRepository businessNumberRepository;
+    private final ReviewRepository reviewRepository;
+    private final OrderRepository orderRepository;
 
     @Value("${image.path}")
     private String imagePath;
@@ -197,5 +205,19 @@ public class StoreService {
             throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
         }
             return stores.stream().map(MyStoreResponse::from).collect(Collectors.toList());
+    }
+
+    public List<ReviewResponse> findReviews(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getDeleteYn().equals("Y")) {
+            throw new StoreNotFoundException();
+        }
+        List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
+        for(Review review : reviews) {
+            ReviewResponse reviewResponse = ReviewResponse.from(review);
+            reviewResponses.add(reviewResponse);
+        }
+        return reviewResponses;
     }
 }

@@ -23,9 +23,14 @@ public class Review extends BaseTimeEntity {
     private Long id;
 
     // 주문
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    // 매장
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     // 별점
     @Column(nullable = false)
@@ -43,8 +48,9 @@ public class Review extends BaseTimeEntity {
     private String deleteYn = "N";
 
     @Builder
-    public Review(Order order, int rating, String contents) {
+    public Review(Order order, Store store, int rating, String contents) {
         this.order = order;
+        this.store = store;
         this.rating = rating;
         this. contents = contents;
     }
