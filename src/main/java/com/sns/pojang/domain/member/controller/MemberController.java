@@ -69,7 +69,7 @@ public class MemberController {
     @PatchMapping("/my-info")
     public ResponseEntity<SuccessResponse<FindMyInfoResponse>> updateMyInfo(
             @Valid @RequestBody UpdateMyInfoRequest updateMyInfoRequest) {
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                 UPDATE_MY_INFO_SUCCESS.getMessage(), memberService.updateMyInfo(updateMyInfoRequest)));
     }
 
@@ -84,7 +84,7 @@ public class MemberController {
     @PatchMapping("/address")
     public ResponseEntity<SuccessResponse<FindAddressResponse>> updateMyAddress(
             @Valid @RequestBody UpdateAddressRequest updateAddressRequest) {
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                 UPDATE_ADDRESS_SUCCESS.getMessage(), memberService.updateMyAddress(updateAddressRequest)));
     }
 
@@ -93,7 +93,7 @@ public class MemberController {
     @DeleteMapping("/withdraw")
     public ResponseEntity<SuccessResponse<Void>> withdraw() {
         memberService.withdraw();
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.delete(HttpStatus.OK.value(),
                 DELETE_MEMBER_SUCCESS.getMessage()));
         // 회원탈퇴 시 Authentication 객체 제거해야하나? - 프론트에서 필요
 

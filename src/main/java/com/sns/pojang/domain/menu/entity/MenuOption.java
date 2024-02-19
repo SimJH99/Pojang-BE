@@ -2,6 +2,7 @@ package com.sns.pojang.domain.menu.entity;
 
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,15 +17,26 @@ public class MenuOption extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //카테고리 옵션 이름
+    // 메뉴 옵션 이름
     @Column(nullable = false)
     private String name;
 
-    //추가 금액
+    // 메뉴 옵션 가격
     @Column(nullable = false)
-    private int additionalPrice;
+    private int price;
 
-    //삭제여부
+    //삭제 여부
     @Column(nullable = false)
     private String deleteYn = "N";
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_option_group_id", nullable = false)
+    private MenuOptionGroup menuOptionGroup;
+
+    @Builder
+    public MenuOption(String name, int price, MenuOptionGroup menuOptionGroup){
+        this.name = name;
+        this.price = price;
+        this.menuOptionGroup = menuOptionGroup;
+    }
 }

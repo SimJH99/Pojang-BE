@@ -1,11 +1,8 @@
 package com.sns.pojang.domain.favorite.dto.response;
 
-import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.store.entity.Store;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder

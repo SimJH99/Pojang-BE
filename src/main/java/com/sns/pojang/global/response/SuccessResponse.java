@@ -23,4 +23,28 @@ public class SuccessResponse<T> {
     public static <T> SuccessResponse<T> create(int status, String message, T result) {
         return new SuccessResponse<>(status, message, result);
     }
+
+    public static <T> SuccessResponse<T> update(int status, String message) {
+        return new SuccessResponse<>(status, message, null);
+    }
+
+    public static <T> SuccessResponse<T> update(int status, String message, T result) {
+        return new SuccessResponse<>(status, message, result);
+    }
+
+    public static <T> SuccessResponse<T> delete(int status, String message) {
+        return new SuccessResponse<>(status, message, null);
+    }
+
+    public static <T> SuccessResponse<T> delete(int status, String message, T result) {
+        return new SuccessResponse<>(status, message, result);
+    }
+
+    public static <T> SuccessResponse<T> read(int status, String message) {
+        return new SuccessResponse<>(status, message, null);
+    }
+
+    public static <T> SuccessResponse<T> read(int status, String message, T result) {
+        return new SuccessResponse<>(status, message, result);
+    }
 }

@@ -20,9 +20,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-import static com.sns.pojang.global.response.SuccessMessage.CREATE_STORE_SUCCESS;
-import static com.sns.pojang.global.response.SuccessMessage.UPDATE_MEMBER_SUCCESS;
-import static com.sns.pojang.global.response.SuccessMessage.SEARCH_STORE_SUCCESS;
+import static com.sns.pojang.global.response.SuccessMessage.*;
 
 @RestController
 @RequestMapping("/api/stores")
@@ -36,10 +34,10 @@ public class StoreController {
 
     //    매장 생성
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<SuccessResponse<CreateStoreResponse>> createStore(
             @Valid CreateStoreRequest createStoreRequest) {
-        return ResponseEntity.created(URI.create("/create"))
+        return ResponseEntity.created(URI.create(""))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_STORE_SUCCESS.getMessage(),
                         storeService.createStore(createStoreRequest)));
@@ -56,19 +54,19 @@ public class StoreController {
 
     // 매장 정보 수정
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @PatchMapping("/{id}/update")
+    @PatchMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
             @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                 UPDATE_STORE_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
     }
 
     // 매장 삭제
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<Void>> deleteStore(@PathVariable Long id){
         storeService.deleteStore(id);
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+        return ResponseEntity.ok(SuccessResponse.delete(HttpStatus.OK.value(),
                 DELETE_STORE_SUCCESS.getMessage()));
     }
 
@@ -76,7 +74,7 @@ public class StoreController {
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/{memberId}/my-store")
     public ResponseEntity<SuccessResponse<List<MyStoreResponse>>> myStore(@PathVariable Long memberId){
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), MY_STORE_SUCCESS.getMessage(),
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
                 storeService.myStore(memberId)));
     }
   

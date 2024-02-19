@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.store.entity;
 
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.global.config.BaseTimeEntity;
@@ -57,13 +58,13 @@ public class Store extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.CLOSED;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     //삭제여부
     @Column(nullable = false)
     private String deleteYn = "N";
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
 
     @Builder
     public Store(String name, String imageUrl, String category, Address address, 
@@ -80,7 +81,7 @@ public class Store extends BaseTimeEntity {
     }
 
     public void updateStore(String name, String category, String sido, String sigungu, String query, 
-                            String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl) {
+                            String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl){
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;

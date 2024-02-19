@@ -27,6 +27,7 @@ public enum ErrorCode {
     STORE_NOT_FOUND(400, "등록된 매장이 아닙니다."),
     MY_STORE_NOT_FOUND(400, "등록한 매장이 없습니다."),
     NOT_INVALID_VALUE_MEMBER(400, "회원과 매장이 일치하지 않습니다."),
+    STORE_ID_NOT_EQUAL(400, "메뉴의 storeId와 입력 storeId가 일치하지 않습니다."),
 
     // Favorite
     FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다."),
@@ -38,9 +39,12 @@ public enum ErrorCode {
     // Menu
     MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
     MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다."),
+    MENU_OPTION_GROUP_NOT_FOUND(400, "메뉴 옵션 그룹을 찾을 수 없습니다."),
+    MENU_ID_NOT_EQUAL(400, "메뉴 옵션 그룹의 menuId와 입력된 menuId가 일치하지 않습니다."),
 
     //Image
     IMAGE_INVALID_VALUE(400, "사용가능한 이미지 파일이 아닙니다.");
+
 
     private int status;
     private String message;

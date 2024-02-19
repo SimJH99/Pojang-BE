@@ -30,10 +30,10 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<SuccessResponse<CreateOrderResponse>> createOrder(
             @Valid @RequestBody OrderRequest orderRequest){
-        return ResponseEntity.created(URI.create("/create"))
+        return ResponseEntity.created(URI.create(""))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_ORDER_SUCCESS.getMessage(),
                         orderService.createOrder(orderRequest)));

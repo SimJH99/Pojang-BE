@@ -1,13 +1,14 @@
 package com.sns.pojang.domain.store.service;
 
 import com.sns.pojang.domain.member.entity.Member;
+import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
+import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
 import com.sns.pojang.domain.store.dto.response.MyStoreResponse;
-import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
@@ -18,12 +19,14 @@ import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import com.sns.pojang.global.error.exception.InvalidValueException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,22 +48,15 @@ import static com.sns.pojang.global.error.ErrorCode.*;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final BusinessNumberRepository businessNumberRepository;
     private final MemberRepository memberRepository;
+    private final BusinessNumberRepository businessNumberRepository;
 
-    public StoreService(StoreRepository storeRepository, BusinessNumberRepository businessNumberRepository, MemberRepository memberRepository) {
-    
     @Value("${image.path}")
     private String imagePath;
-
-    public StoreService(StoreRepository storeRepository, BusinessNumberRepository businessNumberRepository) {
-        this.storeRepository = storeRepository;
-        this.businessNumberRepository = businessNumberRepository;
-        this.memberRepository = memberRepository;
-    }
 
     public BusinessNumber registerBusinessNumber(RegisterBusinessNumberRequest registerBusinessNumberRequest){
         BusinessNumber businessNumber = new BusinessNumber(registerBusinessNumberRequest.getBusinessNumber());
@@ -68,6 +64,10 @@ public class StoreService {
     }
 
     public CreateStoreResponse createStore(CreateStoreRequest createStoreRequest) throws BusinessNumberDuplicateException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+
         //사업자 번호 대조
         if (businessNumberRepository.findByBusinessNumber(createStoreRequest.getBusinessNumber()).isEmpty()) {
             throw new BusinessNumberNotFoundException();
@@ -77,9 +77,6 @@ public class StoreService {
             throw new BusinessNumberDuplicateException();
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
         MultipartFile multipartFile = createStoreRequest.getStoreImage();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
 
@@ -87,7 +84,6 @@ public class StoreService {
 
         if (fileName != null) {
             path = Paths.get(imagePath, fileName);
-
             try {
                 byte[] bytes = multipartFile.getBytes();
                 Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
@@ -95,14 +91,20 @@ public class StoreService {
                 throw new InvalidValueException(IMAGE_INVALID_VALUE);
             }
         }
-
-        Store store = storeRepository.save(createStoreRequest.toEntity(path != null ? path.toString() : null, member));
-
-        return CreateStoreResponse.from(storeRepository.save(store));
+        Store savedStore = storeRepository.save(createStoreRequest.toEntity(path != null ? path.toString() : null, findMember));
+        // Member List<Store>에 생성된 store 추가
+        savedStore.getMember().getStores().add(savedStore);
+        return CreateStoreResponse.from(storeRepository.save(savedStore));
     }
 
     public UpdateStoreResponse updateStore(Long id, UpdateStoreRequest updateStoreRequest) {
-        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        Store findStore = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
+        if (!findStore.getMember().equals(findMember)){
+            throw new AccessDeniedException(findStore.getName() + "의 사장님이 아닙니다.");
+        }
 
         MultipartFile multipartFile = updateStoreRequest.getImageUrl();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
@@ -120,7 +122,7 @@ public class StoreService {
             }
         }
 
-        store.updateStore(updateStoreRequest.getName(),
+        findStore.updateStore(updateStoreRequest.getName(),
                 updateStoreRequest.getCategory(),
                 updateStoreRequest.getSido(),
                 updateStoreRequest.getSigungu(),
@@ -131,9 +133,9 @@ public class StoreService {
                 updateStoreRequest.getOperationTime(),
                 path != null ? path.toString() : null);
 
-        return UpdateStoreResponse.from(storeRepository.save(store));
+        return UpdateStoreResponse.from(storeRepository.save(findStore));
     }
-  
+
 //    가게 조회 및 검색기능
     public List<SearchStoreResponse> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
 //        검색을 위해 Specification 객체 사용
@@ -170,10 +172,16 @@ public class StoreService {
         ).collect(Collectors.toList());
         return searchStoreResponses;
     }
-  
+
     public void deleteStore(Long id) {
-        Store store = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
-        store.isDelete();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        Store findStore = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
+        if (!findStore.getMember().equals(findMember)){
+            throw new AccessDeniedException(findStore.getName() + "의 사장님이 아닙니다.");
+        }
+        findStore.isDelete();
     }
 
     public List<MyStoreResponse> myStore(Long memberId) {
@@ -185,9 +193,9 @@ public class StoreService {
             throw new InvalidValueException(NOT_INVALID_VALUE_MEMBER);
         }
         List<Store> stores = storeRepository.findAllByMemberId(memberId);
-        if (stores.size() == 0){
+        if (stores.isEmpty()){
             throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
         }
-            return stores.stream().map(o -> MyStoreResponse.from(o)).collect(Collectors.toList());
+            return stores.stream().map(MyStoreResponse::from).collect(Collectors.toList());
     }
 }

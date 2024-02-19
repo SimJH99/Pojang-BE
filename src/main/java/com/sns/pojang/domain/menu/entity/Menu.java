@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -44,6 +46,9 @@ public class Menu extends BaseTimeEntity{
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MenuOptionGroup> menuOptionGroups = new ArrayList<>();
+
     @Builder
     public Menu(String name, String menuInfo, int price, String imageUrl, Store store){
         this.name = name;
@@ -51,5 +56,23 @@ public class Menu extends BaseTimeEntity{
         this.price = price;
         this.imageUrl = imageUrl;
         this.store = store;
+    }
+
+    public Menu updateMenu(String name,
+                           String menuInfo,
+                           int price,
+                           String imageUrl,
+                           Store store){
+        this.name = name;
+        this.menuInfo = menuInfo;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.store = store;
+
+        return this;
+    }
+
+    public void updateDeleteYn(){
+        this.deleteYn = "Y";
     }
 }

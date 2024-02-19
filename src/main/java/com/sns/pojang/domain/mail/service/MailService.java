@@ -23,7 +23,7 @@ public class MailService {
 
     public CertificateEmailResponse sendEmailForCertification(String email) throws NoSuchAlgorithmException, MessagingException {
         String certificationNumber = certificationGenerator.createCertificationNumber();
-        String content = String.format("%s/api/mail/verify?certificationNumber=%s&email=%s   링크를 3분 이내에 클릭해주세요.",
+        String content = String.format("%s/api/mail/verify?certificationNumber=%s&email=%s 링크를 3분 이내에 클릭해주세요.",
                 DOMAIN_NAME, certificationNumber, email);
         certificationNumberRepository.saveCertificationNumber(email, certificationNumber);
         sendMail(email, content);
