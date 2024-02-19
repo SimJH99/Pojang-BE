@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.store.entity;
 
 import com.sns.pojang.domain.favorite.entity.Favorite;
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -60,9 +61,13 @@ public class Store extends BaseTimeEntity {
     @Column(nullable = false)
     private String deleteYn = "N";
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
     public Store(String name, String imageUrl, String category, Address address, 
-                 String storeNumber, String introduction, String operationTime, String businessNumber) {
+                 String storeNumber, String introduction, String operationTime, String businessNumber, Member member) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -71,10 +76,11 @@ public class Store extends BaseTimeEntity {
         this.introduction = introduction;
         this.operationTime = operationTime;
         this.businessNumber = businessNumber;
+        this.member = member;
     }
 
     public void updateStore(String name, String category, String sido, String sigungu, String query, 
-                            String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl){
+                            String addressDetail, String storeNumber, String introduction, String operationTime, String imageUrl) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;

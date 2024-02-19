@@ -25,6 +25,8 @@ public enum ErrorCode {
     BUSINESS_NUMBER_DUPLICATION(400, "이미 등록된 사업자 번호입니다."), 
     BUSINESS_NUMBER_NOT_FOUND(400, "존재하지 않는 사업자 번호입니다."),
     STORE_NOT_FOUND(400, "등록된 매장이 아닙니다."),
+    MY_STORE_NOT_FOUND(400, "등록한 매장이 없습니다."),
+    NOT_INVALID_VALUE_MEMBER(400, "회원과 매장이 일치하지 않습니다."),
 
     // Favorite
     FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다."),
@@ -35,7 +37,10 @@ public enum ErrorCode {
 
     // Menu
     MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
-    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다.");
+    MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다."),
+
+    //Image
+    IMAGE_INVALID_VALUE(400, "사용가능한 이미지 파일이 아닙니다.");
 
     private int status;
     private String message;
