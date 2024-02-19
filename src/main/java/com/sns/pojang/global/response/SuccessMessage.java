@@ -47,7 +47,8 @@ public enum SuccessMessage {
 
     // Review
     CREATE_REVIEW_SUCCESS("리뷰를 작성했습니다."),
-    UPDATE_REVIEW_SUCCESS("리뷰를 수정했습니다.");
+    UPDATE_REVIEW_SUCCESS("리뷰를 수정했습니다."),
+    DELETE_REVIEW_SUCCESS("리뷰를 삭제했습니다.");
 
     private final String message;
 }

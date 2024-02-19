@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.review.service;
 
+import com.sns.pojang.domain.favorite.exception.FavoriteDuplicateException;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
@@ -43,15 +44,26 @@ public class ReviewService {
         }
         // 리뷰 존재 여부 체크
         if(reviewRepository.findByOrderId(orderId).isPresent()) {
-            throw new ReviewDuplicateException();
+            Review review = reviewRepository.findByOrderId(orderId).orElseThrow(ReviewNotFoundException::new);
+            if(review.getDeleteYn().equals("N")) {
+                throw new ReviewDuplicateException();
+            }else { // 데이터는 있으나 deleteY인 경우 N로 변경
+                review.updateReview(reviewRequest.getRating(),reviewRequest.getContents());
+                return ReviewResponse.from(review);
+            }
         }
         Review review = reviewRequest.toEntity(order, reviewRequest.getRating(), reviewRequest.getContents());
         return ReviewResponse.from(reviewRepository.save(review));
     }
 
     public ReviewResponse updateReview(Long orderId, ReviewRequest reviewRequest) {
-        Review review = reviewRepository.findByOrderId(orderId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewRepository.findByOrderIdAndDeleteYn(orderId, "N").orElseThrow(ReviewNotFoundException::new);
         review.updateReview(reviewRequest.getRating(), reviewRequest.getContents());
         return ReviewResponse.from(review);
+    }
+
+    public void deleteReview(Long orderId) {
+        Review review = reviewRepository.findByOrderIdAndDeleteYn(orderId, "N").orElseThrow(ReviewNotFoundException::new);
+        review.delete();
     }
 }

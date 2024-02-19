@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByOrderId(Long orderId);
 
+    Optional<Review> findByOrderIdAndDeleteYn(Long orderId, String n);
 }

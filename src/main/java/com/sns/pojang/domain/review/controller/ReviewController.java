@@ -43,5 +43,15 @@ public class ReviewController {
                 UPDATE_REVIEW_SUCCESS.getMessage(), reviewService.updateReview(orderId, reviewRequest)));
     }
 
+    // 리뷰 삭제
+    @DeleteMapping("/{orderId}/reviews")
+    public ResponseEntity<SuccessResponse<Void>> deleteReview(
+            @PathVariable Long orderId) {
+        reviewService.deleteReview(orderId);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                DELETE_REVIEW_SUCCESS.getMessage()));
+    }
+
+
 
 }

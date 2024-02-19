@@ -2,6 +2,7 @@ package com.sns.pojang.domain.review.entity;
 
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.order.entity.Order;
+import com.sns.pojang.domain.review.dto.request.ReviewRequest;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -52,5 +53,11 @@ public class Review extends BaseTimeEntity {
     public void updateReview(int rating, String contents) {
         this.rating = rating;
         this.contents = contents;
+        this.deleteYn = "N";
     }
+
+    public void delete() {
+        this.deleteYn = "Y";
+    }
+
 }
