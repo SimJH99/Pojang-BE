@@ -46,7 +46,8 @@ public enum SuccessMessage {
     FIND_FAVORITE_SUCCESS("찜한 매장을 조회했습니다."),
 
     // Review
-    CREATE_REVIEW_SUCCESS("리뷰를 작성했습니다.");
+    CREATE_REVIEW_SUCCESS("리뷰를 작성했습니다."),
+    UPDATE_REVIEW_SUCCESS("리뷰를 수정했습니다.");
 
     private final String message;
 }

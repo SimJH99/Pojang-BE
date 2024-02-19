@@ -1,16 +1,15 @@
 package com.sns.pojang.domain.review.service;
 
-import com.sns.pojang.domain.favorite.dto.response.CreateFavoriteResponse;
-import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.repository.OrderRepository;
-import com.sns.pojang.domain.review.dto.request.CreateReviewRequest;
-import com.sns.pojang.domain.review.dto.response.CreateReviewResponse;
+import com.sns.pojang.domain.review.dto.request.ReviewRequest;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.exception.ReviewDuplicateException;
+import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
 import com.sns.pojang.domain.order.exception.OrderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class ReviewService {
         this.orderRepository = orderRepository;
     }
 
-    public CreateReviewResponse createReview(Long orderId, CreateReviewRequest createReviewRequest) {
+    public ReviewResponse createReview(Long orderId, ReviewRequest reviewRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
@@ -43,11 +42,16 @@ public class ReviewService {
             throw new AccessDeniedException("주문한 회원이 아닙니다.");
         }
         // 리뷰 존재 여부 체크
-        if(reviewRepository.findByOrder(order).isPresent()) {
+        if(reviewRepository.findByOrderId(orderId).isPresent()) {
             throw new ReviewDuplicateException();
         }
-        Review review = createReviewRequest.toEntity(order, createReviewRequest.getRating(), createReviewRequest.getContents());
-        return CreateReviewResponse.from(reviewRepository.save(review));
+        Review review = reviewRequest.toEntity(order, reviewRequest.getRating(), reviewRequest.getContents());
+        return ReviewResponse.from(reviewRepository.save(review));
     }
 
+    public ReviewResponse updateReview(Long orderId, ReviewRequest reviewRequest) {
+        Review review = reviewRepository.findByOrderId(orderId).orElseThrow(ReviewNotFoundException::new);
+        review.updateReview(reviewRequest.getRating(), reviewRequest.getContents());
+        return ReviewResponse.from(review);
+    }
 }
