@@ -8,6 +8,7 @@ import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
 import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuDetailResponse;
 import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.entity.Menu;
 import com.sns.pojang.domain.menu.entity.MenuOption;
@@ -203,6 +204,15 @@ public class MenuService {
         return menuList.stream().map(MenuResponse::from).collect(Collectors.toList());
     }
 
+    // 메뉴 상세 조회
+    public MenuDetailResponse getMenuDetail(Long storeId, Long menuId){
+        Store findStore = findStore(storeId);
+        Menu findMenu = findMenu(menuId);
+        validateStore(findStore.getId(), findMenu);
+
+        return MenuDetailResponse.from(findMenu);
+    }
+
     private Store findStore(Long storeId){
         return storeRepository.findById(storeId)
                 .orElseThrow(StoreNotFoundException::new);
@@ -243,6 +253,4 @@ public class MenuService {
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
     }
-
-
 }
