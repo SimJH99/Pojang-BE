@@ -22,7 +22,7 @@ public class CreateStoreRequest {
     @NotEmpty(message = "사업자번호는 비어있으면 안됩니다.")
     private String businessNumber;
     @Nullable
-    private MultipartFile imageUrl;
+    private MultipartFile storeImage;
     private String sido;
     private String sigungu;
     private String query;
