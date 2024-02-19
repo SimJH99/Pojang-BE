@@ -5,6 +5,7 @@ import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.repository.OrderRepository;
+import com.sns.pojang.domain.review.dto.response.RatingResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
@@ -223,5 +224,19 @@ public class StoreService {
             reviewResponses.add(reviewResponse);
         }
         return reviewResponses;
+    }
+
+    public RatingResponse findRating(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getDeleteYn().equals("Y")) {
+            throw new StoreNotFoundException();
+        }
+        List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+        int totalRating = 0;
+        for(Review review : reviews) {
+            totalRating += review.getRating();
+        }
+        double avgRating = (double) totalRating /reviews.size();
+        return RatingResponse.from(avgRating);
     }
 }

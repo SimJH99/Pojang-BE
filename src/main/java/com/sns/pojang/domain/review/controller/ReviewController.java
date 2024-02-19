@@ -52,7 +52,4 @@ public class ReviewController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 DELETE_REVIEW_SUCCESS.getMessage()));
     }
-
-
-
 }
