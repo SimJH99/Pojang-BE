@@ -15,7 +15,7 @@ import static com.sns.pojang.global.response.SuccessMessage.*;
 
 
 @RestController
-@RequestMapping("/api/favorites")
+@RequestMapping("/api/stores")
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
@@ -26,17 +26,17 @@ public class FavoriteController {
     }
 
     // 찜 등록
-    @PostMapping("/{storeId}")
+    @PostMapping("/{storeId}/favorites")
     public ResponseEntity<SuccessResponse<CreateFavoriteResponse>> createFavorite(
             @PathVariable Long storeId) {
-        return ResponseEntity.created(URI.create("/" + storeId))
+        return ResponseEntity.created(URI.create("/" + storeId + "/favorites"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_FAVORITE_SUCCESS.getMessage(),
                         favoriteService.createFavorite(storeId)));
     }
 
     // 찜 취소
-    @DeleteMapping("/{storeId}")
+    @DeleteMapping("/{storeId}/favorites")
     public ResponseEntity<SuccessResponse<Void>> cancelFavorite(
             @PathVariable Long storeId) {
         favoriteService.cancelFavorite(storeId);
@@ -45,7 +45,7 @@ public class FavoriteController {
     }
 
     // 찜 수 조회
-    @GetMapping("/{storeId}")
+    @GetMapping("/{storeId}/favorites")
     public ResponseEntity<SuccessResponse<CountFavoriteResponse>> countFavorite(
             @PathVariable Long storeId) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),

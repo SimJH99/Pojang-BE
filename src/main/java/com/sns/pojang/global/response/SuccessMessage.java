@@ -36,7 +36,10 @@ public enum SuccessMessage {
     CREATE_FAVORITE_SUCCESS("찜 완료했습니다."),
     DELETE_FAVORITE_SUCCESS("찜 취소했습니다."),
     COUNT_FAVORITE_SUCCESS("해당 매장의 찜 개수를 조회했습니다."),
-    FIND_FAVORITE_SUCCESS("찜한 매장을 조회했습니다.");
+    FIND_FAVORITE_SUCCESS("찜한 매장을 조회했습니다."),
+
+    // Review
+    CREATE_REVIEW_SUCCESS("리뷰를 작성했습니다.");
 
     private final String message;
 }

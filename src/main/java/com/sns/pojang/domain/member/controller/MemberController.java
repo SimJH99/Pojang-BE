@@ -120,7 +120,7 @@ public class MemberController {
     }
 
     // 내 찜 목록 조회
-    @GetMapping("/favorite")
+    @GetMapping("/favorites")
     public ResponseEntity<SuccessResponse<List<FindFavoritesResponse>>> findFavorites() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 FIND_FAVORITE_SUCCESS.getMessage(), memberService.findFavorites()));
