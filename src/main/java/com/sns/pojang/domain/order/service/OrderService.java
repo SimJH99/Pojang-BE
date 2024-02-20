@@ -13,14 +13,21 @@ import com.sns.pojang.domain.order.dto.request.OrderRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuOptionRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuRequest;
 import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
+import com.sns.pojang.domain.order.dto.response.GetOrderDetailResponse;
+import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderMenu;
+import com.sns.pojang.domain.order.entity.OrderStatus;
 import com.sns.pojang.domain.order.exception.InvalidTotalPriceException;
+import com.sns.pojang.domain.order.exception.OrderAlreadyCanceledException;
+import com.sns.pojang.domain.order.exception.OrderNotFoundException;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,8 +35,11 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static com.sns.pojang.global.error.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
@@ -66,6 +76,34 @@ public class OrderService {
             orderMenu.attachOrder(order);
         }
         return CreateOrderResponse.from(orderRepository.save(order));
+    }
+
+    // 주문 취소
+    @Transactional
+    public OrderResponse cancelOrder(Long storeId, Long orderId){
+        Member findMember = findMember();
+        Order findOrder = findOrder(orderId);
+        Store findStore = findStore(storeId);
+        validateOrder(findMember, findOrder);
+        validateStore(findStore, findOrder);
+
+        if (findOrder.getOrderStatus() == OrderStatus.CANCELED){
+            throw new OrderAlreadyCanceledException();
+        }
+        findOrder.updateOrderStatus(OrderStatus.CANCELED);
+        return OrderResponse.from(findOrder);
+    }
+
+    // 주문 상세 조회
+    @Transactional
+    public GetOrderDetailResponse getOrderDetail(Long storeId, Long orderId) {
+        Member findMember = findMember();
+        Order findOrder = findOrder(orderId);
+        Store findStore = findStore(storeId);
+        validateOrder(findMember, findOrder);
+        validateStore(findStore, findOrder);
+
+        return GetOrderDetailResponse.from(findOrder);
     }
 
     // 프론트에서 받아온 총 주문 금액 검증 (프론트는 중간에 연산이 조작 되기 쉬움)
@@ -117,6 +155,11 @@ public class OrderService {
     private Store findStore(Long storeId){
         return storeRepository.findById(storeId)
                 .orElseThrow(StoreNotFoundException::new);
+    }
+
+    private Order findOrder(Long orderId){
+        return orderRepository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
     }
 
     private Menu findMenu(Long menuId){
