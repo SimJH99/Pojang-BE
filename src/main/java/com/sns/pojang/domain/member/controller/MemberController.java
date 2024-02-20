@@ -55,7 +55,7 @@ public class MemberController {
 
     // 이메일 중복 검증
     @PostMapping("/sign-up/email-validate")
-    public ResponseEntity<SuccessResponse<Void>> validateEmail(@RequestBody ValidateEmailRequest validateEmailRequest){
+    public ResponseEntity<SuccessResponse<Void>> validateEmail(@Valid @RequestBody ValidateEmailRequest validateEmailRequest){
         memberService.validateEmail(validateEmailRequest);
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 VERIFY_EMAIL_SUCCESS.getMessage()));
