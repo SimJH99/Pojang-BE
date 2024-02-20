@@ -1,5 +1,6 @@
 package com.sns.pojang.domain.store.repository;
 
+import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.store.entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findByBusinessNumber(String businessNumber);
-    Optional<Store> findByMemberId(Long memberId);
+    List<Store> findByMember(Member member);
     List<Store> findAllByMemberId(Long id);
     Page<Store> findAll(Specification<Store> specification, Pageable pageable);
 }

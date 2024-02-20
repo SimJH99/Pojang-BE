@@ -73,14 +73,6 @@ public class StoreController {
                 DELETE_STORE_SUCCESS.getMessage()));
     }
 
-    //내 매장 정보 조회
-    @PreAuthorize("hasRole('ROLE_OWNER')")
-    @GetMapping("/{memberId}/my-store")
-    public ResponseEntity<SuccessResponse<List<SearchMyStoreResponse>>> getMyStore(@PathVariable Long memberId){
-        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
-                storeService.getMyStore(memberId)));
-    }
-
     // 매장 상세 조회
     @GetMapping("/{storeId}/details")
     public ResponseEntity<SuccessResponse<SearchStoreInfoResponse>> getStoreDetail(@PathVariable Long storeId){

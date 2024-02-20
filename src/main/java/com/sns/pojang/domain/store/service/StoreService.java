@@ -92,25 +92,29 @@ public class StoreService {
             throw new BusinessNumberDuplicateException();
         }
 
-        MultipartFile multipartFile = createStoreRequest.getStoreImage();
-        String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
-
-        Path path = null;
-
-        if (fileName != null) {
+        Path path;
+        if (createStoreRequest.getStoreImage() != null){
+            MultipartFile storeImage = createStoreRequest.getStoreImage();
+            String fileName = storeImage.getOriginalFilename(); // 확장자 포함한 파일명 추출
             path = Paths.get(imagePath, fileName);
             try {
-                byte[] bytes = multipartFile.getBytes();
+                byte[] bytes = storeImage.getBytes(); // 이미지 파일을 바이트로 변환
+                // 해당 경로의 폴더에 이미지 파일 추가. 이미 동일 파일이 있으면 덮어 쓰기(Write), 없으면 Create
                 Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             } catch (IOException e) {
-                throw new InvalidValueException(IMAGE_INVALID_VALUE);
+                throw new IllegalArgumentException("Image Not Available");
             }
+        } else {
+            // 첨부된 이미지가 없을 경우, 기본 이미지로 세팅해주기
+            path = Paths.get(imagePath, "no_image.jpg");
         }
-        Store savedStore = storeRepository.save(createStoreRequest.toEntity(path != null ? path.toString() : null, findMember));
+
+        Store newStore = createStoreRequest.toEntity(path, findMember);
 
         // Member List<Store>에 생성된 store 추가
-        savedStore.getMember().getStores().add(savedStore);
-        return CreateStoreResponse.from(storeRepository.save(savedStore));
+        newStore.attachMember(findMember);
+
+        return CreateStoreResponse.from(storeRepository.save(newStore));
     }
 
     @Transactional
@@ -193,19 +197,15 @@ public class StoreService {
     }
 
     @Transactional
-    public List<SearchMyStoreResponse> getMyStore(Long memberId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
+    public List<SearchMyStoreResponse> getMyStore() {
+        Member findMember = findMember();
         //본인이 아닌 다른 owner회원이 조회하지 못하게 분기처리
-        if (memberId != member.getId()) {
-            throw new InvalidValueException(NOT_INVALID_VALUE_MEMBER);
-        }
-        List<Store> stores = storeRepository.findAllByMemberId(memberId);
-        if (stores.isEmpty()){
-            throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
-        }
-            return stores.stream().map(SearchMyStoreResponse::from).collect(Collectors.toList());
+
+        List<Store> stores = storeRepository.findByMember(findMember);
+//        if (stores.isEmpty()){
+//            throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
+//        }
+        return stores.stream().map(SearchMyStoreResponse::from).collect(Collectors.toList());
     }
 
     // 가게 이미지 조회
@@ -225,6 +225,12 @@ public class StoreService {
             throw new IllegalArgumentException("Url Form Is Not Valid");
         }
         return resource;
+    }
+
+    private Member findMember(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
     }
 
     private Store findStore(Long storeId){
