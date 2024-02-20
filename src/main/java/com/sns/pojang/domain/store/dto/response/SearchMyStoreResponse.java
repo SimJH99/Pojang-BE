@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MyStoreResponse {
+public class SearchMyStoreResponse {
     private String name;
     private String imageUrl;
     private Address address;
@@ -17,8 +17,8 @@ public class MyStoreResponse {
     private String introduction;
     private String operationTime;
 
-    public static MyStoreResponse from(Store store) {
-        return MyStoreResponse.builder()
+    public static SearchMyStoreResponse from(Store store) {
+        return SearchMyStoreResponse.builder()
                 .name(store.getName())
                 .imageUrl(store.getImageUrl())
                 .address(store.getAddress())

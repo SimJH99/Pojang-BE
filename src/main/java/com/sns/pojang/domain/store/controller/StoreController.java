@@ -4,7 +4,7 @@ import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
-import com.sns.pojang.domain.store.dto.response.MyStoreResponse;
+import com.sns.pojang.domain.store.dto.response.SearchMyStoreResponse;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
@@ -32,7 +32,7 @@ public class StoreController {
         this.storeService = storeService;
     }
 
-    //    매장 생성
+    // 매장 생성
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @PostMapping
     public ResponseEntity<SuccessResponse<CreateStoreResponse>> createStore(
@@ -73,9 +73,9 @@ public class StoreController {
     //내 매장 정보 조회
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/{memberId}/my-store")
-    public ResponseEntity<SuccessResponse<List<MyStoreResponse>>> myStore(@PathVariable Long memberId){
+    public ResponseEntity<SuccessResponse<List<SearchMyStoreResponse>>> getMyStore(@PathVariable Long memberId){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
-                storeService.myStore(memberId)));
+                storeService.getMyStore(memberId)));
     }
   
     // 카테고리 별 매장조회
@@ -84,4 +84,13 @@ public class StoreController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEARCH_STORE_SUCCESS.getMessage(), storeService.findStores(searchStoreRequest, pageable)));
     }
+
+    // 매장 내 주문 목록 조회
+//    @PreAuthorize("hasRole('ROLE_OWNER')")
+//    @GetMapping("/{id}/orders")
+//    public ResponseEntity<SuccessResponse<List<SearchStoreResponse>>> searchStoreOrders(@PathVariable Long id){
+//        return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
+//                SEARCH_STORE_ORDERS_SUCCESS.getMessage(),
+//                storeService.searchStoreOrders(id)));
+//    }
 }

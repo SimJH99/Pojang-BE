@@ -37,7 +37,7 @@ public class MailController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<SuccessResponse<Void>> createUser(@RequestParam(name = "email") String email,
+    public ResponseEntity<SuccessResponse<Void>> verify(@RequestParam(name = "email") String email,
                                                             @RequestParam(name = "certificationNumber") String certificationNumber) {
         certificationService.verifyKey(email, certificationNumber);
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),

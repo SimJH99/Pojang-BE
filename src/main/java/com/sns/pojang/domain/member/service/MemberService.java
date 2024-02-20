@@ -8,11 +8,7 @@ import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.entity.Role;
-import com.sns.pojang.domain.member.exception.EmailDuplicateException;
-import com.sns.pojang.domain.member.exception.NicknameDuplicateException;
-import com.sns.pojang.global.error.exception.KeyNotExistException;
-import com.sns.pojang.domain.member.exception.MemberNotFoundException;
-import com.sns.pojang.domain.member.exception.PasswordNotMatchException;
+import com.sns.pojang.domain.member.exception.*;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.member.utils.SmsCertificationUtil;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
@@ -69,7 +65,7 @@ public class MemberService {
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
         // Email 존재 여부 Check
         Member findMember = memberRepository.findByEmail(loginMemberRequest.getEmail())
-                .orElseThrow(KeyNotExistException::new);
+                .orElseThrow(EmailNotFoundException::new);
 
         // 계정 삭제 여부 Check
         if(findMember.getDeleteYn().equals("Y")) {
@@ -160,5 +156,19 @@ public class MemberService {
             findFavoritesResponses.add(favoritesResponse);
         }
         return findFavoritesResponses;
+    }
+
+    public void validateEmail(ValidateEmailRequest validateEmailRequest) {
+        String email = validateEmailRequest.getEmail();
+        if (memberRepository.findByEmail(email).isPresent()){
+            throw new EmailDuplicateException();
+        }
+    }
+
+    public void validateNickname(ValidateNicknameRequest validateNicknameRequest) {
+        String nickname = validateNicknameRequest.getNickname();
+        if (memberRepository.findByNickname(nickname).isPresent()){
+            throw new NicknameDuplicateException();
+        }
     }
 }
