@@ -157,4 +157,18 @@ public class MemberService {
         }
         return findFavoritesResponses;
     }
+
+    public void validateEmail(ValidateEmailRequest validateEmailRequest) {
+        String email = validateEmailRequest.getEmail();
+        if (memberRepository.findByEmail(email).isPresent()){
+            throw new EmailDuplicateException();
+        }
+    }
+
+    public void validateNickname(ValidateNicknameRequest validateNicknameRequest) {
+        String nickname = validateNicknameRequest.getNickname();
+        if (memberRepository.findByNickname(nickname).isPresent()){
+            throw new NicknameDuplicateException();
+        }
+    }
 }
