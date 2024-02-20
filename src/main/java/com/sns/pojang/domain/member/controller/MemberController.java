@@ -3,10 +3,12 @@ package com.sns.pojang.domain.member.controller;
 import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.service.MemberService;
+import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.global.response.SuccessResponse;
 import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -144,6 +146,16 @@ public class MemberController {
                 FIND_FAVORITE_SUCCESS.getMessage(), memberService.findFavorites()));
     }
 
+    // 나의 주문 목록 조회
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/orders")
+    // Page size default: 20, 0번 페이지부터 시작
+    public ResponseEntity<SuccessResponse<List<OrderResponse>>> getMyOrders(Pageable pageable){
+        return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
+                GET_MY_ORDERS_SUCCESS.getMessage(),
+                memberService.getMyOrders(pageable)));
+    }
+  
     // 내 리뷰 목록 조회
     @GetMapping("/reviews")
     public ResponseEntity<SuccessResponse<List<ReviewResponse>>> findReviews() {

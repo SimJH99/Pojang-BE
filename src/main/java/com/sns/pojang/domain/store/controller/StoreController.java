@@ -14,8 +14,11 @@ import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.service.StoreService;
 import com.sns.pojang.global.response.SuccessResponse;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -81,11 +84,20 @@ public class StoreController {
                 storeService.getMyStore(memberId)));
     }
   
-    // 카테고리 별 매장조회
-    @GetMapping("/categories")
+    // 매장 목록 조회
+    @GetMapping
     public ResponseEntity<SuccessResponse<List<SearchStoreResponse>>> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEARCH_STORE_SUCCESS.getMessage(), storeService.findStores(searchStoreRequest, pageable)));
+    }
+
+    // 매장 이미지 조회
+    @GetMapping("/{id}/image")
+    public ResponseEntity<Resource> findImage(@PathVariable Long id){
+        Resource resource = storeService.findImage(id);
+        HttpHeaders headers = new HttpHeaders(); // 파일의 타입을 스프링에 알려주기 위함
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     // 매장 리뷰 조회

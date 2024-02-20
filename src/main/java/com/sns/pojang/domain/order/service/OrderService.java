@@ -13,7 +13,6 @@ import com.sns.pojang.domain.order.dto.request.OrderRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuOptionRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuRequest;
 import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
-import com.sns.pojang.domain.order.dto.response.GetOrderDetailResponse;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderMenu;
@@ -27,6 +26,8 @@ import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sns.pojang.global.error.ErrorCode.*;
 
@@ -96,14 +98,23 @@ public class OrderService {
 
     // 주문 상세 조회
     @Transactional
-    public GetOrderDetailResponse getOrderDetail(Long storeId, Long orderId) {
+    public OrderResponse getOrderDetail(Long storeId, Long orderId) {
         Member findMember = findMember();
         Order findOrder = findOrder(orderId);
         Store findStore = findStore(storeId);
         validateOrder(findMember, findOrder);
         validateStore(findStore, findOrder);
 
-        return GetOrderDetailResponse.from(findOrder);
+        return OrderResponse.from(findOrder);
+    }
+
+    @Transactional
+    public List<OrderResponse> getOrders(Long storeId, Pageable pageable) {
+        Store findStore = findStore(storeId);
+        validateOwner(findStore);
+        Page<Order> orders = orderRepository.findByStore(findStore, pageable);
+
+        return orders.stream().map(OrderResponse::from).collect(Collectors.toList());
     }
 
     // 프론트에서 받아온 총 주문 금액 검증 (프론트는 중간에 연산이 조작 되기 쉬움)
@@ -136,6 +147,16 @@ public class OrderService {
     private void validateStore(Store store, Order order){
         if (!order.getStore().equals(store)){
             throw new AccessDeniedException(STORE_ORDER_MISMATCH.getMessage());
+        }
+    }
+
+    // 가게 등록한 Owner인지 검증
+    private void validateOwner(Store store){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        if (!store.getMember().equals(findMember)){
+            throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
     }
 
