@@ -11,11 +11,18 @@ import com.sns.pojang.domain.member.entity.Role;
 import com.sns.pojang.domain.member.exception.*;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.member.utils.SmsCertificationUtil;
+import com.sns.pojang.domain.order.dto.response.OrderResponse;
+import com.sns.pojang.domain.order.entity.Order;
+import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
 import com.sns.pojang.global.utils.CertificationGenerator;
 import com.sns.pojang.global.utils.CertificationNumberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,12 +32,15 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.sns.pojang.global.error.ErrorCode.MEMBER_ORDER_MISMATCH;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final OrderRepository orderRepository;
     private final FavoriteRepository favoriteRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -38,6 +48,7 @@ public class MemberService {
     private final CertificationGenerator certificationGenerator;
     private final SmsCertificationUtil smsCertificationUtil;
 
+    @Transactional
     public CreateMemberResponse createUser(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException{
         if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()){
             throw new EmailDuplicateException();
@@ -50,6 +61,7 @@ public class MemberService {
         return CreateMemberResponse.from(memberRepository.save(newMember));
     }
 
+    @Transactional
     public CreateMemberResponse createOwner(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException {
         if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()){
             throw new EmailDuplicateException();
@@ -62,6 +74,7 @@ public class MemberService {
         return CreateMemberResponse.from(memberRepository.save(newMember));
     }
 
+    @Transactional
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
         // Email 존재 여부 Check
         Member findMember = memberRepository.findByEmail(loginMemberRequest.getEmail())
@@ -170,5 +183,24 @@ public class MemberService {
         if (memberRepository.findByNickname(nickname).isPresent()){
             throw new NicknameDuplicateException();
         }
+    }
+
+    public List<OrderResponse> getMyOrders(Pageable pageable) {
+        Member findMember = findMember();
+        Page<Order> myOrders = orderRepository.findByMember(findMember, pageable);
+
+        return myOrders.stream().map(OrderResponse::from).collect(Collectors.toList());
+    }
+
+    private void validateOrder(Member member, Order order){
+        if (!order.getMember().equals(member)){
+            throw new AccessDeniedException(MEMBER_ORDER_MISMATCH.getMessage());
+        }
+    }
+
+    private Member findMember(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
     }
 }
