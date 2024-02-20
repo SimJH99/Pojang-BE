@@ -9,6 +9,7 @@ import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.entity.Role;
 import com.sns.pojang.domain.member.exception.EmailDuplicateException;
+import com.sns.pojang.domain.member.exception.EmailNotFoundException;
 import com.sns.pojang.domain.member.exception.NicknameDuplicateException;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
