@@ -81,8 +81,8 @@ public class StoreController {
                 storeService.getMyStore(memberId)));
     }
   
-    // 카테고리 별 매장조회
-    @GetMapping("/categories")
+    // 매장 목록 조회
+    @GetMapping
     public ResponseEntity<SuccessResponse<List<SearchStoreResponse>>> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEARCH_STORE_SUCCESS.getMessage(), storeService.findStores(searchStoreRequest, pageable)));
