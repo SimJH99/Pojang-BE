@@ -3,6 +3,13 @@ package com.sns.pojang.domain.store.service;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
+import com.sns.pojang.domain.order.entity.Order;
+import com.sns.pojang.domain.order.repository.OrderRepository;
+import com.sns.pojang.domain.review.dto.response.RatingResponse;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
+import com.sns.pojang.domain.review.entity.Review;
+import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
+import com.sns.pojang.domain.review.repository.ReviewRepository;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
@@ -55,6 +62,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
     private final BusinessNumberRepository businessNumberRepository;
+    private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
 
     @Value("${image.path}")
@@ -219,5 +227,36 @@ public class StoreService {
         if (!store.getMember().equals(findMember)){
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
+    }
+
+    public List<ReviewResponse> findReviews(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getDeleteYn().equals("Y")) {
+            throw new StoreNotFoundException();
+        }
+        List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+        if(reviews.isEmpty()) {
+            throw new ReviewNotFoundException();
+        }
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
+        for(Review review : reviews) {
+            ReviewResponse reviewResponse = ReviewResponse.from(review);
+            reviewResponses.add(reviewResponse);
+        }
+        return reviewResponses;
+    }
+
+    public RatingResponse findRating(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getDeleteYn().equals("Y")) {
+            throw new StoreNotFoundException();
+        }
+        List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+        int totalRating = 0;
+        for(Review review : reviews) {
+            totalRating += review.getRating();
+        }
+        double avgRating = (double) totalRating /reviews.size();
+        return RatingResponse.from(avgRating);
     }
 }

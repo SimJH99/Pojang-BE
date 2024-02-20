@@ -49,7 +49,7 @@ public class FavoriteService {
             }
             else { // 데이터는 있으나 favoriteY가 아닌 경우 Y로 변경
                 favorite.updateFavorite();
-                return null;
+                return CreateFavoriteResponse.from(favorite);
             }
         }
         Favorite favorite = Favorite.builder()

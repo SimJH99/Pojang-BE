@@ -3,6 +3,7 @@ package com.sns.pojang.domain.member.controller;
 import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.service.MemberService;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.global.response.SuccessResponse;
 import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,13 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<List<FindFavoritesResponse>>> findFavorites() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 FIND_FAVORITE_SUCCESS.getMessage(), memberService.findFavorites()));
+    }
+
+    // 내 리뷰 목록 조회
+    @GetMapping("/reviews")
+    public ResponseEntity<SuccessResponse<List<ReviewResponse>>> findReviews() {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                FIND_REVIEW_SUCCESS.getMessage(), memberService.findReviews()));
     }
 }
 
