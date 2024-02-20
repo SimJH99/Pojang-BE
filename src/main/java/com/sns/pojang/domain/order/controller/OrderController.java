@@ -30,8 +30,10 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping
-    public ResponseEntity<SuccessResponse<CreateOrderResponse>> createOrder(
+    // 주문 생성
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/{storeId}/orders")
+    public ResponseEntity<SuccessResponse<CreateOrderResponse>> createOrder(@PathVariable Long storeId,
             @Valid @RequestBody OrderRequest orderRequest){
         return ResponseEntity.created(URI.create(""))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),

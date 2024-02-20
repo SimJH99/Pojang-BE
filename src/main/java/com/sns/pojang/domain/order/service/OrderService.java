@@ -39,21 +39,31 @@ public class OrderService {
 
     // 메뉴 주문
     @Transactional
-    public CreateOrderResponse createOrder(OrderRequest orderRequest) {
+    public CreateOrderResponse createOrder(Long storeId, OrderRequest orderRequest) {
         Member findMember = findMember();
-        Store findStore = findStore(orderRequest.getStoreId());
+        Store findStore = findStore(storeId);
+
         // 총 주문 금액 검증
         validateTotalPrice(orderRequest.getSelectedMenus(), orderRequest.getTotalPrice());
         Order order = orderRequest.toEntity(findMember, findStore);
 
         for (SelectedMenuRequest selectedMenu : orderRequest.getSelectedMenus()){
             Menu findMenu = findMenu(selectedMenu.getMenuId());
+            validateMenu(findStore, findMenu);
             OrderMenu orderMenu = OrderMenu.builder()
                     .quantity(selectedMenu.getQuantity())
                     .menu(findMenu)
-                    .order(order)
                     .build();
-            order.getOrderMenus().add(orderMenu);
+            // 메뉴 옵션이 있으면 아래 코드 실행
+            if (selectedMenu.getSelectedMenuOptions() != null){
+                for (SelectedMenuOptionRequest selectedMenuOption : selectedMenu.getSelectedMenuOptions()){
+                    for (Long optionId : selectedMenuOption.getSelectedMenuOptions()){
+                        MenuOption findMenuOption = findMenuOption(optionId);
+                        findMenuOption.attachOrderMenu(orderMenu);
+                    }
+                }
+            }
+            orderMenu.attachOrder(order);
         }
         return CreateOrderResponse.from(orderRepository.save(order));
     }
@@ -61,19 +71,40 @@ public class OrderService {
     // 프론트에서 받아온 총 주문 금액 검증 (프론트는 중간에 연산이 조작 되기 쉬움)
     private void validateTotalPrice(List<SelectedMenuRequest> selectedMenus, int totalPrice){
         int calculatedTotalPrice = 0;
-        for (SelectedMenuRequest selectedMenuRequest : selectedMenus){
-            Menu menu = findMenu(selectedMenuRequest.getMenuId());
+        for (SelectedMenuRequest menuRequest : selectedMenus){
+            Menu menu = findMenu(menuRequest.getMenuId());
             int menuOptionTotal = 0;
-            for (SelectedMenuOptionRequest selectedMenuOptionRequest : selectedMenuRequest.getSelectedMenuOptions()){
-                for (Long menuOptionId : selectedMenuOptionRequest.getSelectedMenuOptions()){
-                    MenuOption menuOption = findMenuOption(menuOptionId);
-                    menuOptionTotal += menuOption.getPrice();
+            if (menuRequest.getSelectedMenuOptions() != null){
+                for (SelectedMenuOptionRequest menuOptionRequest : menuRequest.getSelectedMenuOptions()){
+                    for (Long menuOptionId : menuOptionRequest.getSelectedMenuOptions()){
+                        MenuOption menuOption = findMenuOption(menuOptionId);
+                        menuOptionTotal += menuOption.getPrice();
+                    }
                 }
             }
-            calculatedTotalPrice += menu.getPrice() + menuOptionTotal;
+            calculatedTotalPrice += menu.getPrice() * menuRequest.getQuantity() + menuOptionTotal;
         }
         if (calculatedTotalPrice != totalPrice){
             throw new InvalidTotalPriceException();
+        }
+    }
+
+    private void validateOrder(Member member, Order order){
+        if (!order.getMember().equals(member)){
+            throw new AccessDeniedException(MEMBER_ORDER_MISMATCH.getMessage());
+        }
+    }
+
+    private void validateStore(Store store, Order order){
+        if (!order.getStore().equals(store)){
+            throw new AccessDeniedException(STORE_ORDER_MISMATCH.getMessage());
+        }
+    }
+
+    // menu의 store와 입력된 store의 일치 여부 확인
+    private void validateMenu(Store store, Menu menu){
+        if (!menu.getStore().equals(store)){
+            throw new AccessDeniedException(STORE_MENU_MISMATCH.getMessage());
         }
     }
 
