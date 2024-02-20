@@ -23,6 +23,8 @@ import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import com.sns.pojang.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,6 +40,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,13 +106,8 @@ public class StoreService {
 
     @Transactional
     public UpdateStoreResponse updateStore(Long id, UpdateStoreRequest updateStoreRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member findMember = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(MemberNotFoundException::new);
-        Store findStore = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
-        if (!findStore.getMember().equals(findMember)){
-            throw new AccessDeniedException(findStore.getName() + "의 사장님이 아닙니다.");
-        }
+        Store findStore = findStore(id);
+        validateOwner(findStore);
 
         MultipartFile multipartFile = updateStoreRequest.getImageUrl();
         String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
@@ -180,13 +178,8 @@ public class StoreService {
 
     @Transactional
     public void deleteStore(Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member findMember = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(MemberNotFoundException::new);
-        Store findStore = storeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(STORE_NOT_FOUND));
-        if (!findStore.getMember().equals(findMember)){
-            throw new AccessDeniedException(findStore.getName() + "의 사장님이 아닙니다.");
-        }
+        Store findStore = findStore(id);
+        validateOwner(findStore);
         findStore.isDelete();
     }
 
@@ -204,6 +197,25 @@ public class StoreService {
             throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
         }
             return stores.stream().map(SearchMyStoreResponse::from).collect(Collectors.toList());
+    }
+
+    // 가게 이미지 조회
+    @Transactional
+    public Resource findImage(Long storeId) {
+        Store findStore = findStore(storeId);
+        // 삭제된 매장은 조회 불가
+        if (findStore.getDeleteYn().equals("Y")){
+            throw new StoreNotFoundException();
+        }
+        String imageUrl = findStore.getImageUrl();
+        Path path = Paths.get(imageUrl);
+        Resource resource;
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Url Form Is Not Valid");
+        }
+        return resource;
     }
 
     private Store findStore(Long storeId){

@@ -47,7 +47,8 @@ public class SecurityConfig {
                         "/api/mail/*",
                         "/api/stores/*/menus/*/image",
                         "/api/stores/*/menus",
-                        "/api/stores/*/menus/*")
+                        "/api/stores/*/menus/*",
+                        "/api/stores/*/image")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
