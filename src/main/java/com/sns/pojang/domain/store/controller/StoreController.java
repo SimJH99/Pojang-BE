@@ -6,11 +6,8 @@ import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
-import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
-import com.sns.pojang.domain.store.dto.response.SearchMyStoreResponse;
+import com.sns.pojang.domain.store.dto.response.*;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
-import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
-import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.service.StoreService;
 import com.sns.pojang.global.response.SuccessResponse;
@@ -82,6 +79,13 @@ public class StoreController {
     public ResponseEntity<SuccessResponse<List<SearchMyStoreResponse>>> getMyStore(@PathVariable Long memberId){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
                 storeService.getMyStore(memberId)));
+    }
+
+    // 매장 상세 조회
+    @GetMapping("/{storeId}/details")
+    public ResponseEntity<SuccessResponse<SearchStoreInfoResponse>> getStoreDetail(@PathVariable Long storeId){
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
+                storeService.getStoreDetail(storeId)));
     }
   
     // 매장 목록 조회

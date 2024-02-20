@@ -49,7 +49,12 @@ public class SecurityConfig {
                         "/api/stores/*/menus",
                         "/api/stores/*/menus/*",
                         "/api/stores/*/image",
-                        "/api/stores")
+                        "/api/stores/*/reviews",
+                        "/api/orders/*/reviews/*",
+                        "/api/stores/*/details",
+                        "/api/stores/*/rating",
+                        "/api/stores/*/favorites"
+                        )
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()

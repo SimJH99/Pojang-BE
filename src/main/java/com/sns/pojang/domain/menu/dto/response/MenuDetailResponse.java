@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @Getter
 public class MenuDetailResponse {
+    private Long id;
     private String name; // 메뉴명
     private String menuInfo; // 메뉴 정보
     private int price; // 메뉴 가격
@@ -23,6 +24,7 @@ public class MenuDetailResponse {
             menuOptionGroups.add(response);
         }
         return MenuDetailResponse.builder()
+                .id(menu.getId())
                 .name(menu.getName())
                 .menuInfo(menu.getMenuInfo())
                 .price(menu.getPrice())

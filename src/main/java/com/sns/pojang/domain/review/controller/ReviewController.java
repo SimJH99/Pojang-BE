@@ -57,9 +57,9 @@ public class ReviewController {
     }
 
     // 리뷰 이미지 조회
-    @GetMapping("/{orderId}/reviews/image")
-    public ResponseEntity<Resource> findImage(@PathVariable Long orderId){
-        Resource resource = reviewService.findImage(orderId);
+    @GetMapping("/{reviewId}/reviews/image")
+    public ResponseEntity<Resource> findImage(@PathVariable Long reviewId){
+        Resource resource = reviewService.findImage(reviewId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);

@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @Getter
 public class GetMenuOptionGroupResponse {
+    private Long id;
     private String name; // 메뉴 옵션 그룹명
     private List<GetMenuOptionResponse> menuOptions; // 메뉴 옵션 List Dto
 
@@ -21,6 +22,7 @@ public class GetMenuOptionGroupResponse {
             menuOptions.add(response);
         }
         return GetMenuOptionGroupResponse.builder()
+                .id(menuOptionGroup.getId())
                 .name(menuOptionGroup.getName())
                 .menuOptions(menuOptions)
                 .build();

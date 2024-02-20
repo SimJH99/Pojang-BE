@@ -1,5 +1,8 @@
 package com.sns.pojang.domain.store.service;
 
+import com.sns.pojang.domain.favorite.entity.Favorite;
+import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
+import com.sns.pojang.domain.favorite.service.FavoriteService;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
@@ -15,10 +18,7 @@ import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
-import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
-import com.sns.pojang.domain.store.dto.response.SearchMyStoreResponse;
-import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
-import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
+import com.sns.pojang.domain.store.dto.response.*;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
@@ -67,6 +67,7 @@ public class StoreService {
     private final BusinessNumberRepository businessNumberRepository;
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final FavoriteRepository favoriteRepository;
 
     @Value("${image.path}")
     private String imagePath;
@@ -270,5 +271,27 @@ public class StoreService {
         }
         double avgRating = (double) totalRating /reviews.size();
         return RatingResponse.from(avgRating);
+    }
+
+    public SearchStoreInfoResponse getStoreDetail(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getDeleteYn().equals("Y")) {
+            throw new StoreNotFoundException();
+        }
+        List<Favorite> favorites = favoriteRepository.findByStoreAndFavoriteYn(store, "Y");
+        int count = 0;
+        for(Favorite favorite : favorites) {
+            // 회원 탈퇴 후 30일 전까지 회원 정보가 삭제되지 않으므로 걸러줘야 함
+            if(favorite.getMember().getDeleteYn().equals("N")) {
+                count++;
+            }
+        }
+        List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+        int totalRating = 0;
+        for(Review review : reviews) {
+            totalRating += review.getRating();
+        }
+        double avgRating = (double) totalRating /reviews.size();
+        return SearchStoreInfoResponse.from(store, count, avgRating);
     }
 }

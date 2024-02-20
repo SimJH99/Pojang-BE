@@ -23,4 +23,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByOrderAndDeleteYn(Order order, String deleteYn);
 
     List<Review> findByMemberAndDeleteYn(Member member, String deleteYn);
+
+    Optional<Review> findByIdAndDeleteYn(Long reviewId, String deleteYn);
 }

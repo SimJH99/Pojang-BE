@@ -102,8 +102,8 @@ public class ReviewService {
         review.delete();
     }
 
-    public Resource findImage(Long orderId) {
-        Review review = reviewRepository.findByOrderIdAndDeleteYn(orderId, "N").orElseThrow(ReviewNotFoundException::new);
+    public Resource findImage(Long reviewId) {
+        Review review = reviewRepository.findByIdAndDeleteYn(reviewId, "N").orElseThrow(ReviewNotFoundException::new);
         String imagePath = review.getImageUrl();
         Path path = Paths.get(imagePath);
         Resource resource;
