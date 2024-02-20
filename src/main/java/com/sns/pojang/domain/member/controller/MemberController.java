@@ -4,6 +4,7 @@ import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.service.MemberService;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.global.response.SuccessResponse;
 import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,6 +154,13 @@ public class MemberController {
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MY_ORDERS_SUCCESS.getMessage(),
                 memberService.getMyOrders(pageable)));
+    }
+  
+    // 내 리뷰 목록 조회
+    @GetMapping("/reviews")
+    public ResponseEntity<SuccessResponse<List<ReviewResponse>>> findReviews() {
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                FIND_REVIEW_SUCCESS.getMessage(), memberService.findReviews()));
     }
 }
 
