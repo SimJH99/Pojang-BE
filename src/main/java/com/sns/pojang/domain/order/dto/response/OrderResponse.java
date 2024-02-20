@@ -19,10 +19,11 @@ import java.util.Map;
 @Slf4j
 public class OrderResponse {
     private Long orderId; // 주문 번호
+    private Long storeId;
     private String store; // 가게명
     private String customer; // 주문자 닉네임
     private String orderDateTime; // 주문 시간
-    private OrderStatus orderStatus; // 주문 상태
+    private String orderStatus; // 주문 상태
     private Map<String, Integer> orderMenuInfo; // 주문 메뉴 정보
     private Map<String, List<String>> orderMenuOptions; // 추가한 옵션 정보
     private String phoneNumber; // 주문자 연락처
@@ -43,10 +44,11 @@ public class OrderResponse {
         }
         return OrderResponse.builder()
                 .orderId(order.getId())
+                .storeId(order.getStore().getId())
                 .store(order.getStore().getName())
                 .customer(order.getMember().getNickname())
                 .orderDateTime(order.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .orderStatus(order.getOrderStatus())
+                .orderStatus(order.getOrderStatus().toString())
                 .phoneNumber(order.getMember().getPhoneNumber())
                 .requirement(order.getRequirement())
                 .totalPrice(order.getTotalPrice())
