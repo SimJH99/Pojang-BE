@@ -100,4 +100,9 @@ public class Store extends BaseTimeEntity {
     public void isDelete() {
         this.deleteYn = "Y";
     }
+
+    public void attachMember(Member member){
+        this.member = member;
+        member.getStores().add(this);
+    }
 }

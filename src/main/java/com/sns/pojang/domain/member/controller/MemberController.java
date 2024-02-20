@@ -5,6 +5,8 @@ import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.service.MemberService;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
+import com.sns.pojang.domain.store.dto.response.SearchMyStoreResponse;
+import com.sns.pojang.domain.store.service.StoreService;
 import com.sns.pojang.global.response.SuccessResponse;
 import com.sns.pojang.global.utils.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,13 @@ import static com.sns.pojang.global.response.SuccessMessage.*;
 @RequestMapping("/api/members")
 public class MemberController {
     private final MemberService memberService;
+    private final StoreService storeService;
     private final CertificationService certificationService;
 
     @Autowired
-    public MemberController(MemberService memberService, CertificationService certificationService) {
+    public MemberController(MemberService memberService, StoreService storeService, CertificationService certificationService) {
         this.memberService = memberService;
+        this.storeService = storeService;
         this.certificationService = certificationService;
     }
 
@@ -161,6 +165,14 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<List<ReviewResponse>>> findReviews() {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 FIND_REVIEW_SUCCESS.getMessage(), memberService.findReviews()));
+    }
+
+    //내 매장 정보 조회
+    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @GetMapping("/stores")
+    public ResponseEntity<SuccessResponse<List<SearchMyStoreResponse>>> getMyStore(){
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
+                storeService.getMyStore()));
     }
 }
 
