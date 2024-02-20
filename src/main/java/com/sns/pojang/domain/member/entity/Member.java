@@ -52,7 +52,7 @@ public class Member extends BaseTimeEntity {
     private String deleteYn = "N";
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
-    private List<Favorite> Favorites = new ArrayList<>();
+    private List<Favorite> favorites = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Store> stores = new ArrayList<>();
@@ -88,6 +88,5 @@ public class Member extends BaseTimeEntity {
                 .build();
         this.address = fullAddress;
     }
-
 }
 

@@ -10,12 +10,13 @@ import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
+import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
-import com.sns.pojang.domain.store.dto.response.MyStoreResponse;
+import com.sns.pojang.domain.store.dto.response.SearchMyStoreResponse;
 import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
 import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
@@ -55,7 +56,6 @@ import java.util.stream.Collectors;
 import static com.sns.pojang.global.error.ErrorCode.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class StoreService {
 
@@ -73,6 +73,7 @@ public class StoreService {
         return businessNumberRepository.save(businessNumber);
     }
 
+    @Transactional
     public CreateStoreResponse createStore(CreateStoreRequest createStoreRequest) throws BusinessNumberDuplicateException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member findMember = memberRepository.findByEmail(authentication.getName())
@@ -102,11 +103,13 @@ public class StoreService {
             }
         }
         Store savedStore = storeRepository.save(createStoreRequest.toEntity(path != null ? path.toString() : null, findMember));
+
         // Member List<Store>에 생성된 store 추가
         savedStore.getMember().getStores().add(savedStore);
         return CreateStoreResponse.from(storeRepository.save(savedStore));
     }
 
+    @Transactional
     public UpdateStoreResponse updateStore(Long id, UpdateStoreRequest updateStoreRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member findMember = memberRepository.findByEmail(authentication.getName())
@@ -147,9 +150,9 @@ public class StoreService {
     }
 
 //    가게 조회 및 검색기능
+    @Transactional
     public List<SearchStoreResponse> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
 //        검색을 위해 Specification 객체 사용
-
         Specification<Store> spec = new Specification<Store>() {
             @Override
             public Predicate toPredicate(Root<Store> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -183,6 +186,7 @@ public class StoreService {
         return searchStoreResponses;
     }
 
+    @Transactional
     public void deleteStore(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member findMember = memberRepository.findByEmail(authentication.getName())
@@ -194,7 +198,8 @@ public class StoreService {
         findStore.isDelete();
     }
 
-    public List<MyStoreResponse> myStore(Long memberId) {
+    @Transactional
+    public List<SearchMyStoreResponse> getMyStore(Long memberId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
@@ -206,7 +211,22 @@ public class StoreService {
         if (stores.isEmpty()){
             throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
         }
-            return stores.stream().map(MyStoreResponse::from).collect(Collectors.toList());
+            return stores.stream().map(SearchMyStoreResponse::from).collect(Collectors.toList());
+    }
+
+    private Store findStore(Long storeId){
+        return storeRepository.findById(storeId)
+                .orElseThrow(StoreNotFoundException::new);
+    }
+
+    // 가게 등록한 Owner인지 검증
+    private void validateOwner(Store store){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member findMember = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        if (!store.getMember().equals(findMember)){
+            throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
+        }
     }
 
     public List<ReviewResponse> findReviews(Long storeId) {

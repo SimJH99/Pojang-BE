@@ -74,7 +74,7 @@ public class MemberService {
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
         // Email 존재 여부 Check
         Member findMember = memberRepository.findByEmail(loginMemberRequest.getEmail())
-                .orElseThrow(KeyNotExistException::new);
+                .orElseThrow(EmailNotFoundException::new);
 
         // 계정 삭제 여부 Check
         if(findMember.getDeleteYn().equals("Y")) {
@@ -180,5 +180,19 @@ public class MemberService {
             reviewResponses.add(reviewResponse);
         }
         return reviewResponses;
+    }
+  
+    public void validateEmail(ValidateEmailRequest validateEmailRequest) {
+        String email = validateEmailRequest.getEmail();
+        if (memberRepository.findByEmail(email).isPresent()){
+            throw new EmailDuplicateException();
+        }
+    }
+
+    public void validateNickname(ValidateNicknameRequest validateNicknameRequest) {
+        String nickname = validateNicknameRequest.getNickname();
+        if (memberRepository.findByNickname(nickname).isPresent()){
+            throw new NicknameDuplicateException();
+        }
     }
 }

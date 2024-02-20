@@ -5,6 +5,7 @@ import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
 import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuDetailResponse;
 import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
@@ -102,5 +103,13 @@ public class MenuController {
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MENUS_SUCCESS.getMessage(),
                 menuService.getMenus(storeId, pageable)));
+    }
+
+    @GetMapping("/{storeId}/menus/{menuId}")
+    public ResponseEntity<SuccessResponse<MenuDetailResponse>> getMenuDetail(@PathVariable Long storeId,
+                                                                             @PathVariable Long menuId){
+        return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
+                GET_MENU_DETAIL_SUCCESS.getMessage(),
+                menuService.getMenuDetail(storeId, menuId)));
     }
 }

@@ -51,6 +51,22 @@ public class MemberController {
                         memberService.createOwner(createMemberRequest)));
     }
 
+    // 이메일 중복 검증
+    @PostMapping("/sign-up/email-validate")
+    public ResponseEntity<SuccessResponse<Void>> validateEmail(@RequestBody ValidateEmailRequest validateEmailRequest){
+        memberService.validateEmail(validateEmailRequest);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                VERIFY_EMAIL_SUCCESS.getMessage()));
+    }
+
+    // 닉네임 중복 검증
+    @PostMapping("/sign-up/nickname-validate")
+    public ResponseEntity<SuccessResponse<Void>> validateNickname(@RequestBody ValidateNicknameRequest validateNicknameRequest){
+        memberService.validateNickname(validateNicknameRequest);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                VERIFY_NICKNAME_SUCCESS.getMessage()));
+    }
+
 //    로그인
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse<LoginMemberResponse>> login(

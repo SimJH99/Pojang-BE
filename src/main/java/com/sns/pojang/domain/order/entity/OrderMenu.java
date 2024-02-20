@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.order.entity;
 
 import com.sns.pojang.domain.menu.entity.Menu;
+import com.sns.pojang.domain.menu.entity.MenuOption;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,10 +31,17 @@ public class OrderMenu extends BaseTimeEntity {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
+    @OneToMany(mappedBy = "orderMenu", cascade = CascadeType.PERSIST)
+    private List<MenuOption> menuOptions = new ArrayList<>();
+
     @Builder
-    public OrderMenu(int quantity, Order order, Menu menu){
+    public OrderMenu(int quantity, Menu menu){
         this.quantity = quantity;
-        this.order = order;
         this.menu = menu;
+    }
+
+    public void attachOrder(Order order){
+        this.order = order;
+        order.getOrderMenus().add(this);
     }
 }
