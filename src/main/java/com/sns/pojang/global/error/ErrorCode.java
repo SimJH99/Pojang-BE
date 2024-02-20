@@ -34,14 +34,19 @@ public enum ErrorCode {
     FAVORITE_NOT_FOUND(400, "존재하지 않는 찜입니다."),
     FAVORITE_DUPLICATION(400, "이미 찜한 가게입니다."),
 
+    // Review
+    REVIEW_DUPLICATION(400, "이미 등록된 리뷰입니다."),
+    REVIEW_NOT_FOUND(400, "등록된 리뷰가 없습니다."),
+
     // Order
     INVALID_TOTAL_PRICE(400, "최종 주문 금액이 일치하지 않습니다."),
+    ORDER_NOT_CONFIRM(400, "확정되지 않은 주문입니다."),
     ORDER_NOT_FOUND(400, "존재하지 않는 주문입니다."),
     ORDER_ALREADY_CANCELED(400, "이미 취소된 주문입니다."),
     MEMBER_ORDER_MISMATCH(403, "주문자 정보가 일치하지 않습니다."),
     STORE_MENU_MISMATCH(400, "가게의 메뉴와 입력된 메뉴가 일치하지 않습니다."),
     STORE_ORDER_MISMATCH(400, "주문의 가게와 입력된 가게가 일치하지 않습니다."),
-
+  
     // Menu
     MENU_NOT_FOUND(400, "메뉴를 찾을 수 없습니다."),
     MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다."),
@@ -50,7 +55,6 @@ public enum ErrorCode {
 
     //Image
     IMAGE_INVALID_VALUE(400, "사용가능한 이미지 파일이 아닙니다.");
-
 
     private int status;
     private String message;
