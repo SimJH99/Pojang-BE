@@ -8,21 +8,15 @@ import com.sns.pojang.domain.member.dto.request.*;
 import com.sns.pojang.domain.member.dto.response.*;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.entity.Role;
-import com.sns.pojang.domain.member.exception.EmailDuplicateException;
-import com.sns.pojang.domain.member.exception.EmailNotFoundException;
-import com.sns.pojang.domain.member.exception.NicknameDuplicateException;
-import com.sns.pojang.domain.review.dto.response.ReviewResponse;
-import com.sns.pojang.domain.review.entity.Review;
-import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
-import com.sns.pojang.domain.review.repository.ReviewRepository;
-import com.sns.pojang.global.error.exception.KeyNotExistException;
-import com.sns.pojang.domain.member.exception.MemberNotFoundException;
-import com.sns.pojang.domain.member.exception.PasswordNotMatchException;
+import com.sns.pojang.domain.member.exception.*;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.member.utils.SmsCertificationUtil;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.repository.OrderRepository;
+import com.sns.pojang.domain.review.dto.response.ReviewResponse;
+import com.sns.pojang.domain.review.entity.Review;
+import com.sns.pojang.domain.review.repository.ReviewRepository;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
 import com.sns.pojang.global.utils.CertificationGenerator;
 import com.sns.pojang.global.utils.CertificationNumberRepository;
@@ -185,9 +179,9 @@ public class MemberService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         List<Review> reviews = reviewRepository.findByMemberAndDeleteYn(member, "N");
-        if(reviews.isEmpty()) {
-            throw new ReviewNotFoundException();
-        }
+//        if(reviews.isEmpty()) {
+//            throw new ReviewNotFoundException();
+//        }
         List<ReviewResponse> reviewResponses= new ArrayList<>();
         for(Review review : reviews) {
             ReviewResponse reviewResponse = ReviewResponse.from(review);
