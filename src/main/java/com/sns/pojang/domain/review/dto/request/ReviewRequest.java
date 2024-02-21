@@ -23,7 +23,7 @@ public class ReviewRequest {
     private String contents;
 
     // 이미지
-    private MultipartFile Image;
+    private MultipartFile image;
 
     public Review toEntity(Order order, Store store, Member member, int rating, String contents, Path path){
         String imageUrl = path != null ? path.toString() : null;
