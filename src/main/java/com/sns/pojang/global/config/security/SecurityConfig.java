@@ -45,7 +45,7 @@ public class SecurityConfig {
                         "/api/members/send-sms",
                         "/api/members/confirm-sms",
                         "/api/mail/*",
-                        "/api/stores",
+                        "/api/stores/*",
                         "/api/stores/*/menus/*/image",
                         "/api/stores/*/menus",
                         "/api/stores/*/menus/*",

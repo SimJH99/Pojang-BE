@@ -9,6 +9,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class SearchStoreResponse {
+    private Long id;
     private String name;
     private String imageUrl;
     private String category;
