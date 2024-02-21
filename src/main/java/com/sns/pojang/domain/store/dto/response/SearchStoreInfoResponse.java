@@ -13,7 +13,9 @@ import java.text.DecimalFormat;
 public class SearchStoreInfoResponse {
     private Long id;
     private String name;
+    // 찜수
     private int likes;
+    // 평점
     private String avgRating;
     private String imageUrl;
     private String address;
