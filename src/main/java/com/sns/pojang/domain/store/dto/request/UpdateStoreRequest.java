@@ -15,10 +15,5 @@ public class UpdateStoreRequest {
     private String storeNumber;
     @NotEmpty(message = "운영시간은 비어있으면 안됩니다.")
     private String operationTime;
-    private MultipartFile imageUrl;
-    private String sido;
-    private String sigungu;
-    private String query;
-    private String addressDetail;
     private String introduction;
 }

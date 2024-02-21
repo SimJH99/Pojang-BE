@@ -1,6 +1,5 @@
 package com.sns.pojang.domain.store.controller;
 
-import com.sns.pojang.domain.favorite.dto.response.CountFavoriteResponse;
 import com.sns.pojang.domain.review.dto.response.RatingResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
@@ -57,9 +56,9 @@ public class StoreController {
 
     // 매장 정보 수정
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateStoreResponse>> updateStore(
-            @PathVariable Long id , @Valid UpdateStoreRequest updateStoreRequest){
+            @PathVariable Long id , @Valid @RequestBody UpdateStoreRequest updateStoreRequest){
         return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                 UPDATE_STORE_SUCCESS.getMessage(), storeService.updateStore(id, updateStoreRequest)));
     }
