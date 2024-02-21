@@ -122,32 +122,11 @@ public class StoreService {
         Store findStore = findStore(id);
         validateOwner(findStore);
 
-        MultipartFile multipartFile = updateStoreRequest.getImageUrl();
-        String fileName = multipartFile != null ? multipartFile.getOriginalFilename() : null;
-
-        Path path = null;
-
-        if (fileName != null) {
-            path = Paths.get(imagePath, fileName);
-
-            try {
-                byte[] bytes = multipartFile.getBytes();
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("이미지를 사용할 수 없습니다.");
-            }
-        }
-
         findStore.updateStore(updateStoreRequest.getName(),
                 updateStoreRequest.getCategory(),
-                updateStoreRequest.getSido(),
-                updateStoreRequest.getSigungu(),
-                updateStoreRequest.getQuery(),
-                updateStoreRequest.getAddressDetail(),
                 updateStoreRequest.getStoreNumber(),
                 updateStoreRequest.getIntroduction(),
-                updateStoreRequest.getOperationTime(),
-                path != null ? path.toString() : null);
+                updateStoreRequest.getOperationTime());
 
         return UpdateStoreResponse.from(storeRepository.save(findStore));
     }
