@@ -54,7 +54,7 @@ public class ReviewService {
         System.out.println(reviewRequest.getImage());
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        // 주문상태가 CINFIRM인 경우만
+        // 주문상태가 CONFIRM인 경우만
         Order order = orderRepository.findByIdAndOrderStatus(orderId, OrderStatus.CONFIRM).orElseThrow(OrderNotConfirmException::new);
         // 주문과 동일한 회원인지 체크
         if(member.getId() != order.getMember().getId()) {

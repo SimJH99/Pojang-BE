@@ -15,7 +15,6 @@ public class FindMyInfoResponse {
     private String email;
     private String phoneNumber;
     private String address;
-
     public static FindMyInfoResponse from(Member member){
         Address address = member.getAddress();
         String sido = address.getSido();

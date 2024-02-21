@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -73,10 +74,11 @@ public class Member extends BaseTimeEntity {
     }
 
 //    마이페이지 수정
-    public void updateMyInfo(String nickname, String password, String phoneNumber) {
+    public void updateMyInfo(PasswordEncoder passwordEncoder, String nickname, String password, String phoneNumber, String email) {
         this.nickname = nickname;
-        this.password = password;
+        this.password = passwordEncoder.encode(password);
         this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 
 //    주소 수정
