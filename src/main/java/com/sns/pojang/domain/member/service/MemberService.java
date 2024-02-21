@@ -109,13 +109,14 @@ public class MemberService {
         return FindMyInfoResponse.from(member);
     }
 
+    @Transactional
     public FindMyInfoResponse updateMyInfo(UpdateMyInfoRequest updateMyInfoRequest) throws NicknameDuplicateException{
         if(memberRepository.findByNickname(updateMyInfoRequest.getNickname()).isPresent()) {
             throw new NicknameDuplicateException();
         }
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        member.updateMyInfo(updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPassword(), updateMyInfoRequest.getPhoneNumber());
+        member.updateMyInfo(passwordEncoder, updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPassword(), updateMyInfoRequest.getPhoneNumber(), updateMyInfoRequest.getEmail());
         return FindMyInfoResponse.from(member);
     }
 
