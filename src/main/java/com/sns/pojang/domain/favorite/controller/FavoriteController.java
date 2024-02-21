@@ -44,6 +44,14 @@ public class FavoriteController {
                         DELETE_FAVORITE_SUCCESS.getMessage()));
     }
 
+    // 찜 여부 조회
+    @GetMapping("/{storeId}/favorite")
+    public ResponseEntity<Boolean> checkFavorite(
+            @PathVariable Long storeId) {
+        Boolean checkFavorite = favoriteService.checkFavorite(storeId);
+        return new ResponseEntity<>(checkFavorite,HttpStatus.OK);
+    }
+
     // 찜 수 조회
     @GetMapping("/{storeId}/favorites")
     public ResponseEntity<SuccessResponse<CountFavoriteResponse>> countFavorite(
