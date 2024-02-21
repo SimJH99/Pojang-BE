@@ -8,8 +8,9 @@ import lombok.Getter;
 @Getter
 public class MenuResponse {
     private Long id;
-    private String storeName; // 가게명
-    private String menuName; // 메뉴명
+    private String store; // 가게명
+    private String info; // 메뉴 정보
+    private String name; // 메뉴명
     private int price; // 메뉴 가격
     private String imageUrl; // 메뉴 이미지 url
 
@@ -17,8 +18,9 @@ public class MenuResponse {
 
         return MenuResponse.builder()
                 .id(menu.getId())
-                .storeName(menu.getStore().getName())
-                .menuName(menu.getName())
+                .store(menu.getStore().getName())
+                .name(menu.getName())
+                .info(menu.getMenuInfo())
                 .price(menu.getPrice())
                 .imageUrl(menu.getImageUrl())
                 .build();
