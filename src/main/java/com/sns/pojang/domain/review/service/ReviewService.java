@@ -8,6 +8,7 @@ import com.sns.pojang.domain.menu.exception.MenuNotFoundException;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderStatus;
 import com.sns.pojang.domain.order.exception.OrderNotConfirmException;
+import com.sns.pojang.domain.order.exception.OrderNotFoundException;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.review.dto.request.ReviewRequest;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
@@ -50,6 +51,7 @@ public class ReviewService {
     private String imagePath;
 
     public ReviewResponse createReview(Long orderId, ReviewRequest reviewRequest) {
+        System.out.println(reviewRequest.getImage());
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         // 주문상태가 CINFIRM인 경우만
@@ -70,11 +72,11 @@ public class ReviewService {
         }
         Path path = null;
         if (reviewRequest.getImage() != null){
-            MultipartFile Image = reviewRequest.getImage();
-            String fileName = Image.getOriginalFilename(); // 확장자 포함한 파일명 추출
+            MultipartFile image = reviewRequest.getImage();
+            String fileName = image.getOriginalFilename(); // 확장자 포함한 파일명 추출
             path = Paths.get(imagePath, fileName);
             try {
-                byte[] bytes = Image.getBytes(); // 이미지 파일을 바이트로 변환
+                byte[] bytes = image.getBytes(); // 이미지 파일을 바이트로 변환
                 // 해당 경로의 폴더에 이미지 파일 추가. 이미 동일 파일이 있으면 덮어 쓰기(Write), 없으면 Create
                 Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             } catch (IOException e) {
@@ -113,5 +115,10 @@ public class ReviewService {
             throw new IllegalArgumentException("Url Form Is Not Valid");
         }
         return resource;
+    }
+
+    public Boolean checkReview(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
+        return reviewRepository.findByOrder(order).isPresent();
     }
 }

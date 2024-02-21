@@ -56,6 +56,7 @@ public class SecurityConfig {
                         "/api/stores/*/favorites"
                         )
                 .permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 // 세션을 사용하지 않는 설정 추가
