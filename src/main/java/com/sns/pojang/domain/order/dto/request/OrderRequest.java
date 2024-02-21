@@ -24,5 +24,4 @@ public class OrderRequest {
                 .member(member)
                 .build();
     }
-
 }
