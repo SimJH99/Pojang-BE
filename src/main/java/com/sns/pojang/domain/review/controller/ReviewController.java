@@ -56,6 +56,13 @@ public class ReviewController {
                 DELETE_REVIEW_SUCCESS.getMessage()));
     }
 
+    // 리뷰 존재 여부 조회
+    @GetMapping("/{orderId}/reviews")
+    public ResponseEntity<Boolean> checkReview(@PathVariable Long orderId){
+        Boolean checkReview = reviewService.checkReview(orderId);
+        return new ResponseEntity<>(checkReview,HttpStatus.OK);
+    }
+
     // 리뷰 이미지 조회
     @GetMapping("/{reviewId}/reviews/image")
     public ResponseEntity<Resource> findImage(@PathVariable Long reviewId){

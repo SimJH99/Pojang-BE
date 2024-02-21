@@ -180,6 +180,7 @@ public class StoreService {
         List<Store> storeList = stores.getContent();
         List<SearchStoreResponse> searchStoreResponses = new ArrayList<>();
         searchStoreResponses = storeList.stream().map(i -> SearchStoreResponse.builder()
+                .id(i.getId())
                 .name(i.getName())
                 .category(i.getCategory())
                 .imageUrl(i.getImageUrl())
