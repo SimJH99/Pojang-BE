@@ -82,4 +82,11 @@ public class FavoriteService {
         }
         return CountFavoriteResponse.from(count, store);
     }
+
+    public Boolean checkFavorite(Long storeId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        return favoriteRepository.findByMemberAndStoreAndFavoriteYn(member, store, "Y").isPresent();
+    }
 }
