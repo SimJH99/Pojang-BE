@@ -88,6 +88,14 @@ public class Store extends BaseTimeEntity {
         this.operationTime = operationTime;
     }
 
+    public void close() {
+        this.status = Status.CLOSED;
+    }
+
+    public void open() {
+        this.status = Status.OPEN;
+    }
+
     public void isDelete() {
         this.deleteYn = "Y";
     }

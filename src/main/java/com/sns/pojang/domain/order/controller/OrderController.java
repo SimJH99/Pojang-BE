@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.order.controller;
 
 import com.sns.pojang.domain.order.dto.request.OrderRequest;
+import com.sns.pojang.domain.order.dto.response.CountResponse;
 import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.service.OrderService;
@@ -98,5 +99,13 @@ public class OrderController {
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_ORDERS_SUCCESS.getMessage(),
                 orderService.getStoreOrders(id, pageable)));
+    }
+
+    // 매장별 확정 주문 수 조회
+    @GetMapping("{storeId}/orders/confirm")
+    public ResponseEntity<SuccessResponse<CountResponse>> getCount(@PathVariable Long storeId) {
+        return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
+                GET_ORDER_COUNT_SUCCESS.getMessage(),
+                orderService.getCount(storeId)));
     }
 }

@@ -11,6 +11,7 @@ import com.sns.pojang.domain.menu.repository.MenuOptionRepository;
 import com.sns.pojang.domain.menu.repository.MenuRepository;
 import com.sns.pojang.domain.order.dto.request.OrderRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuRequest;
+import com.sns.pojang.domain.order.dto.response.CountResponse;
 import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.entity.Order;
@@ -258,5 +259,11 @@ public class OrderService {
     private MenuOption findMenuOption(Long menuOptionId){
         return menuOptionRepository.findById(menuOptionId)
                 .orElseThrow(MenuOptionNotFoundException::new);
+    }
+
+    public CountResponse getCount(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        List<Order> orders = orderRepository.findByStoreAndOrderStatus(store, OrderStatus.CONFIRM);
+        return CountResponse.from(store, orders.size());
     }
 }

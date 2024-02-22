@@ -5,6 +5,8 @@ import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
+import com.sns.pojang.domain.order.entity.Order;
+import com.sns.pojang.domain.order.entity.OrderStatus;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.review.dto.response.RatingResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
@@ -17,10 +19,9 @@ import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.*;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
+import com.sns.pojang.domain.store.entity.Status;
 import com.sns.pojang.domain.store.entity.Store;
-import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
-import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
-import com.sns.pojang.domain.store.exception.StoreNotFoundException;
+import com.sns.pojang.domain.store.exception.*;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -151,14 +153,30 @@ public class StoreService {
         Page<Store> stores = storeRepository.findAll(spec, pageable);
         List<Store> storeList = stores.getContent();
         List<SearchStoreResponse> searchStoreResponses = new ArrayList<>();
-        searchStoreResponses = storeList.stream().map(i -> SearchStoreResponse.builder()
-                .id(i.getId())
-                .name(i.getName())
-                .category(i.getCategory())
-                .imageUrl(i.getImageUrl())
-                .status(i.getStatus())
-                .build()
-        ).collect(Collectors.toList());
+        int totalRating = 0;
+        double avgRating = 0;
+        for(Store store : storeList) {
+            int countOrder = orderRepository.findByStoreAndOrderStatus(store, OrderStatus.CONFIRM).size();
+            int likes = favoriteRepository.findByStoreAndFavoriteYn(store, "Y").size();
+            List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
+            for(Review review : reviews) {
+                totalRating += review.getRating();
+            }
+            avgRating = (double) totalRating /reviews.size();
+            totalRating = 0;
+            SearchStoreResponse searchStoreResponse = SearchStoreResponse.from(store, countOrder, avgRating, likes);
+            searchStoreResponses.add(searchStoreResponse);
+        }
+//        return RatingResponse.builder()
+//                .avgRating(df.format(avgRating))
+//        List<SearchStoreResponse> searchStoreResponses = new ArrayList<>();
+//        searchStoreResponses = storeList.stream().map(i -> SearchStoreResponse.builder()
+//                .id(i.getId())
+//                .name(i.getName())
+//                .category(i.getCategory())
+//                .imageUrl(i.getImageUrl())
+//                .build()
+//        ).collect(Collectors.toList());
         return searchStoreResponses;
     }
 
@@ -174,6 +192,7 @@ public class StoreService {
         Member findMember = findMember();
         //본인이 아닌 다른 owner회원이 조회하지 못하게 분기처리
 
+//                .status(i.getStatus())
         List<Store> stores = storeRepository.findByMember(findMember);
 //        if (stores.isEmpty()){
 //            throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
@@ -272,5 +291,23 @@ public class StoreService {
         }
         double avgRating = (double) totalRating /reviews.size();
         return SearchStoreInfoResponse.from(store, count, avgRating);
+    }
+
+    @Transactional
+    public void open(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getStatus() == Status.OPEN) {
+            throw new AlreadyOpenedException();
+        }
+        store.open();
+    }
+
+    @Transactional
+    public void close(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getStatus() == Status.CLOSED) {
+            throw new AlreadyClosedException();
+        }
+        store.close();
     }
 }

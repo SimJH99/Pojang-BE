@@ -18,4 +18,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByMemberOrderByCreatedTimeDesc(Member member, Pageable pageable);
     List<Order> findByStoreOrderByCreatedTimeDesc(Store store);
     Optional<Order> findByIdAndOrderStatus(Long orderId, OrderStatus orderStatus);
+
+    List<Order> findByStoreAndOrderStatus(Store store, OrderStatus orderStatus);
 }

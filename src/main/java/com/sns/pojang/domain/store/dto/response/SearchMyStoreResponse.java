@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.store.dto.response;
 
 import com.sns.pojang.domain.store.entity.Address;
+import com.sns.pojang.domain.store.entity.Status;
 import com.sns.pojang.domain.store.entity.Store;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class SearchMyStoreResponse {
     private String category;
     private String storeNumber;
     private String introduction;
+    private Status status;
     private String operationTime;
 
     public static SearchMyStoreResponse from(Store store) {
@@ -28,6 +30,7 @@ public class SearchMyStoreResponse {
                 .category(store.getCategory())
                 .storeNumber(store.getStoreNumber())
                 .introduction(store.getIntroduction())
+                .status(store.getStatus())
                 .operationTime(store.getOperationTime())
                 .build();
     }
