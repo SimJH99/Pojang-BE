@@ -4,20 +4,26 @@ import com.sns.pojang.domain.review.dto.response.RatingResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
-import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
-import com.sns.pojang.domain.store.dto.response.*;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
+import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
+import com.sns.pojang.domain.store.dto.response.CreateStoreResponse;
+import com.sns.pojang.domain.store.dto.response.SearchStoreInfoResponse;
+import com.sns.pojang.domain.store.dto.response.SearchStoreResponse;
+import com.sns.pojang.domain.store.dto.response.UpdateStoreResponse;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.service.StoreService;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -81,7 +87,9 @@ public class StoreController {
   
     // 매장 목록 조회
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<SearchStoreResponse>>> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
+    public ResponseEntity<SuccessResponse<List<SearchStoreResponse>>> findStores(
+            SearchStoreRequest searchStoreRequest,
+            @PageableDefault(sort = "status", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEARCH_STORE_SUCCESS.getMessage(), storeService.findStores(searchStoreRequest, pageable)));
     }

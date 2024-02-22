@@ -220,7 +220,7 @@ public class MemberService {
 
     public List<OrderResponse> getMyOrders(Pageable pageable) {
         Member findMember = findMember();
-        Page<Order> myOrders = orderRepository.findByMember(findMember, pageable);
+        Page<Order> myOrders = orderRepository.findByMemberOrderByCreatedTimeDesc(findMember, pageable);
 
         return myOrders.stream().map(OrderResponse::from).collect(Collectors.toList());
     }

@@ -1,6 +1,5 @@
 package com.sns.pojang.domain.order.controller;
 
-import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.order.dto.request.OrderRequest;
 import com.sns.pojang.domain.order.dto.response.CountResponse;
 import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
@@ -44,13 +43,43 @@ public class OrderController {
                         orderService.createOrder(storeId, orderRequest)));
     }
 
-    // 주문 취소
-    @PatchMapping("/{storeId}/orders/{orderId}/cancel")
-    public ResponseEntity<SuccessResponse<OrderResponse>> cancelOrder(@PathVariable Long storeId,
+    // 고객의 주문 취소
+    @GetMapping("/{storeId}/orders/{orderId}/member-cancel")
+    public ResponseEntity<SuccessResponse<OrderResponse>> cancelMemberOrder(@PathVariable Long storeId,
                                                                        @PathVariable Long orderId) {
         return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
-                CANCEL_ORDER_SUCCESS.getMessage(),
-                orderService.cancelOrder(storeId, orderId)));
+                CANCEL_MEMBER_ORDER_SUCCESS.getMessage(),
+                orderService.cancelMemberOrder(storeId, orderId)));
+    }
+
+    // 가게의 주문 취소
+    @PreAuthorize("hasRole('OWNER')")
+    @GetMapping("/{storeId}/orders/{orderId}/store-cancel")
+    public ResponseEntity<SuccessResponse<OrderResponse>> cancelStoreOrder(@PathVariable Long storeId,
+                                                                           @PathVariable Long orderId) {
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
+                CANCEL_STORE_ORDER_SUCCESS.getMessage(),
+                orderService.cancelStoreOrder(storeId, orderId)));
+    }
+
+    // 주문 접수 (가게)
+    @PreAuthorize("hasRole('OWNER')")
+    @GetMapping("/{storeId}/orders/{orderId}/store-accept")
+    public ResponseEntity<SuccessResponse<OrderResponse>> acceptOrder(@PathVariable Long storeId,
+                                                                           @PathVariable Long orderId) {
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
+                ACCEPT_ORDER_SUCCESS.getMessage(),
+                orderService.acceptOrder(storeId, orderId)));
+    }
+
+    // 주문 확정 (가게)
+    @PreAuthorize("hasRole('OWNER')")
+    @GetMapping("/{storeId}/orders/{orderId}/store-confirm")
+    public ResponseEntity<SuccessResponse<OrderResponse>> confirmOrder(@PathVariable Long storeId,
+                                                                      @PathVariable Long orderId) {
+        return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
+                CONFIRM_ORDER_SUCCESS.getMessage(),
+                orderService.confirmOrder(storeId, orderId)));
     }
 
     // 주문 상세 조회
@@ -66,10 +95,10 @@ public class OrderController {
     @PreAuthorize("hasRole('OWNER')")
     @GetMapping("/{id}/orders")
     // Page size default: 20, 0번 페이지부터 시작
-    public ResponseEntity<SuccessResponse<List<OrderResponse>>> getOrders(@PathVariable Long id, Pageable pageable){
+    public ResponseEntity<SuccessResponse<List<OrderResponse>>> getStoreOrders(@PathVariable Long id, Pageable pageable){
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_ORDERS_SUCCESS.getMessage(),
-                orderService.getOrders(id, pageable)));
+                orderService.getStoreOrders(id, pageable)));
     }
 
     // 매장별 확정 주문 수 조회

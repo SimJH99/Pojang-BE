@@ -17,13 +17,12 @@ import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderMenu;
 import com.sns.pojang.domain.order.entity.OrderStatus;
-import com.sns.pojang.domain.order.exception.InvalidTotalPriceException;
-import com.sns.pojang.domain.order.exception.OrderAlreadyCanceledException;
-import com.sns.pojang.domain.order.exception.OrderNotFoundException;
+import com.sns.pojang.domain.order.exception.*;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.StoreRepository;
+import com.sns.pojang.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -78,9 +77,9 @@ public class OrderService {
         return CreateOrderResponse.from(orderRepository.save(order));
     }
 
-    // 주문 취소
+    // 고객의 주문 취소
     @Transactional
-    public OrderResponse cancelOrder(Long storeId, Long orderId){
+    public OrderResponse cancelMemberOrder(Long storeId, Long orderId){
         Member findMember = findMember();
         Order findOrder = findOrder(orderId);
         Store findStore = findStore(storeId);
@@ -90,7 +89,79 @@ public class OrderService {
         if (findOrder.getOrderStatus() == OrderStatus.CANCELED){
             throw new OrderAlreadyCanceledException();
         }
+        if (findOrder.getOrderStatus() == OrderStatus.CONFIRM){
+            throw new OrderAlreadyConfirmedException();
+        }
         findOrder.updateOrderStatus(OrderStatus.CANCELED);
+        return OrderResponse.from(findOrder);
+    }
+
+    // 가게의 주문 취소
+    @Transactional
+    public OrderResponse cancelStoreOrder(Long storeId, Long orderId) {
+        Member findMember = findMember();
+        Order findOrder = findOrder(orderId);
+        Store findStore = findStore(storeId);
+        validateOwner(findMember, findStore);
+
+        if (findOrder.getOrderStatus() == OrderStatus.CANCELED){
+            throw new OrderAlreadyCanceledException();
+        }
+        if (findOrder.getOrderStatus() == OrderStatus.CONFIRM){
+            throw new InvalidValueException(CANNOT_CANCEL_ORDER);
+        }
+        if (findOrder.getOrderStatus() == OrderStatus.ORDERED){
+            throw new InvalidValueException(CANNOT_CANCEL_ORDER);
+        }
+
+        findOrder.updateOrderStatus(OrderStatus.CANCELED);
+        return OrderResponse.from(findOrder);
+    }
+
+    // 주문 접수
+    @Transactional
+    public OrderResponse acceptOrder(Long storeId, Long orderId) {
+        Member findMember = findMember();
+        Order findOrder = findOrder(orderId);
+        Store findStore = findStore(storeId);
+        validateOwner(findMember, findStore);
+
+        log.info("검증 완료");
+
+        if (findOrder.getOrderStatus() == OrderStatus.CANCELED){
+            throw new InvalidValueException(CANNOT_ACCEPT_ORDER);
+        }
+        if (findOrder.getOrderStatus() == OrderStatus.CONFIRM){
+            throw new InvalidValueException(CANNOT_ACCEPT_ORDER);
+        }
+        if (findOrder.getOrderStatus() == OrderStatus.ORDERED){
+            throw new OrderAlreadyOrderedException();
+        }
+
+        log.info("예외 통과");
+        findOrder.updateOrderStatus(OrderStatus.ORDERED);
+        log.info("상태 변경 완료");
+        return OrderResponse.from(findOrder);
+    }
+
+    // 주문 확정
+    @Transactional
+    public OrderResponse confirmOrder(Long storeId, Long orderId) {
+        Member findMember = findMember();
+        Order findOrder = findOrder(orderId);
+        Store findStore = findStore(storeId);
+        validateOwner(findMember, findStore);
+
+        if (findOrder.getOrderStatus() == OrderStatus.CANCELED){
+            throw new InvalidValueException(CANNOT_CONFIRM_ORDER);
+        }
+        if (findOrder.getOrderStatus() == OrderStatus.CONFIRM){
+            throw new OrderAlreadyConfirmedException();
+        }
+        if (findOrder.getOrderStatus() == OrderStatus.PENDING){
+            throw new InvalidValueException(CANNOT_CONFIRM_ORDER);
+        }
+        findOrder.updateOrderStatus(OrderStatus.CONFIRM);
         return OrderResponse.from(findOrder);
     }
 
@@ -107,13 +178,16 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderResponse> getOrders(Long storeId, Pageable pageable) {
+    public List<OrderResponse> getStoreOrders(Long storeId, Pageable pageable) {
+        Member findMember = findMember();
         Store findStore = findStore(storeId);
-        validateOwner(findStore);
-        Page<Order> orders = orderRepository.findByStore(findStore, pageable);
+        validateOwner(findMember, findStore);
+        Page<Order> orders = orderRepository.findByStoreOrderByCreatedTimeDesc(findStore, pageable);
 
         return orders.stream().map(OrderResponse::from).collect(Collectors.toList());
     }
+
+
 
     // 프론트에서 받아온 총 주문 금액 검증 (프론트는 중간에 연산이 조작 되기 쉬움)
     private void validateTotalPrice(List<SelectedMenuRequest> selectedMenus, int totalPrice){
@@ -148,11 +222,8 @@ public class OrderService {
     }
 
     // 가게 등록한 Owner인지 검증
-    private void validateOwner(Store store){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member findMember = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(MemberNotFoundException::new);
-        if (!store.getMember().equals(findMember)){
+    private void validateOwner(Member member, Store store){
+        if (!store.getMember().equals(member)){
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
     }
