@@ -1,8 +1,7 @@
+# 🎁 포장의 민족
 <p align="center">
   <img src= "https://github.com/Team-SNS/Pojang-BE/assets/78871184/ef7c6f3e-446d-47e8-a4e3-e19b9cd8d6b2" width="100%" height="100%">
 </p> 
-
-# 🎁 포장의 민족
 <br/>
 
 # 📣 프로젝트 목적
@@ -17,11 +16,8 @@
 > **2024/02/19 ~ 2024/02/23**
 <br/>
 
-# 📱팀명: SNS
-<br/>
-
-# 🖥 팀원 소개
-| 팀원 | 이름 |
+# 📱팀 명: SNS
+| 팀 원 | 이름 |
 |------|-------------|
 | 팀장 | [한종승👨‍💻](https://github.com/BellWin98) |
 | 서기 | [배소영👩‍💻](https://github.com/qoth-0) |
