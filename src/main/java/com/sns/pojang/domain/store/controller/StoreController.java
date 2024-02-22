@@ -130,4 +130,5 @@ public class StoreController {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 DELETE_FAVORITE_SUCCESS.getMessage()));
     }
+
 }

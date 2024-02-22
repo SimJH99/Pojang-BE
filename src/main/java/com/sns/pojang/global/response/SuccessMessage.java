@@ -37,6 +37,7 @@ public enum SuccessMessage {
     GET_ORDER_DETAIL_SUCCESS("주문 상세를 조회합니다."),
     GET_ORDERS_SUCCESS("주문 목록을 조회하였습니다."),
     GET_MY_ORDERS_SUCCESS("나의 목록을 조회하였습니다."),
+    GET_ORDER_COUNT_SUCCESS("가게의 확정주문 수를 조회했습니다."),
 
     // Store
     SEARCH_MY_STORE_SUCCESS("내 매장보기를 성공하였습니다."),

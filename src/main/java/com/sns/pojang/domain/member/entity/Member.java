@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.member.entity;
 
 import com.sns.pojang.domain.favorite.entity.Favorite;
+import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -52,11 +53,14 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String deleteYn = "N";
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Favorite> favorites = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Store> stores = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String nickname, String phoneNumber, Address address, Role role) {
