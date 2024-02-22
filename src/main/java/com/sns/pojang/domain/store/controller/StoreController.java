@@ -112,4 +112,22 @@ public class StoreController {
                 FIND_RATING_SUCCESS.getMessage(),
                 storeService.findRating(storeId)));
     }
+
+    // 영업상태 - 오픈
+    @PatchMapping("/{storeId}/open")
+    public ResponseEntity<SuccessResponse<Void>> open(
+            @PathVariable Long storeId) {
+        storeService.open(storeId);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                DELETE_FAVORITE_SUCCESS.getMessage()));
+    }
+
+    // 영업상태 - 종료
+    @PatchMapping("/{storeId}/close")
+    public ResponseEntity<SuccessResponse<Void>> close(
+            @PathVariable Long storeId) {
+        storeService.close(storeId);
+        return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
+                DELETE_FAVORITE_SUCCESS.getMessage()));
+    }
 }

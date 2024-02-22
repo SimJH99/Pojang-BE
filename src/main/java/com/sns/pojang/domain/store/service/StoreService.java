@@ -20,10 +20,9 @@ import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.*;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
+import com.sns.pojang.domain.store.entity.Status;
 import com.sns.pojang.domain.store.entity.Store;
-import com.sns.pojang.domain.store.exception.BusinessNumberDuplicateException;
-import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
-import com.sns.pojang.domain.store.exception.StoreNotFoundException;
+import com.sns.pojang.domain.store.exception.*;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
@@ -279,5 +278,23 @@ public class StoreService {
         }
         double avgRating = (double) totalRating /reviews.size();
         return SearchStoreInfoResponse.from(store, count, avgRating);
+    }
+
+    @Transactional
+    public void open(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getStatus() == Status.OPEN) {
+            throw new AlreadyOpenedException();
+        }
+        store.open();
+    }
+
+    @Transactional
+    public void close(Long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        if(store.getStatus() == Status.CLOSED) {
+            throw new AlreadyClosedException();
+        }
+        store.close();
     }
 }
