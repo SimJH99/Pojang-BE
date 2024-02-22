@@ -62,6 +62,9 @@ public class MemberService {
         if(memberRepository.findByNickname(createMemberRequest.getNickname()).isPresent()) {
             throw new NicknameDuplicateException();
         }
+        if(memberRepository.findByPhoneNumber(createMemberRequest.getPhoneNumber()).isPresent()) {
+            throw new PhoneNumberDuplicateException();
+        }
         Member newMember = createMemberRequest.toEntity(passwordEncoder, Role.ROLE_USER);
 
         return CreateMemberResponse.from(memberRepository.save(newMember));
@@ -74,6 +77,9 @@ public class MemberService {
         }
         if(memberRepository.findByNickname(createMemberRequest.getNickname()).isPresent()) {
             throw new NicknameDuplicateException();
+        }
+        if(memberRepository.findByPhoneNumber(createMemberRequest.getPhoneNumber()).isPresent()) {
+            throw new PhoneNumberDuplicateException();
         }
         Member newMember = createMemberRequest.toEntity(passwordEncoder, Role.ROLE_OWNER);
 
