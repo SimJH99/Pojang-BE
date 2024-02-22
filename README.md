@@ -1,5 +1,6 @@
-
-![포장의 민족-001](https://github.com/Team-SNS/Pojang-BE/assets/78871184/ef7c6f3e-446d-47e8-a4e3-e19b9cd8d6b2)
+<p align="center">
+  <img src= "https://github.com/Team-SNS/Pojang-BE/assets/78871184/ef7c6f3e-446d-47e8-a4e3-e19b9cd8d6b2" width="100%" height="100%">
+</p> 
 
 # 🎁 포장의 민족
 <br/>
@@ -14,6 +15,9 @@
 
 # 🗓 프로젝트 기간
 > **2024/02/19 ~ 2024/02/23**
+<br/>
+
+# 📱팀명: SNS
 <br/>
 
 # 🖥 팀원 소개
@@ -50,5 +54,15 @@
 <br/>
 
 # 🚩 Git 브랜치 전략
+<p align="center">
+  <img src= "https://github.com/Team-SNS/Pojang-BE/assets/78871184/b8a464a8-61ce-4bca-8082-be0affd5a342" width="100%" height="100%">
+</p> 
 
+- 저장소를 효과적으로 활용하기 위해 SNS팀은 Github-Flow 전략 브랜치를 생성한다.
+1. 이슈 탭 클릭 → New Issue → 템플릿 선택 → 이슈 제목 및 작업할 내용 입력 → Assignees 본인으로 설정 → Label 선택 → issue 생성
+2. 브랜치 생성: main 브랜치 → feature 브랜치 분기
+3. 브랜치 규칙: feature/{엔티티}-(이슈번호)
+4. 커밋 순서: [Type] 작업 내용(#이슈번호)
+5. PR 날린 후 팀원들의 코드 리뷰
+6. 코드 리뷰 완료되면 main 브랜치에 Merge 
 
