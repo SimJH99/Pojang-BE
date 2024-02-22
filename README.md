@@ -49,10 +49,6 @@
 >  ![intellijidea](https://img.shields.io/badge/IntelliJidea-000000.svg?&style=for-the-badge&logo=intellijidea&logoColor=white)
 <br/>
 
-# 📈 ERD 모델링
-[![포장의 민족](https://github.com/Team-SNS/Pojang-BE/assets/78871184/86609aa5-4ec8-4c0f-836a-6313136cef18)](https://www.erdcloud.com/d/xroTBFytvBCr9fm5S)
-<br/>
-
 # 🚩 Git 브랜치 전략
 <p align="center">
   <img src= "https://github.com/Team-SNS/Pojang-BE/assets/78871184/b8a464a8-61ce-4bca-8082-be0affd5a342" width="100%" height="100%">
@@ -65,4 +61,8 @@
 4. 커밋 순서: [Type] 작업 내용(#이슈번호)
 5. PR 날린 후 팀원들의 코드 리뷰
 6. 코드 리뷰 완료되면 main 브랜치에 Merge 
+<br/>
+
+# 📈 ERD 모델링
+[![포장의 민족](https://github.com/Team-SNS/Pojang-BE/assets/78871184/86609aa5-4ec8-4c0f-836a-6313136cef18)](https://www.erdcloud.com/d/xroTBFytvBCr9fm5S)
 <br/>
