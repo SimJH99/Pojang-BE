@@ -64,7 +64,7 @@
 <br/>
 `사진 클릭시 이동`
 
-# 요구사항 명세서
+# 📌 요구사항 명세서
 <details>
 <summary><h2>😀 회원(Member)</h2></summary>
 <div markdown="1">
