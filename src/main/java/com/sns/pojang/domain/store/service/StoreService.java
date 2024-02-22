@@ -2,18 +2,15 @@ package com.sns.pojang.domain.store.service;
 
 import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
-import com.sns.pojang.domain.favorite.service.FavoriteService;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
-import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.review.dto.response.RatingResponse;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
-import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.store.dto.request.CreateStoreRequest;
 import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
@@ -26,8 +23,6 @@ import com.sns.pojang.domain.store.exception.BusinessNumberNotFoundException;
 import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
-import com.sns.pojang.global.error.exception.EntityNotFoundException;
-import com.sns.pojang.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -55,8 +50,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.sns.pojang.global.error.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -155,7 +148,7 @@ public class StoreService {
             }
         };
 
-        Page<Store> stores = storeRepository.findAll(spec , pageable);
+        Page<Store> stores = storeRepository.findAll(spec, pageable);
         List<Store> storeList = stores.getContent();
         List<SearchStoreResponse> searchStoreResponses = new ArrayList<>();
         searchStoreResponses = storeList.stream().map(i -> SearchStoreResponse.builder()
