@@ -3,10 +3,7 @@ package com.sns.pojang.domain.menu.controller;
 import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
 import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
-import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
-import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionResponse;
-import com.sns.pojang.domain.menu.dto.response.MenuDetailResponse;
-import com.sns.pojang.domain.menu.dto.response.MenuResponse;
+import com.sns.pojang.domain.menu.dto.response.*;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,5 +108,14 @@ public class MenuController {
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MENU_DETAIL_SUCCESS.getMessage(),
                 menuService.getMenuDetail(storeId, menuId)));
+    }
+
+    // 메뉴 옵션 객체 조회
+    @GetMapping("/{storeId}/menu-options/{optionId}/")
+    public ResponseEntity<SuccessResponse<MenuOptionResponse>> getMenuOption(@PathVariable Long storeId,
+                                                                             @PathVariable Long optionId){
+        return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
+                GET_MENU_OPTION_SUCCESS.getMessage(),
+                menuService.getMenuOption(storeId, optionId)));
     }
 }
