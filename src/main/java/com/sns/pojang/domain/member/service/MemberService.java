@@ -18,6 +18,7 @@ import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
+import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import com.sns.pojang.global.utils.CertificationGenerator;
 import com.sns.pojang.global.utils.CertificationNumberRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sns.pojang.global.error.ErrorCode.MEMBER_NOT_FOUND;
 import static com.sns.pojang.global.error.ErrorCode.MEMBER_ORDER_MISMATCH;
 
 @Service
@@ -110,14 +112,25 @@ public class MemberService {
     }
 
     @Transactional
-    public FindMyInfoResponse updateMyInfo(UpdateMyInfoRequest updateMyInfoRequest) throws NicknameDuplicateException{
-        if(memberRepository.findByNickname(updateMyInfoRequest.getNickname()).isPresent()) {
-            throw new NicknameDuplicateException();
+    public UpdateMyInfoResponse updateMyInfo(UpdateMyInfoRequest updateMyInfoRequest) throws NicknameDuplicateException{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
+
+        if (!member.getNickname().equals(updateMyInfoRequest.getNickname())){
+            if(memberRepository.findByNickname(updateMyInfoRequest.getNickname()).isPresent()){
+               throw new NicknameDuplicateException();
+            }
+
         }
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        member.updateMyInfo(passwordEncoder, updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPassword(), updateMyInfoRequest.getPhoneNumber(), updateMyInfoRequest.getEmail());
-        return FindMyInfoResponse.from(member);
+        if (!member.getPhoneNumber().equals(updateMyInfoRequest.getPhoneNumber())){
+            if(memberRepository.findByPhoneNumber(updateMyInfoRequest.getPhoneNumber()).isPresent()){
+                throw new PhoneNumberDuplicateException();
+            }
+        }
+        member.updateMyInfo(updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPhoneNumber());
+
+        return UpdateMyInfoResponse.from(member);
     }
 
     public FindAddressResponse findMyAddress() {
