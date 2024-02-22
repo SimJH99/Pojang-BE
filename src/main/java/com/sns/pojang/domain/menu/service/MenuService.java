@@ -6,16 +6,14 @@ import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
 import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
-import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionGroupResponse;
-import com.sns.pojang.domain.menu.dto.response.CreateMenuOptionResponse;
-import com.sns.pojang.domain.menu.dto.response.MenuDetailResponse;
-import com.sns.pojang.domain.menu.dto.response.MenuResponse;
+import com.sns.pojang.domain.menu.dto.response.*;
 import com.sns.pojang.domain.menu.entity.Menu;
 import com.sns.pojang.domain.menu.entity.MenuOption;
 import com.sns.pojang.domain.menu.entity.MenuOptionGroup;
 import com.sns.pojang.domain.menu.exception.MenuIdNotEqualException;
 import com.sns.pojang.domain.menu.exception.MenuNotFoundException;
 import com.sns.pojang.domain.menu.exception.MenuOptionGroupNotFoundException;
+import com.sns.pojang.domain.menu.exception.MenuOptionNotFoundException;
 import com.sns.pojang.domain.menu.repository.MenuOptionGroupRepository;
 import com.sns.pojang.domain.menu.repository.MenuOptionRepository;
 import com.sns.pojang.domain.menu.repository.MenuRepository;
@@ -205,12 +203,22 @@ public class MenuService {
     }
 
     // 메뉴 상세 조회
+    @Transactional
     public MenuDetailResponse getMenuDetail(Long storeId, Long menuId){
         Store findStore = findStore(storeId);
         Menu findMenu = findMenu(menuId);
         validateStore(findStore.getId(), findMenu);
 
         return MenuDetailResponse.from(findMenu);
+    }
+
+    // 메뉴 옵션 조회
+    @Transactional
+    public MenuOptionResponse getMenuOption(Long storeId, Long optionId) {
+        findStore(storeId);
+        MenuOption findMenuOption = findMenuOption(optionId);
+
+        return MenuOptionResponse.from(findMenuOption);
     }
 
     private Store findStore(Long storeId){
@@ -226,6 +234,11 @@ public class MenuService {
     private MenuOptionGroup findMenuOptionGroup(Long menuOptionGroupId){
         return menuOptionGroupRepository.findById(menuOptionGroupId)
                 .orElseThrow(MenuOptionGroupNotFoundException::new);
+    }
+
+    private MenuOption findMenuOption(Long menuOptionId){
+        return menuOptionRepository.findById(menuOptionId)
+                .orElseThrow(MenuOptionNotFoundException::new);
     }
 
     // 메뉴의 storeId와 입력 storeId 일치 여부 검증
@@ -253,4 +266,6 @@ public class MenuService {
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
     }
+
+
 }
