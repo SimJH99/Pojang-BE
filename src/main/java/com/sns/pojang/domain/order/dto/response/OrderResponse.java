@@ -31,6 +31,15 @@ public class OrderResponse {
     private int totalPrice; // 총 주문 금액
 
     public static OrderResponse from(Order order) {
+        String orderStatus = "";
+        if(order.getOrderStatus() == OrderStatus.PENDING) {
+           orderStatus = "접수대기";
+        } else if (order.getOrderStatus() == OrderStatus.ORDERED) {
+            orderStatus = "주문접수";
+        } else if (order.getOrderStatus() == OrderStatus.CANCELED) {
+            orderStatus = "주문취소";
+        }else orderStatus = "픽업완료";
+
         Map<String, Integer> orderMenuInfo = new HashMap<>();
         Map<String, List<String>> orderMenuOptions = new HashMap<>();
         for (OrderMenu orderMenu : order.getOrderMenus()){
@@ -48,7 +57,7 @@ public class OrderResponse {
                 .store(order.getStore().getName())
                 .customer(order.getMember().getNickname())
                 .orderDateTime(order.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .orderStatus(order.getOrderStatus().toString())
+                .orderStatus(orderStatus)
                 .phoneNumber(order.getMember().getPhoneNumber())
                 .requirement(order.getRequirement())
                 .totalPrice(order.getTotalPrice())
