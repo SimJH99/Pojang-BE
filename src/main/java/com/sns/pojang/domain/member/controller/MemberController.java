@@ -90,7 +90,7 @@ public class MemberController {
 
 //    마이페이지 수정
     @PatchMapping("/my-info")
-    public ResponseEntity<SuccessResponse<FindMyInfoResponse>> updateMyInfo(
+    public ResponseEntity<SuccessResponse<UpdateMyInfoResponse>> updateMyInfo(
             @Valid @RequestBody UpdateMyInfoRequest updateMyInfoRequest) {
         return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                 UPDATE_MY_INFO_SUCCESS.getMessage(), memberService.updateMyInfo(updateMyInfoRequest)));

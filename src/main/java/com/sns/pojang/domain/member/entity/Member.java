@@ -40,7 +40,7 @@ public class Member extends BaseTimeEntity {
     private String password;
 
     //휴대폰번호
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String phoneNumber;
 
     //권한
@@ -74,11 +74,9 @@ public class Member extends BaseTimeEntity {
     }
 
 //    마이페이지 수정
-    public void updateMyInfo(PasswordEncoder passwordEncoder, String nickname, String password, String phoneNumber, String email) {
+    public void updateMyInfo(String nickname, String phoneNumber) {
         this.nickname = nickname;
-        this.password = passwordEncoder.encode(password);
         this.phoneNumber = phoneNumber;
-        this.email = email;
     }
 
 //    주소 수정
