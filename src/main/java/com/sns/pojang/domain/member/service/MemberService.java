@@ -56,11 +56,14 @@ public class MemberService {
 
     @Transactional
     public CreateMemberResponse createUser(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException{
-        if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()){
-            throw new EmailDuplicateException();
-        }
         if(memberRepository.findByNickname(createMemberRequest.getNickname()).isPresent()) {
             throw new NicknameDuplicateException();
+        }
+        if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()) {
+            throw new EmailDuplicateException();
+        }
+        if(memberRepository.findByPhoneNumber(createMemberRequest.getPhoneNumber()).isPresent()) {
+            throw new PhoneNumberDuplicateException();
         }
         Member newMember = createMemberRequest.toEntity(passwordEncoder, Role.ROLE_USER);
 
@@ -69,11 +72,14 @@ public class MemberService {
 
     @Transactional
     public CreateMemberResponse createOwner(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException {
+        if(memberRepository.findByNickname(createMemberRequest.getNickname()).isPresent()) {
+            throw new NicknameDuplicateException();
+        }
         if (memberRepository.findByEmail(createMemberRequest.getEmail()).isPresent()){
             throw new EmailDuplicateException();
         }
-        if(memberRepository.findByNickname(createMemberRequest.getNickname()).isPresent()) {
-            throw new NicknameDuplicateException();
+        if(memberRepository.findByPhoneNumber(createMemberRequest.getPhoneNumber()).isPresent()) {
+            throw new PhoneNumberDuplicateException();
         }
         Member newMember = createMemberRequest.toEntity(passwordEncoder, Role.ROLE_OWNER);
 
