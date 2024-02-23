@@ -190,7 +190,9 @@
 <details>
 <summary><h2>😀 회원(Member)</h2></summary>
 <div markdown="1">
-
+<p align="center">
+  <img src="">
+</p>
 여기에 gif 넣기
   
 </div>
