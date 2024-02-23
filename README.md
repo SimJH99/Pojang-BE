@@ -191,9 +191,15 @@
 <summary><h2>😀 회원(Member)</h2></summary>
 <div markdown="1">
 <p align="center">
-  <img src="">
+  <h4>회원가입</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/ed03c100-6cbd-4e9a-80cf-3eb9871ae9e1">
 </p>
-여기에 gif 넣기
+
+<p align="center">
+  <h4>로그인</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/e42aa5f7-8e7f-4935-9be8-b771e4326c75">
+</p>
+
   
 </div>
 </details>
