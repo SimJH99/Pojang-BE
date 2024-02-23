@@ -59,11 +59,6 @@
 6. 코드 리뷰 완료되면 main 브랜치에 Merge 
 <br/>
 
-# 📈 ERD 모델링
-[![포장의 민족](https://github.com/Team-SNS/Pojang-BE/assets/78871184/86609aa5-4ec8-4c0f-836a-6313136cef18)](https://www.erdcloud.com/d/xroTBFytvBCr9fm5S)
-<br/>
-`사진 클릭시 이동`
-
 # 📌 요구사항 명세서
 <details>
 <summary ><h2>😀 회원(Member)</h2></summary>
@@ -158,6 +153,11 @@
 </div>
 </details>
 <br/>
+
+# 📈 ERD 모델링
+[![포장의 민족](https://github.com/Team-SNS/Pojang-BE/assets/78871184/86609aa5-4ec8-4c0f-836a-6313136cef18)](https://www.erdcloud.com/d/xroTBFytvBCr9fm5S)
+<br/>
+`사진 클릭시 이동`
 
 # 📝 API명세서
 > [📂API DOCS](https://robust-skunk-0f9.notion.site/API-0f59651871d44b36a32874c9f8b4f0e0?pvs=4)
