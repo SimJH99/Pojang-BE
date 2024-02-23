@@ -1,7 +1,5 @@
 package com.sns.pojang.domain.store.dto.response;
 
-import com.sns.pojang.domain.review.dto.response.RatingResponse;
-import com.sns.pojang.domain.store.entity.Address;
 import com.sns.pojang.domain.store.entity.Store;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +22,7 @@ public class SearchStoreInfoResponse {
     private String storeNumber;
     private String introduction;
     private String operationTime;
+    private String status;
 
     public static SearchStoreInfoResponse from(Store store, int likes, double avgRating) {
         DecimalFormat df = new DecimalFormat("#.#");
@@ -43,6 +42,7 @@ public class SearchStoreInfoResponse {
                 .storeNumber(store.getStoreNumber())
                 .introduction(store.getIntroduction())
                 .operationTime(store.getOperationTime())
+                .status(store.getStatus().toString())
                 .build();
     }
 }
