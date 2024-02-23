@@ -66,7 +66,7 @@
 
 # 📌 요구사항 명세서
 <details>
-<summary><h2>😀 회원(Member)</h2></summary>
+<summary ><h2>😀 회원(Member)</h2></summary>
 <div markdown="1">
 
 1. 일반 회원은 내 정보를 조회할 수 있다.
@@ -161,3 +161,73 @@
 
 # 📝 API명세서
 > [📂API DOCS](https://robust-skunk-0f9.notion.site/API-0f59651871d44b36a32874c9f8b4f0e0?pvs=4)
+<br/>
+
+<details>
+<summary><h1>📝 중점 기술 명세</h1></summary>
+<div markdown="1">
+
+  ## API명
+  | 기술 영역 | 설명 |
+  | --- | --- |
+  | Front | 여기다가 도메인에 대한 기술 명세를 와바바바박 적어주면 될것 같습니다. |
+  | Backend | 22222 |
+
+<br/>
+
+## API명
+| 기술 영역 | 설명 |
+| --- | --- |
+| Front | 여기다가 도메인에 대한 기술 명세를 와바바바박 적어주면 될것 같습니다. |
+| Backend | 22222 |
+
+</div>
+</details>
+<br/>
+
+
+# 테스트 결과
+<details>
+<summary><h2>😀 회원(Member)</h2></summary>
+<div markdown="1">
+
+여기에 gif 넣기
+  
+</div>
+</details>
+
+<details>
+<summary><h2>🏪 가게(Store)</h2></summary>
+<div markdown="1">
+
+여기에 gif 넣기
+
+</div>
+</details>
+
+<details>
+<summary><h2>📋 메뉴(Menu)</h2></summary>
+<div markdown="1">
+
+여기에 gif 넣기
+
+</div>
+</details>
+
+<details>
+<summary><h2>🧾 주문(Order)</h2></summary>
+<div markdown="1">
+
+여기에 gif 넣기
+
+</div>
+</details>
+
+<details>
+<summary><h2>🛒 장바구니(Cart)</h2></summary>
+<div markdown="1">
+
+여기에 gif 넣기
+
+</div>
+</details>
