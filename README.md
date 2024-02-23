@@ -257,7 +257,11 @@
 <summary><h2>🛒 장바구니(Cart)</h2></summary>
 <div markdown="1">
 
-여기에 gif 넣기
+<p align="center">
+  <h4>장바구니 등록 및 비우기</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/f9a44172-f8f7-408a-9858-a4db2816e40b">
+</p>
+
 
 </div>
 </details>
