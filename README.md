@@ -222,15 +222,6 @@
 </details>
 
 <details>
-<summary><h2>📋 메뉴(Menu)</h2></summary>
-<div markdown="1">
-
-여기에 gif 넣기
-
-</div>
-</details>
-
-<details>
 <summary><h2>🧾 주문(Order)</h2></summary>
 <div markdown="1">
 
