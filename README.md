@@ -229,27 +229,26 @@
 | Front | 1. 매장 목록 조회에서 데이터를 받아 해당 매장 조회에 대한 요청을 서버에 전송한 후 응답이 오면 해당 매장을 상세조회 한다. |
 | Backend | 1. 프론트에서 받은 데이터 값 중에서 null로 들어오는 값이 있으면 에러를 프론트에 전송한다.  |
 
-## API명
+## 찜
 | 기술 영역 | 설명 |
 | --- | --- |
-| Front | 여기다가 도메인에 대한 기술 명세를 와바바바박 적어주면 될것 같습니다. |
-| Backend | 22222 |
+| Front | 1. 매장 조회 시 해당 매장의 찜 수를 표시한다.</br>2. 사용자의 찜 여부에 따라 하트 색이 바뀐다.</br>ㅇ 찜 활성화  : 빨간색, 찜 비활성화 : 회색</br>3. 로그인 없이 찜 등록 시 로그인 화면으로 이동한다.</br> |
+| Backend | Favorite 테이블에 Store_id, Member_id, FavoriteY/N(찜 여부)을 관리한다.</br></br>찜 하기</br>1. SecurityContextHolder에 담긴 유저정보로 해당 매장을 찜한다. </br>2. 찜 여부는 Favorite Y/N로 관리하기 때문에 이미 존재하는 찜(회원-매장-Y)이면  중복 에러를 전송한다.</br>3. 튜플은 존재하나 Favorite N인 경우 Y로 변경한다.</br></br>찜 취소</br>1. SecurityContextHolder에 담긴 유저정보와 해당 매장의 찜 여부를 확인하여 취소한다. </br>2. 취소 시 Favorite Y를 N으로 변경한다.</br></br>매장별 찜 수 조회</br>1. FavoriteRepository에서 해당 매장과 FavoriteY인 찜 리스트를 조회한다.</br>2. 그 중 회원탈퇴 후 30일이 지나지 않은 회원의 찜을 제외하고 개수를 센다.</br></br>내 찜 목록 조회</br>1. SecurityContextHolder에 담긴 유저와 FavoriteY인 찜 리스트를 조회한다.</br> |
 
 <br/>
 
-## API명
+## 리뷰
 | 기술 영역 | 설명 |
 | --- | --- |
-| Front | 여기다가 도메인에 대한 기술 명세를 와바바바박 적어주면 될것 같습니다. |
-| Backend | 22222 |
+| Front | 1. 리뷰 작성 버튼은 주문확정 상태일 경우만 표시한다. </br>2. 리뷰 작성 시 별점을 등록한다.</br>3. 매장 조회 시 해당 매장의 평점을 표시한다.</br>4. 등록된 리뷰가 없을 경우 NaN값을 ‘등록된 리뷰가 없습니다.’로 표시한다.</br> |
+| Backend | Review 테이블에 Store_id, Member_id, order_id,  DeleteY/N(삭제여부), contents, rating(별점), img_url을 관리한다.</br></br>리뷰 작성</br>1. 리뷰 작성은 주문 건당 하나만 가능하다. </br>ㅇ order_id로 관리</br>2. 삭제여부를 DeleteY/N으로 관리하기 때문에 DeleteN인 경우 중복 에러를 전송한다.</br>3. 튜플은 존재하나 DeleteY인 경우 N으로 바꾸고 내용을 변경시킨다.</br>4. 해당 주문을 등록한 회원 본인만 리뷰 작성이 가능하다. </br>ㅇ SecurityContextHolder에 담긴 유저정보와 orderId로 조회한 order의 member와 비교하여 다르면 에러를 전송한다.</br>5. 주문상태가 CONFIRM인 경우만 작성 가능하다.</br></br>리뷰 수정</br>1. 해당 주문을 등록한 회원 본인만 리뷰 수정이 가능하다. </br>ㅇ SecurityContextHolder에 담긴 유저정보와 orderId로 조회한 order의 member와 비교하여 다르면 에러를 전송한다.</br>2. ReviewRepository에서 해당 order와 DeleteN인 리뷰를 조회하여 수정한다.</br></br>평점 조회</br>1. 해당 매장의 DeleteN인 리뷰들만 조회한다.</br>2. 조회된 리뷰의 평점들의 총합을  리뷰 수로 나누어 평점을 구한다.</br>3. DecimalFormat으로 소숫점 한 자리까지만 표시한다.</br> |
 
 <br/>
 
-## API명
+## 회원 탈퇴
 | 기술 영역 | 설명 |
 | --- | --- |
-| Front | 여기다가 도메인에 대한 기술 명세를 와바바바박 적어주면 될것 같습니다. |
-| Backend | 22222 |
+| Backend | 1. 탈퇴 시 부정 이용 방지 등을 위하여 탈퇴일로부터 30일 이내에 재가입이 불가능하도록 한다.</br>ㅇ 30일 동안 회원정보를 보관하기 위해 회원 탈퇴 시 member테이블에 DeleteY로 변경한다.</br>ㅇ스케쥴러로 30일이 지나면 DeleteY인 회원의 튜플을 삭제한다.</br>ㅇ 30일의 기준은 DeleteY로 변경 후 반영된 updated_time을 기준으로 한다.</br>ㅇ회원 삭제 시 연관된 테이블의 튜플을 모두 제거한다.</br> |
 
 <br/>
 
