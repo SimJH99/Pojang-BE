@@ -208,7 +208,15 @@
 <summary><h2>🏪 가게(Store)</h2></summary>
 <div markdown="1">
 
-여기에 gif 넣기
+<p align="center">
+  <h4>검색 및 찜</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/8936c5c4-06b9-4516-88d6-5c2c77c721e7">
+</p>
+
+<p align="center">
+  <h4>매장 등록</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/12092707-bb52-4497-be59-20fb10728c5d">
+</p>
 
 </div>
 </details>
@@ -226,7 +234,21 @@
 <summary><h2>🧾 주문(Order)</h2></summary>
 <div markdown="1">
 
-여기에 gif 넣기
+<p align="center">
+  <h4>주문등록</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/4d4109bd-1539-44b6-b6ad-da6224f30124">
+</p>
+
+<p align="center">
+  <h4>주문상태 변경 및 리뷰등록</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/9e9b7aac-7e86-4cd3-8c7d-ff6dd4d98e2b">
+</p>
+
+<p align="center">
+  <h4>리뷰조회</h4>
+  <img src="https://github.com/Team-SNS/Pojang-FE/assets/112849147/2faf019a-4993-43b2-b68f-f2093ce83e8b">
+</p>
+
 
 </div>
 </details>
