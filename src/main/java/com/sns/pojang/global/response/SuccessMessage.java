@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum SuccessMessage {
 
     // Common
-    SEND_CERTIFICATION_SUCCESS("인증 키를 성공적으로 전송하였습니다"),
+    SEND_EMAIL_SUCCESS("인증 키를 성공적으로 전송하였습니다"),
     VERIFY_CERTIFICATION_SUCCESS("인증 코드 검증에 성공하였습니다."),
 
     // Member

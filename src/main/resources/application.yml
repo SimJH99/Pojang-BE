@@ -22,11 +22,9 @@ spring:
         smtp.auth: true
         smtp.timeout: 50000 # SMTP 서버에 연결을 시도하고 응답을 기다리는 최대 시간이 50,000ms
         smtp.starttls.enable: true
-  data:
-    redis:
-      mail:
-        host: localhost
-        port: 6379
+  redis:
+    host: localhost
+    port: 6379
   coolsms:
       apiKey: NCSW9W1WPRODZ9JV
       apiSecret: FIJRCGDMA1Y8XTJ5HY8XO3SM4N9YPJ61
@@ -41,5 +39,6 @@ image:
   # SimJH99: C:\Users\Playdata\Desktop\프로젝트 사진 저장
 #  path: C:\Users\Playdata\Desktop\프로젝트 사진 저장
 #  path: C:/Users/Playdata/Desktop/pojang_image
-  path: C:/Users/Playdata/OneDrive/바탕 화면/pojang_image/
+#  path: C:/Users/Playdata/OneDrive/바탕 화면/pojang_image/
 #   path: C:/Users/Playdata/Desktop/pojang_image
+  path: C:\Users\USER\Desktop\playdata\image\pojang
