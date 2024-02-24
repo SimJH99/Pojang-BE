@@ -130,7 +130,7 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<SmsCertificationResponse>> sendSms(
             @RequestBody SendCertificationRequest sendCertificationRequest) throws Exception {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
-                SEND_CERTIFICATION_SUCCESS.getMessage(), memberService.sendSms(sendCertificationRequest)));
+                SEND_EMAIL_SUCCESS.getMessage(), memberService.sendSms(sendCertificationRequest)));
     }
 
     //인증 번호 확인
