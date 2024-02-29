@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/pojang
+    url: jdbc:mariadb://host.docker.internal:3306/pojang
     username: root
     password: 1234
   jpa:
@@ -39,6 +39,6 @@ image:
   # SimJH99: C:\Users\Playdata\Desktop\프로젝트 사진 저장
 #  path: C:\Users\Playdata\Desktop\프로젝트 사진 저장
 #  path: C:/Users/Playdata/Desktop/pojang_image
-#  path: C:/Users/Playdata/OneDrive/바탕 화면/pojang_image/
+  path: C:/Users/Playdata/OneDrive/바탕 화면/pojang_image/
 #   path: C:/Users/Playdata/Desktop/pojang_image
-  path: C:\Users\USER\Desktop\playdata\image\pojang
+#  path: C:\Users\USER\Desktop\playdata\image\pojang
