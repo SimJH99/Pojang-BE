@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.nio.file.Path;
 
 @Data
 public class ReviewRequest {
@@ -25,16 +24,14 @@ public class ReviewRequest {
     // 이미지
     private MultipartFile image;
 
-    public Review toEntity(Order order, Store store, Member member, int rating, String contents, Path path){
-        String imageUrl = path != null ? path.toString() : null;
+    public Review toEntity(Order order, Store store, Member member, int rating, String contents, String s3Url){
         return Review.builder()
                 .order(order)
                 .store(store)
                 .member(member)
-                .imageUrl(imageUrl)
+                .imageUrl(s3Url)
                 .rating(rating)
                 .contents(contents)
                 .build();
     }
-
 }

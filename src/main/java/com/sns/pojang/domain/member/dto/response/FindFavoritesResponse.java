@@ -16,7 +16,7 @@ public class FindFavoritesResponse {
     private Status storeStatus;
     private String imageUrl;
 
-    public static FindFavoritesResponse from(Favorite favorite) {
+    public static FindFavoritesResponse from(Favorite favorite, String s3Url) {
         return FindFavoritesResponse.builder()
                 .id(favorite.getId())
                 .storeId(favorite.getStore().getId())
@@ -24,7 +24,7 @@ public class FindFavoritesResponse {
                 .storeName(favorite.getStore().getName())
                 .category(favorite.getStore().getCategory())
                 .storeStatus(favorite.getStore().getStatus())
-                .imageUrl(favorite.getStore().getImageUrl())
+                .imageUrl(s3Url)
                 .build();
     }
 }

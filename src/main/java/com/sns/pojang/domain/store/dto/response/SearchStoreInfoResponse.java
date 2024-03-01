@@ -24,7 +24,7 @@ public class SearchStoreInfoResponse {
     private String operationTime;
     private String status;
 
-    public static SearchStoreInfoResponse from(Store store, int likes, double avgRating) {
+    public static SearchStoreInfoResponse from(Store store, int likes, double avgRating, String s3Url) {
         DecimalFormat df = new DecimalFormat("#.#");
         String sido = store.getAddress().getSido();
         String sigungu = store.getAddress().getSigungu();
@@ -35,7 +35,7 @@ public class SearchStoreInfoResponse {
                 .name(store.getName())
                 .likes(likes)
                 .avgRating(df.format(avgRating))
-                .imageUrl(store.getImageUrl())
+                .imageUrl(s3Url)
                 .address(sido + " " + sigungu + " " + query + " " + addressDetail)
                 .businessNumber(store.getBusinessNumber())
                 .category(store.getCategory())

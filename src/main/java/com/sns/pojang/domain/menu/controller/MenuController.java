@@ -32,15 +32,15 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    @PreAuthorize("hasRole('OWNER')")
-    @PostMapping("/{storeId}/menus")
-    public ResponseEntity<SuccessResponse<MenuResponse>> createMenu(
-            @PathVariable Long storeId, @Valid MenuRequest menuRequest){
-        return ResponseEntity.created(URI.create("/" + storeId + "/menus"))
-                .body(SuccessResponse.create(HttpStatus.CREATED.value(),
-                        CREATE_MENU_SUCCESS.getMessage(),
-                        menuService.createMenu(storeId, menuRequest)));
-    }
+        @PreAuthorize("hasRole('OWNER')")
+        @PostMapping("/{storeId}/menus")
+        public ResponseEntity<SuccessResponse<CreateMenuResponse>> createMenu(
+                @PathVariable Long storeId, @Valid MenuRequest menuRequest){
+            return ResponseEntity.created(URI.create("/" + storeId + "/menus"))
+                    .body(SuccessResponse.create(HttpStatus.CREATED.value(),
+                            CREATE_MENU_SUCCESS.getMessage(),
+                            menuService.createMenu(storeId, menuRequest)));
+        }
 
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping("/{storeId}/menus/{menuId}/option-groups")
@@ -70,7 +70,7 @@ public class MenuController {
 
     @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/{storeId}/menus/{menuId}")
-    public ResponseEntity<SuccessResponse<MenuResponse>> updateMenu(
+    public ResponseEntity<SuccessResponse<CreateMenuResponse>> updateMenu(
             @PathVariable Long storeId, @PathVariable Long menuId, @Valid MenuRequest menuRequest){
         return ResponseEntity.ok(SuccessResponse.update(HttpStatus.OK.value(),
                         UPDATE_MENU_SUCCESS.getMessage(),

@@ -15,7 +15,7 @@ public class ReviewResponse {
     private String contents;
     private String imageUrl;
 
-    public static ReviewResponse from(Review review) {
+    public static ReviewResponse from(Review review, String s3Url) {
         return ReviewResponse.builder()
                 .id(review.getId())
                 .orderId(review.getOrder().getId())
@@ -23,7 +23,7 @@ public class ReviewResponse {
                 .storeName(review.getOrder().getStore().getName())
                 .rating(review.getRating())
                 .contents(review.getContents())
-                .imageUrl(review.getImageUrl())
+                .imageUrl(s3Url)
                 .build();
     }
 }

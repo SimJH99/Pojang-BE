@@ -4,6 +4,7 @@ import com.sns.pojang.domain.mail.dto.SendEmailResponse;
 import com.sns.pojang.domain.mail.service.EmailService;
 import com.sns.pojang.global.config.redis.RedisService;
 import com.sns.pojang.global.response.SuccessResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import static com.sns.pojang.global.response.SuccessMessage.SEND_EMAIL_SUCCESS;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/mail")
 public class MailController {
     private final RedisService redisService;
@@ -32,6 +34,7 @@ public class MailController {
         String sentAuthCode;
         try {
             String createdCode = emailService.generateRandomNumber();
+            log.info("이메일 전송 api 시작");
             sentAuthCode = emailService.sendEmailCode(email, createdCode);
         } catch (MailException e){
             throw new MailSendException("이메일 인증코드 전송에 실패했습니다.");

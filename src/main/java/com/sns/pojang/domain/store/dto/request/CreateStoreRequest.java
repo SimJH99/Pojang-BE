@@ -8,7 +8,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
-import java.nio.file.Path;
 
 @Data
 public class CreateStoreRequest {
@@ -30,8 +29,7 @@ public class CreateStoreRequest {
     private String addressDetail;
     private String introduction;
 
-    public Store toEntity(Path path, Member member) {
-        String imageUrl = path != null ? path.toString() : null;
+    public Store toEntity(String imageUrl, Member member) {
         Address fullAddress = Address.builder()
                 .sido(sido)
                 .sigungu(sigungu)

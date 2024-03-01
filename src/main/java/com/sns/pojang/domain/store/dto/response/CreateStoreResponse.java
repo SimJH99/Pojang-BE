@@ -14,6 +14,7 @@ public class CreateStoreResponse {
     private String category;
     private String storeNumber;
     private String businessNumber;
+    private String imageUrl;
     private Address address;
 
     public static CreateStoreResponse from(Store store) {
@@ -22,6 +23,7 @@ public class CreateStoreResponse {
                 .category(store.getCategory())
                 .storeNumber(store.getStoreNumber())
                 .businessNumber(store.getBusinessNumber())
+                .imageUrl(store.getImageUrl())
                 .address(store.getAddress())
                 .build();
     }
