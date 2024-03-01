@@ -6,8 +6,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
-import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
-import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
+import com.sns.pojang.domain.menu.dto.request.OptionGroupRequest;
+import com.sns.pojang.domain.menu.dto.request.OptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.*;
 import com.sns.pojang.domain.menu.entity.Menu;
@@ -24,8 +24,6 @@ import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.StoreIdNotEqualException;
 import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.StoreRepository;
-import com.sns.pojang.global.error.ErrorCode;
-import com.sns.pojang.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,60 +67,34 @@ public class MenuService {
         Store findStore = findStore(storeId);
         validateOwner(findStore);
         String imagePath = null;
-        if (menuRequest.getMenuImage() != null && !menuRequest.getMenuImage().isEmpty()){
+        if (menuRequest.getImage() != null && !menuRequest.getImage().isEmpty()){
             log.info("이미지 추가");
-            imagePath = saveFile(menuRequest.getMenuImage());
+            imagePath = saveFile(menuRequest.getImage());
         }
         Menu newMenu = menuRequest.toEntity(findStore, imagePath);
 
         return CreateMenuResponse.from(menuRepository.save(newMenu));
     }
 
-    // 메뉴 옵션 그룹 등록
-    @Transactional
-    public List<CreateMenuOptionGroupResponse> createMenuOptionGroup(
-            Long storeId, Long menuId, List<CreateMenuOptionGroupRequest> createMenuOptionGroupRequests) {
-        Store findStore = findStore(storeId);
-        validateOwner(findStore);
-        Menu findMenu = findMenu(menuId);
-        validateStore(findStore.getId(), findMenu);
-        List<CreateMenuOptionGroupResponse> responses = new ArrayList<>();
-
-        for (CreateMenuOptionGroupRequest request : createMenuOptionGroupRequests){
-            MenuOptionGroup menuOptionGroup = request.toEntity(findMenu);
-
-            // repository에 save 후,
-            // 메뉴 Entity에 menuOptionGroup List에 생성된 menuOptionGroup add
-            findMenu.getMenuOptionGroups().add(menuOptionGroupRepository.save(menuOptionGroup));
-            responses.add(CreateMenuOptionGroupResponse.from(menuOptionGroup));
-        }
-
-        if (responses.isEmpty()){
-            throw new InvalidValueException(ErrorCode.INVALID_INPUT_VALUE);
-        }
-
-        return responses;
-    }
-
     // 메뉴 옵션 등록
-    public List<CreateMenuOptionResponse> createMenuOption(
-            Long storeId, Long menuId, Long menuOptionGroupId,
-            List<CreateMenuOptionRequest> createMenuOptionRequests) {
+    @Transactional
+    public MenuOptionGroupResponse createOptions(
+            Long storeId, Long menuId, OptionGroupRequest optionGroupRequest) {
         Store findStore = findStore(storeId);
         validateOwner(findStore);
         Menu findMenu = findMenu(menuId);
         validateStore(findStore.getId(), findMenu);
-        MenuOptionGroup findMenuOptionGroup = findMenuOptionGroup(menuOptionGroupId);
 
-        List<CreateMenuOptionResponse> responses = new ArrayList<>();
+        MenuOptionGroup newOptionGroup = optionGroupRequest.toEntity();
 
-        for (CreateMenuOptionRequest request : createMenuOptionRequests){
-            MenuOption menuOption = request.toEntity(findMenuOptionGroup);
-            findMenuOptionGroup.getMenuOptions().add(menuOptionRepository.save(menuOption));
-            responses.add(CreateMenuOptionResponse.from(menuOption));
+        for (OptionRequest optionRequest : optionGroupRequest.getOptions()){
+            MenuOption newMenuOption = optionRequest.toEntity();
+            newMenuOption.attachOptionGroup(newOptionGroup);
         }
+        newOptionGroup.attachMenu(findMenu);
+        menuOptionGroupRepository.save(newOptionGroup);
 
-        return responses;
+        return MenuOptionGroupResponse.from(newOptionGroup);
     }
 
     // 메뉴 수정
@@ -136,7 +108,7 @@ public class MenuService {
         // 입력된 storeId와 수정할 메뉴의 storeId의 일치 여부 확인
         validateStore(storeId, findMenu);
         String imagePath = null;
-        if (menuRequest.getMenuImage() != null){
+        if (menuRequest.getImage() != null){
             // 기존 s3에 업로드 된 이미지 삭제
             if (findMenu.getImageUrl() != null){
                 try {
@@ -145,7 +117,7 @@ public class MenuService {
                     log.error("Not able to delete from S3: " + e.getMessage(), e);
                 }
             }
-            MultipartFile menuImage = menuRequest.getMenuImage();
+            MultipartFile menuImage = menuRequest.getImage();
             if (menuImage != null && !menuImage.isEmpty()){
                 imagePath = saveFile(menuImage);
             }
@@ -212,12 +184,14 @@ public class MenuService {
 
     // 메뉴 상세 조회
     @Transactional
-    public MenuDetailResponse getMenuDetail(Long storeId, Long menuId){
+    public MenuResponse getMenuDetail(Long storeId, Long menuId){
         Store findStore = findStore(storeId);
         Menu findMenu = findMenu(menuId);
         validateStore(findStore.getId(), findMenu);
 
-        return MenuDetailResponse.from(findMenu);
+        URL url = amazonS3Client.getUrl(bucket, findMenu.getImageUrl());
+
+        return MenuResponse.from(findMenu, url.toString());
     }
 
     // 메뉴 옵션 조회
@@ -237,11 +211,6 @@ public class MenuService {
     private Menu findMenu(Long menuId){
         return menuRepository.findById(menuId)
                 .orElseThrow(MenuNotFoundException::new);
-    }
-
-    private MenuOptionGroup findMenuOptionGroup(Long menuOptionGroupId){
-        return menuOptionGroupRepository.findById(menuOptionGroupId)
-                .orElseThrow(MenuOptionGroupNotFoundException::new);
     }
 
     private MenuOption findMenuOption(Long menuOptionId){

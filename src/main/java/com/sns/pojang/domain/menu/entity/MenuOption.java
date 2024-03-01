@@ -39,14 +39,18 @@ public class MenuOption extends BaseTimeEntity {
     private OrderMenu orderMenu;
 
     @Builder
-    public MenuOption(String name, int price, MenuOptionGroup menuOptionGroup){
+    public MenuOption(String name, int price){
         this.name = name;
         this.price = price;
-        this.menuOptionGroup = menuOptionGroup;
     }
 
     public void attachOrderMenu(OrderMenu orderMenu){
         this.orderMenu = orderMenu;
         orderMenu.getMenuOptions().add(this);
+    }
+
+    public void attachOptionGroup(MenuOptionGroup menuOptionGroup){
+        this.menuOptionGroup = menuOptionGroup;
+        menuOptionGroup.getMenuOptions().add(this);
     }
 }

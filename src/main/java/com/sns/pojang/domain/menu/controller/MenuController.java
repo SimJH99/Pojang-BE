@@ -1,11 +1,12 @@
 package com.sns.pojang.domain.menu.controller;
 
-import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionGroupRequest;
-import com.sns.pojang.domain.menu.dto.request.CreateMenuOptionRequest;
+import com.sns.pojang.domain.menu.dto.request.OptionGroupRequest;
+import com.sns.pojang.domain.menu.dto.request.OptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.response.*;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import static com.sns.pojang.global.response.SuccessMessage.*;
 
 @RestController
 @RequestMapping("/api/stores")
+@Slf4j
 public class MenuController {
     private final MenuService menuService;
 
@@ -36,6 +38,7 @@ public class MenuController {
         @PostMapping("/{storeId}/menus")
         public ResponseEntity<SuccessResponse<CreateMenuResponse>> createMenu(
                 @PathVariable Long storeId, @Valid MenuRequest menuRequest){
+            log.info("메뉴 이미지 정보: " + menuRequest.getImage().getOriginalFilename());
             return ResponseEntity.created(URI.create("/" + storeId + "/menus"))
                     .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                             CREATE_MENU_SUCCESS.getMessage(),
@@ -43,29 +46,15 @@ public class MenuController {
         }
 
     @PreAuthorize("hasRole('OWNER')")
-    @PostMapping("/{storeId}/menus/{menuId}/option-groups")
-    public ResponseEntity<SuccessResponse<List<CreateMenuOptionGroupResponse>>> createMenuOptionGroup(
+    @PostMapping("/{storeId}/menus/{menuId}/options")
+    public ResponseEntity<SuccessResponse<MenuOptionGroupResponse>> createOptions(
             @PathVariable Long storeId,
             @PathVariable Long menuId,
-            @Valid @RequestBody List<CreateMenuOptionGroupRequest> createMenuOptionGroupRequests){
+            @Valid @RequestBody OptionGroupRequest optionGroupRequest){
         return ResponseEntity.created(URI.create("/" + storeId + "/menus" + + menuId + "/option-groups"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
-                        CREATE_MENU_OPTION_GROUP_SUCCESS.getMessage(),
-                        menuService.createMenuOptionGroup(storeId, menuId, createMenuOptionGroupRequests)));
-    }
-
-    @PreAuthorize("hasRole('OWNER')")
-    @PostMapping("/{storeId}/menus/{menuId}/option-groups/{menuOptionGroupId}/menuOptions")
-    public ResponseEntity<SuccessResponse<List<CreateMenuOptionResponse>>> createMenuOption(
-            @PathVariable Long storeId,
-            @PathVariable Long menuId,
-            @PathVariable Long menuOptionGroupId,
-            @Valid @RequestBody List<CreateMenuOptionRequest> createMenuOptionRequests){
-        return ResponseEntity.created(URI.create("/" + storeId + "/menus" + menuId +
-                        "/option-groups" + menuOptionGroupId + "/menuOptions"))
-                .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_MENU_OPTION_SUCCESS.getMessage(),
-                        menuService.createMenuOption(storeId, menuId, menuOptionGroupId, createMenuOptionRequests)));
+                        menuService.createOptions(storeId, menuId, optionGroupRequest)));
     }
 
     @PreAuthorize("hasRole('OWNER')")
@@ -103,7 +92,7 @@ public class MenuController {
     }
 
     @GetMapping("/{storeId}/menus/{menuId}")
-    public ResponseEntity<SuccessResponse<MenuDetailResponse>> getMenuDetail(@PathVariable Long storeId,
+    public ResponseEntity<SuccessResponse<MenuResponse>> getMenuDetail(@PathVariable Long storeId,
                                                                              @PathVariable Long menuId){
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MENU_DETAIL_SUCCESS.getMessage(),
@@ -113,7 +102,7 @@ public class MenuController {
     // 메뉴 옵션 객체 조회
     @GetMapping("/{storeId}/menu-options/{optionId}/")
     public ResponseEntity<SuccessResponse<MenuOptionResponse>> getMenuOption(@PathVariable Long storeId,
-                                                                             @PathVariable Long optionId){
+                                                                                  @PathVariable Long optionId){
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MENU_OPTION_SUCCESS.getMessage(),
                 menuService.getMenuOption(storeId, optionId)));
