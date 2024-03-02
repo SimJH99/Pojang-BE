@@ -23,13 +23,13 @@ public class SearchStoreResponse {
     private int countOrder;
     private int likes;
 
-    public static SearchStoreResponse from(Store store, int countOrder, double avgRating, int likes){
+    public static SearchStoreResponse from(Store store, int countOrder, double avgRating, int likes, String s3Url){
         DecimalFormat df = new DecimalFormat("#.#");
         return SearchStoreResponse.builder()
                 .id(store.getId())
                 .name(store.getName())
                 .category(store.getCategory())
-                .imageUrl(store.getImageUrl())
+                .imageUrl(s3Url)
                 .status(store.getStatus())
                 .avgRating(df.format(avgRating))
                 .countOrder(countOrder)

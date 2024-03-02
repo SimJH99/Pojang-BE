@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class MenuResponse {
+public class CreateMenuResponse {
     private Long id;
     private String store; // 가게명
     private String info; // 메뉴 정보
@@ -14,15 +14,15 @@ public class MenuResponse {
     private int price; // 메뉴 가격
     private String imageUrl; // 메뉴 이미지 url
 
-    public static MenuResponse from(Menu menu, String s3Url){
+    public static CreateMenuResponse from(Menu menu){
 
-        return MenuResponse.builder()
+        return CreateMenuResponse.builder()
                 .id(menu.getId())
                 .store(menu.getStore().getName())
                 .name(menu.getName())
                 .info(menu.getMenuInfo())
                 .price(menu.getPrice())
-                .imageUrl(s3Url)
+                .imageUrl(menu.getImageUrl())
                 .build();
     }
 }

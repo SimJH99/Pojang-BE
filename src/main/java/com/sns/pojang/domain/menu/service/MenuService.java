@@ -1,5 +1,8 @@
 package com.sns.pojang.domain.menu.service;
 
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
@@ -39,13 +42,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -56,34 +58,24 @@ public class MenuService {
     private final MenuOptionGroupRepository menuOptionGroupRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final MemberRepository memberRepository;
-    @Value("${image.path}")
-    private String imagePath;
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     // 메뉴 등록
     @Transactional
-    public MenuResponse createMenu(Long storeId, MenuRequest menuRequest) {
+    public CreateMenuResponse createMenu(Long storeId, MenuRequest menuRequest) {
         Store findStore = findStore(storeId);
         validateOwner(findStore);
-        Path path;
-        if (menuRequest.getMenuImage() != null){
+        String imagePath = null;
+        if (menuRequest.getMenuImage() != null && !menuRequest.getMenuImage().isEmpty()){
             log.info("이미지 추가");
-            MultipartFile menuImage = menuRequest.getMenuImage();
-            String fileName = menuImage.getOriginalFilename(); // 확장자 포함한 파일명 추출
-            path = Paths.get(imagePath, fileName);
-            try {
-                byte[] bytes = menuImage.getBytes(); // 이미지 파일을 바이트로 변환
-                // 해당 경로의 폴더에 이미지 파일 추가. 이미 동일 파일이 있으면 덮어 쓰기(Write), 없으면 Create
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Image Not Available");
-            }
-        } else {
-            // 첨부된 이미지가 없을 경우, 기본 이미지로 세팅해주기
-            path = Paths.get(imagePath, "no_image.jpg");
+            imagePath = saveFile(menuRequest.getMenuImage());
         }
-        Menu newMenu = menuRequest.toEntity(findStore, path);
+        Menu newMenu = menuRequest.toEntity(findStore, imagePath);
 
-        return MenuResponse.from(menuRepository.save(newMenu));
+        return CreateMenuResponse.from(menuRepository.save(newMenu));
     }
 
     // 메뉴 옵션 그룹 등록
@@ -135,7 +127,7 @@ public class MenuService {
 
     // 메뉴 수정
     @Transactional
-    public MenuResponse updateMenu(Long storeId, Long menuId, MenuRequest menuRequest)
+    public CreateMenuResponse updateMenu(Long storeId, Long menuId, MenuRequest menuRequest)
             throws StoreIdNotEqualException{
         Store findStore = findStore(storeId);
         validateOwner(findStore);
@@ -143,22 +135,31 @@ public class MenuService {
 
         // 입력된 storeId와 수정할 메뉴의 storeId의 일치 여부 확인
         validateStore(storeId, findMenu);
-
-        // dto에서 얻은 image는 null일 수 없으므로, null 처리 안함
-        // OWNER가 메뉴 등록 시 이미지를 첨부하지 않았어도, 기본 이미지가 세팅되기 때문
-        MultipartFile menuImage = menuRequest.getMenuImage();
-        String fileName = menuImage.getOriginalFilename(); // 확장자 포함한 파일명 추출
-        Path path = Paths.get(imagePath, fileName);
-        Menu updatedMenu = findMenu.updateMenu(menuRequest.getName(), menuRequest.getMenuInfo(),
-                menuRequest.getPrice(), path.toString(), findStore);
-        try {
-            byte[] bytes = menuImage.getBytes(); // 이미지 파일을 바이트로 변환
-            // 해당 경로의 폴더에 이미지 파일 추가. 이미 동일 파일이 있으면 덮어 쓰기(Write), 없으면 Create
-            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Image Not Available");
+        String imagePath = null;
+        if (menuRequest.getMenuImage() != null){
+            // 기존 s3에 업로드 된 이미지 삭제
+            if (findMenu.getImageUrl() != null){
+                try {
+                    amazonS3Client.deleteObject(bucket, findMenu.getImageUrl());
+                } catch (SdkClientException e){
+                    log.error("Not able to delete from S3: " + e.getMessage(), e);
+                }
+            }
+            MultipartFile menuImage = menuRequest.getMenuImage();
+            if (menuImage != null && !menuImage.isEmpty()){
+                imagePath = saveFile(menuImage);
+            }
+        } else {
+            // DB에 image url이 있다면 image 값 유지
+            if (findMenu.getImageUrl() != null) {
+                imagePath = findMenu.getImageUrl();
+            }
         }
-        return MenuResponse.from(updatedMenu);
+
+        Menu updatedMenu = findMenu.updateMenu(menuRequest.getName(), menuRequest.getMenuInfo(),
+                menuRequest.getPrice(), imagePath, findStore);
+
+        return CreateMenuResponse.from(updatedMenu);
     }
 
     // 메뉴 삭제
@@ -199,7 +200,14 @@ public class MenuService {
         Page<Menu> menus = menuRepository.findByDeleteYnAndStoreId("N", findStore.getId(), pageable);
         List<Menu> menuList = menus.getContent();
 
-        return menuList.stream().map(MenuResponse::from).collect(Collectors.toList());
+        List<MenuResponse> menuResponses = new ArrayList<>();
+
+        for (Menu menu : menuList){
+            URL url = amazonS3Client.getUrl(bucket, menu.getImageUrl());
+            menuResponses.add(MenuResponse.from(menu, url.toString()));
+        }
+
+        return menuResponses;
     }
 
     // 메뉴 상세 조회
@@ -265,6 +273,23 @@ public class MenuService {
         if (!store.getMember().equals(findMember)){
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
+    }
+
+    private String saveFile(MultipartFile file){
+        String fileUrl;
+        if (file.isEmpty()){
+            return null;
+        }
+        try {
+            fileUrl = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket, fileUrl, file.getInputStream(), metadata);
+        } catch (IOException e){
+            throw new IllegalArgumentException("Image is not available");
+        }
+        return fileUrl;
     }
 
 

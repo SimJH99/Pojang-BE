@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.member.service;
 
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.favorite.exception.FavoriteNotFoundException;
 import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
@@ -22,6 +23,7 @@ import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import com.sns.pojang.global.utils.CertificationGenerator;
 import com.sns.pojang.global.utils.CertificationNumberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -32,6 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,6 +56,11 @@ public class MemberService {
     private final CertificationNumberRepository certificationNumberRepository;
     private final CertificationGenerator certificationGenerator;
     private final SmsCertificationUtil smsCertificationUtil;
+
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     @Transactional
     public CreateMemberResponse createUser(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException{
@@ -123,16 +131,13 @@ public class MemberService {
         String email = authentication.getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(MEMBER_NOT_FOUND));
 
-        if (!member.getNickname().equals(updateMyInfoRequest.getNickname())){
-            if(memberRepository.findByNickname(updateMyInfoRequest.getNickname()).isPresent()){
+        if (!member.getNickname().equals(updateMyInfoRequest.getNickname()) &&
+                (memberRepository.findByNickname(updateMyInfoRequest.getNickname()).isPresent())){
                throw new NicknameDuplicateException();
-            }
-
         }
-        if (!member.getPhoneNumber().equals(updateMyInfoRequest.getPhoneNumber())){
-            if(memberRepository.findByPhoneNumber(updateMyInfoRequest.getPhoneNumber()).isPresent()){
+        if (!member.getPhoneNumber().equals(updateMyInfoRequest.getPhoneNumber()) &&
+                (memberRepository.findByPhoneNumber(updateMyInfoRequest.getPhoneNumber()).isPresent())){
                 throw new PhoneNumberDuplicateException();
-            }
         }
         member.updateMyInfo(updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPhoneNumber());
 
@@ -189,7 +194,8 @@ public class MemberService {
         }
         List<FindFavoritesResponse> findFavoritesResponses= new ArrayList<>();
         for(Favorite favorite : favorites) {
-            FindFavoritesResponse favoritesResponse = FindFavoritesResponse.from(favorite);
+            URL url = amazonS3Client.getUrl(bucket, favorite.getStore().getImageUrl());
+            FindFavoritesResponse favoritesResponse = FindFavoritesResponse.from(favorite, url.toString());
             findFavoritesResponses.add(favoritesResponse);
         }
         return findFavoritesResponses;
@@ -199,12 +205,10 @@ public class MemberService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         List<Review> reviews = reviewRepository.findByMemberAndDeleteYn(member, "N");
-//        if(reviews.isEmpty()) {
-//            throw new ReviewNotFoundException();
-//        }
         List<ReviewResponse> reviewResponses= new ArrayList<>();
         for(Review review : reviews) {
-            ReviewResponse reviewResponse = ReviewResponse.from(review);
+            URL url = amazonS3Client.getUrl(bucket, review.getImageUrl());
+            ReviewResponse reviewResponse = ReviewResponse.from(review, url.toString());
             reviewResponses.add(reviewResponse);
         }
         return reviewResponses;

@@ -27,6 +27,7 @@ public class RedisService {
 
     public void setValues(String key, String data, Duration duration) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        log.info("이메일, 인증 코드 redis에 세팅 시작");
         values.set(key, data, duration);
         log.info("redis에 이메일 인증코드 관련 정보 저장");
     }

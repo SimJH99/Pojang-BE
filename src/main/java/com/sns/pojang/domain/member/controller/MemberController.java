@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static com.sns.pojang.global.response.SuccessMessage.*;
@@ -128,15 +129,15 @@ public class MemberController {
     // 인증 번호 발송
     @PostMapping("/send-sms")
     public ResponseEntity<SuccessResponse<SmsCertificationResponse>> sendSms(
-            @RequestBody SendCertificationRequest sendCertificationRequest) throws Exception {
+            @RequestBody SendCertificationRequest sendCertificationRequest) throws NoSuchAlgorithmException {
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
                 SEND_EMAIL_SUCCESS.getMessage(), memberService.sendSms(sendCertificationRequest)));
     }
 
     //인증 번호 확인
     @PostMapping("/confirm-sms")
-    public ResponseEntity<SuccessResponse<Void>> SmsVerification(
-            @RequestBody VerifyCertificationRequest verifyCertificationRequest) throws Exception{
+    public ResponseEntity<SuccessResponse<Void>> verify(
+            @RequestBody VerifyCertificationRequest verifyCertificationRequest) {
         certificationService.verifyKey(verifyCertificationRequest.getPhoneNumber(),
                 verifyCertificationRequest.getCertificationNumber());
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
@@ -170,9 +171,9 @@ public class MemberController {
     //내 매장 정보 조회
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/stores")
-    public ResponseEntity<SuccessResponse<List<SearchMyStoreResponse>>> getMyStore(){
+    public ResponseEntity<SuccessResponse<List<SearchMyStoreResponse>>> getMyStores(){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(), SEARCH_MY_STORE_SUCCESS.getMessage(),
-                storeService.getMyStore()));
+                storeService.getMyStores()));
     }
 }
 

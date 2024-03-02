@@ -20,11 +20,11 @@ public class SearchMyStoreResponse {
     private Status status;
     private String operationTime;
 
-    public static SearchMyStoreResponse from(Store store) {
+    public static SearchMyStoreResponse from(Store store, String s3Url) {
         return SearchMyStoreResponse.builder()
                 .id(store.getId())
                 .name(store.getName())
-                .imageUrl(store.getImageUrl())
+                .imageUrl(s3Url)
                 .address(store.getAddress())
                 .businessNumber(store.getBusinessNumber())
                 .category(store.getCategory())

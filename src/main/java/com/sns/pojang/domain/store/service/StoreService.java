@@ -1,11 +1,12 @@
 package com.sns.pojang.domain.store.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
-import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderStatus;
 import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.review.dto.response.RatingResponse;
@@ -44,14 +45,12 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -63,9 +62,10 @@ public class StoreService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final FavoriteRepository favoriteRepository;
+    private final AmazonS3Client amazonS3Client;
 
-    @Value("${image.path}")
-    private String imagePath;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     public BusinessNumber registerBusinessNumber(RegisterBusinessNumberRequest registerBusinessNumberRequest){
         BusinessNumber businessNumber = new BusinessNumber(registerBusinessNumberRequest.getBusinessNumber());
@@ -87,24 +87,11 @@ public class StoreService {
             throw new BusinessNumberDuplicateException();
         }
 
-        Path path;
+        String imagePath = null;
         if (createStoreRequest.getStoreImage() != null){
-            MultipartFile storeImage = createStoreRequest.getStoreImage();
-            String fileName = storeImage.getOriginalFilename(); // 확장자 포함한 파일명 추출
-            path = Paths.get(imagePath, fileName);
-            try {
-                byte[] bytes = storeImage.getBytes(); // 이미지 파일을 바이트로 변환
-                // 해당 경로의 폴더에 이미지 파일 추가. 이미 동일 파일이 있으면 덮어 쓰기(Write), 없으면 Create
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Image Not Available");
-            }
-        } else {
-            // 첨부된 이미지가 없을 경우, 기본 이미지로 세팅해주기
-            path = Paths.get(imagePath, "no_image.jpg");
+            imagePath = saveFile(createStoreRequest.getStoreImage());
         }
-
-        Store newStore = createStoreRequest.toEntity(path, findMember);
+        Store newStore = createStoreRequest.toEntity(imagePath, findMember);
 
         // Member List<Store>에 생성된 store 추가
         newStore.attachMember(findMember);
@@ -126,7 +113,7 @@ public class StoreService {
         return UpdateStoreResponse.from(storeRepository.save(findStore));
     }
 
-//    가게 조회 및 검색기능
+    // 가게 조회 및 검색기능
     @Transactional
     public List<SearchStoreResponse> findStores(SearchStoreRequest searchStoreRequest, Pageable pageable) {
 //        검색을 위해 Specification 객체 사용
@@ -140,13 +127,11 @@ public class StoreService {
                 if (searchStoreRequest.getCategory() != null) {
                     predicates.add(criteriaBuilder.like(root.get("category"), "%" + searchStoreRequest.getCategory() + "%"));
                 }
-//                predicates.add(criteriaBuilder.equal(root.get("delYn"), "N"));
                 Predicate[] predicatesArr = new Predicate[predicates.size()];
                 for (int i = 0; i < predicates.size(); i++) {
                     predicatesArr[i] = predicates.get(i);
                 }
-                Predicate predicate = criteriaBuilder.and(predicatesArr);
-                return predicate;
+                return criteriaBuilder.and(predicatesArr);
             }
         };
 
@@ -156,6 +141,7 @@ public class StoreService {
         int totalRating = 0;
         double avgRating = 0;
         for(Store store : storeList) {
+            URL url = amazonS3Client.getUrl(bucket, store.getImageUrl());
             int countOrder = orderRepository.findByStoreAndOrderStatus(store, OrderStatus.CONFIRM).size();
             int likes = favoriteRepository.findByStoreAndFavoriteYn(store, "Y").size();
             List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
@@ -164,19 +150,9 @@ public class StoreService {
             }
             avgRating = (double) totalRating /reviews.size();
             totalRating = 0;
-            SearchStoreResponse searchStoreResponse = SearchStoreResponse.from(store, countOrder, avgRating, likes);
+            SearchStoreResponse searchStoreResponse = SearchStoreResponse.from(store, countOrder, avgRating, likes, url.toString());
             searchStoreResponses.add(searchStoreResponse);
         }
-//        return RatingResponse.builder()
-//                .avgRating(df.format(avgRating))
-//        List<SearchStoreResponse> searchStoreResponses = new ArrayList<>();
-//        searchStoreResponses = storeList.stream().map(i -> SearchStoreResponse.builder()
-//                .id(i.getId())
-//                .name(i.getName())
-//                .category(i.getCategory())
-//                .imageUrl(i.getImageUrl())
-//                .build()
-//        ).collect(Collectors.toList());
         return searchStoreResponses;
     }
 
@@ -188,16 +164,19 @@ public class StoreService {
     }
 
     @Transactional
-    public List<SearchMyStoreResponse> getMyStore() {
+    public List<SearchMyStoreResponse> getMyStores() {
         Member findMember = findMember();
         //본인이 아닌 다른 owner회원이 조회하지 못하게 분기처리
-
-//                .status(i.getStatus())
         List<Store> stores = storeRepository.findByMember(findMember);
-//        if (stores.isEmpty()){
-//            throw new EntityNotFoundException(MY_STORE_NOT_FOUND);
-//        }
-        return stores.stream().map(SearchMyStoreResponse::from).collect(Collectors.toList());
+
+        List<SearchMyStoreResponse> searchMyStoreResponses = new ArrayList<>();
+
+        for (Store store : stores){
+            URL url = amazonS3Client.getUrl(bucket, store.getImageUrl());
+            searchMyStoreResponses.add(SearchMyStoreResponse.from(store, url.toString()));
+        }
+
+        return searchMyStoreResponses;
     }
 
     // 가게 이미지 조회
@@ -240,6 +219,23 @@ public class StoreService {
         }
     }
 
+    private String saveFile(MultipartFile file){
+        String fileUrl;
+        if (file.isEmpty()){
+            return null;
+        }
+        try {
+            fileUrl = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket, fileUrl, file.getInputStream(), metadata);
+        } catch (IOException e){
+            throw new IllegalArgumentException("Image is not available");
+        }
+        return fileUrl;
+    }
+
     public List<ReviewResponse> findReviews(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         if(store.getDeleteYn().equals("Y")) {
@@ -251,7 +247,8 @@ public class StoreService {
         }
         List<ReviewResponse> reviewResponses = new ArrayList<>();
         for(Review review : reviews) {
-            ReviewResponse reviewResponse = ReviewResponse.from(review);
+            URL url = amazonS3Client.getUrl(bucket, review.getImageUrl());
+            ReviewResponse reviewResponse = ReviewResponse.from(review, url.toString());
             reviewResponses.add(reviewResponse);
         }
         return reviewResponses;
@@ -276,6 +273,9 @@ public class StoreService {
         if(store.getDeleteYn().equals("Y")) {
             throw new StoreNotFoundException();
         }
+        // s3 url 추출
+        URL url = amazonS3Client.getUrl(bucket, store.getImageUrl());
+
         List<Favorite> favorites = favoriteRepository.findByStoreAndFavoriteYn(store, "Y");
         int count = 0;
         for(Favorite favorite : favorites) {
@@ -290,7 +290,7 @@ public class StoreService {
             totalRating += review.getRating();
         }
         double avgRating = (double) totalRating /reviews.size();
-        return SearchStoreInfoResponse.from(store, count, avgRating);
+        return SearchStoreInfoResponse.from(store, count, avgRating, url.toString());
     }
 
     @Transactional
@@ -310,4 +310,6 @@ public class StoreService {
         }
         store.close();
     }
+
+
 }
