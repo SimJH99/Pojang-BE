@@ -17,6 +17,7 @@ import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.order.entity.OrderMenu;
+import com.sns.pojang.domain.order.entity.OrderMenuOption;
 import com.sns.pojang.domain.order.entity.OrderStatus;
 import com.sns.pojang.domain.order.exception.*;
 import com.sns.pojang.domain.order.repository.OrderRepository;
@@ -57,7 +58,8 @@ public class OrderService {
 
         // 총 주문 금액 검증
         validateTotalPrice(orderRequest.getSelectedMenus(), orderRequest.getTotalPrice());
-        Order order = orderRequest.toEntity(findMember, findStore);
+        Order order = orderRequest.toEntity(findStore);
+        order.attachMember(findMember);
 
         for (SelectedMenuRequest selectedMenu : orderRequest.getSelectedMenus()){
             Menu findMenu = findMenu(selectedMenu.getMenuId());
@@ -70,7 +72,10 @@ public class OrderService {
             if (selectedMenu.getSelectedMenuOptions() != null){
                 for (SelectedOptionRequest selectedOptionRequest : selectedMenu.getSelectedMenuOptions()){
                     MenuOption findMenuOption = findMenuOption(selectedOptionRequest.getId());
-                    findMenuOption.attachOrderMenu(orderMenu);
+                    OrderMenuOption orderMenuOption = OrderMenuOption.builder()
+                            .menuOption(findMenuOption)
+                            .build();
+                    orderMenuOption.attachOrderMenu(orderMenu);
                 }
             }
             orderMenu.attachOrder(order);

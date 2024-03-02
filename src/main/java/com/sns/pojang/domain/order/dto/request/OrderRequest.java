@@ -1,6 +1,5 @@
 package com.sns.pojang.domain.order.dto.request;
 
-import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.order.entity.Order;
 import com.sns.pojang.domain.store.entity.Store;
 import lombok.Data;
@@ -15,13 +14,12 @@ public class OrderRequest {
     private int totalPrice; // 총 주문 금액
     private List<SelectedMenuRequest> selectedMenus; // 선택된 메뉴들
 
-    public Order toEntity(Member member, Store store){
+    public Order toEntity(Store store){
         return Order.builder()
                 .payment(payment)
                 .requirement(requirement)
                 .store(store)
                 .totalPrice(totalPrice)
-                .member(member)
                 .build();
     }
 }

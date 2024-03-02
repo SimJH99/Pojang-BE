@@ -1,7 +1,6 @@
 package com.sns.pojang.domain.order.entity;
 
 import com.sns.pojang.domain.menu.entity.Menu;
-import com.sns.pojang.domain.menu.entity.MenuOption;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,7 +31,7 @@ public class OrderMenu extends BaseTimeEntity {
     private Menu menu;
 
     @OneToMany(mappedBy = "orderMenu", cascade = CascadeType.PERSIST)
-    private List<MenuOption> menuOptions = new ArrayList<>();
+    private List<OrderMenuOption> orderMenuOptions = new ArrayList<>();
 
     @Builder
     public OrderMenu(int quantity, Menu menu){
