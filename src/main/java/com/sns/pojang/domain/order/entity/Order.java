@@ -62,4 +62,9 @@ public class Order extends BaseTimeEntity {
     public void updateOrderStatus(OrderStatus orderStatus){
         this.orderStatus = orderStatus;
     }
+
+    public void attachMember(Member member){
+        this.member = member;
+        member.getOrders().add(this);
+    }
 }

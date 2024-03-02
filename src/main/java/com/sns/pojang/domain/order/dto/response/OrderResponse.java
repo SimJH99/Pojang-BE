@@ -25,14 +25,14 @@ public class OrderResponse {
     private String customer; // 주문자 닉네임
     private String orderDateTime; // 주문 시간
     private String orderStatus; // 주문 상태
-    private Map<String, Integer> orderMenuInfo; // 주문 메뉴 정보
-    private Map<String, List<String>> orderMenuOptions; // 추가한 옵션 정보
     private String phoneNumber; // 주문자 연락처
     private String requirement; // 요청 사항
     private int totalPrice; // 총 주문 금액
+    private List<OrderMenuResponse> orderMenus; // 주문 메뉴 정보
 
     public static OrderResponse from(Order order, String s3Url) {
-        String orderStatus = "";
+        List<OrderMenuResponse> orderMenus = new ArrayList<>();
+        String orderStatus;
         if(order.getOrderStatus() == OrderStatus.PENDING) {
             orderStatus = "접수대기";
         } else if (order.getOrderStatus() == OrderStatus.ORDERED) {
@@ -41,17 +41,10 @@ public class OrderResponse {
             orderStatus = "주문취소";
         }else orderStatus = "픽업완료";
 
-        Map<String, Integer> orderMenuInfo = new HashMap<>();
-        Map<String, List<String>> orderMenuOptions = new HashMap<>();
-        for (OrderMenu orderMenu : order.getOrderMenus()){
-            orderMenuInfo.put(orderMenu.getMenu().getName(), orderMenu.getQuantity());
-            List<String> menuOptions = new ArrayList<>();
-            for (MenuOption menuOption : orderMenu.getMenuOptions()){
-                menuOptions.add(menuOption.getName());
-                log.info(menuOption.getName());
-                orderMenuOptions.put(orderMenu.getMenu().getName(), menuOptions);
-            }
+        for (OrderMenu orderMenu : order.getOrderMenus()) {
+            orderMenus.add(OrderMenuResponse.from(orderMenu));
         }
+
         return OrderResponse.builder()
                 .orderId(order.getId())
                 .storeId(order.getStore().getId())
@@ -64,13 +57,13 @@ public class OrderResponse {
                 .requirement(order.getRequirement())
                 .totalPrice(order.getTotalPrice())
                 .storeImageUrl(s3Url)
-                .orderMenuInfo(orderMenuInfo)
-                .orderMenuOptions(orderMenuOptions)
+                .orderMenus(orderMenus)
                 .build();
     }
 
     public static OrderResponse from(Order order) {
-        String orderStatus = "";
+        List<OrderMenuResponse> orderMenus = new ArrayList<>();
+        String orderStatus;
         if(order.getOrderStatus() == OrderStatus.PENDING) {
            orderStatus = "접수대기";
         } else if (order.getOrderStatus() == OrderStatus.ORDERED) {
@@ -79,17 +72,10 @@ public class OrderResponse {
             orderStatus = "주문취소";
         }else orderStatus = "픽업완료";
 
-        Map<String, Integer> orderMenuInfo = new HashMap<>();
-        Map<String, List<String>> orderMenuOptions = new HashMap<>();
-        for (OrderMenu orderMenu : order.getOrderMenus()){
-            orderMenuInfo.put(orderMenu.getMenu().getName(), orderMenu.getQuantity());
-            List<String> menuOptions = new ArrayList<>();
-            for (MenuOption menuOption : orderMenu.getMenuOptions()){
-                menuOptions.add(menuOption.getName());
-                log.info(menuOption.getName());
-                orderMenuOptions.put(orderMenu.getMenu().getName(), menuOptions);
-            }
+        for (OrderMenu orderMenu : order.getOrderMenus()) {
+            orderMenus.add(OrderMenuResponse.from(orderMenu));
         }
+
         return OrderResponse.builder()
                 .orderId(order.getId())
                 .storeId(order.getStore().getId())
@@ -101,8 +87,7 @@ public class OrderResponse {
                 .phoneNumber(order.getMember().getPhoneNumber())
                 .requirement(order.getRequirement())
                 .totalPrice(order.getTotalPrice())
-                .orderMenuInfo(orderMenuInfo)
-                .orderMenuOptions(orderMenuOptions)
+                .orderMenus(orderMenus)
                 .build();
     }
 }
