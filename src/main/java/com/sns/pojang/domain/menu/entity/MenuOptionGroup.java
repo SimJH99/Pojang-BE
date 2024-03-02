@@ -33,8 +33,12 @@ public class MenuOptionGroup extends BaseTimeEntity {
     @OneToMany(mappedBy = "menuOptionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuOption> menuOptions = new ArrayList<>();
 
-    public MenuOptionGroup(String name, Menu menu){
+    public MenuOptionGroup(String name){
         this.name = name;
+    }
+
+    public void attachMenu(Menu menu){
         this.menu = menu;
+        menu.getMenuOptionGroups().add(this);
     }
 }

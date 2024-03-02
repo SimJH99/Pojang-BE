@@ -39,7 +39,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.sns.pojang.global.error.ErrorCode.MEMBER_NOT_FOUND;
 import static com.sns.pojang.global.error.ErrorCode.MEMBER_ORDER_MISMATCH;
@@ -232,7 +231,13 @@ public class MemberService {
         Member findMember = findMember();
         Page<Order> myOrders = orderRepository.findByMemberOrderByCreatedTimeDesc(findMember, pageable);
 
-        return myOrders.stream().map(OrderResponse::from).collect(Collectors.toList());
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        for (Order order : myOrders){
+            URL url = amazonS3Client.getUrl(bucket, order.getStore().getImageUrl());
+            orderResponses.add(OrderResponse.from(order, url.toString()));
+        }
+
+        return orderResponses;
     }
 
     private void validateOrder(Member member, Order order){

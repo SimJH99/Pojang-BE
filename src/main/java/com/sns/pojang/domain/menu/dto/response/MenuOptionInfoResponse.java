@@ -6,14 +6,13 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class GetMenuOptionResponse {
+public class MenuOptionInfoResponse {
     private Long id;
-    private String name; // 메뉴 옵션명
-    private int price; // 옵션 가격
+    private String name;
+    private int price;
 
-    public static GetMenuOptionResponse from(MenuOption menuOption){
-
-        return GetMenuOptionResponse.builder()
+    public static MenuOptionInfoResponse from(MenuOption menuOption){
+        return MenuOptionInfoResponse.builder()
                 .id(menuOption.getId())
                 .name(menuOption.getName())
                 .price(menuOption.getPrice())

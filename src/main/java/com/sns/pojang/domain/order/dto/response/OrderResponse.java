@@ -21,6 +21,7 @@ public class OrderResponse {
     private Long orderId; // 주문 번호
     private Long storeId;
     private String store; // 가게명
+    private String storeImageUrl;
     private String customer; // 주문자 닉네임
     private String orderDateTime; // 주문 시간
     private String orderStatus; // 주문 상태
@@ -29,6 +30,44 @@ public class OrderResponse {
     private String phoneNumber; // 주문자 연락처
     private String requirement; // 요청 사항
     private int totalPrice; // 총 주문 금액
+
+    public static OrderResponse from(Order order, String s3Url) {
+        String orderStatus = "";
+        if(order.getOrderStatus() == OrderStatus.PENDING) {
+            orderStatus = "접수대기";
+        } else if (order.getOrderStatus() == OrderStatus.ORDERED) {
+            orderStatus = "주문접수";
+        } else if (order.getOrderStatus() == OrderStatus.CANCELED) {
+            orderStatus = "주문취소";
+        }else orderStatus = "픽업완료";
+
+        Map<String, Integer> orderMenuInfo = new HashMap<>();
+        Map<String, List<String>> orderMenuOptions = new HashMap<>();
+        for (OrderMenu orderMenu : order.getOrderMenus()){
+            orderMenuInfo.put(orderMenu.getMenu().getName(), orderMenu.getQuantity());
+            List<String> menuOptions = new ArrayList<>();
+            for (MenuOption menuOption : orderMenu.getMenuOptions()){
+                menuOptions.add(menuOption.getName());
+                log.info(menuOption.getName());
+                orderMenuOptions.put(orderMenu.getMenu().getName(), menuOptions);
+            }
+        }
+        return OrderResponse.builder()
+                .orderId(order.getId())
+                .storeId(order.getStore().getId())
+                .store(order.getStore().getName())
+                .storeImageUrl(order.getStore().getImageUrl())
+                .customer(order.getMember().getNickname())
+                .orderDateTime(order.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .orderStatus(orderStatus)
+                .phoneNumber(order.getMember().getPhoneNumber())
+                .requirement(order.getRequirement())
+                .totalPrice(order.getTotalPrice())
+                .storeImageUrl(s3Url)
+                .orderMenuInfo(orderMenuInfo)
+                .orderMenuOptions(orderMenuOptions)
+                .build();
+    }
 
     public static OrderResponse from(Order order) {
         String orderStatus = "";
@@ -55,6 +94,7 @@ public class OrderResponse {
                 .orderId(order.getId())
                 .storeId(order.getStore().getId())
                 .store(order.getStore().getName())
+                .storeImageUrl(order.getStore().getImageUrl())
                 .customer(order.getMember().getNickname())
                 .orderDateTime(order.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .orderStatus(orderStatus)

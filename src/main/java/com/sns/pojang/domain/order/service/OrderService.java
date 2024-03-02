@@ -11,6 +11,7 @@ import com.sns.pojang.domain.menu.repository.MenuOptionRepository;
 import com.sns.pojang.domain.menu.repository.MenuRepository;
 import com.sns.pojang.domain.order.dto.request.OrderRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuRequest;
+import com.sns.pojang.domain.order.dto.request.SelectedOptionRequest;
 import com.sns.pojang.domain.order.dto.response.CountResponse;
 import com.sns.pojang.domain.order.dto.response.CreateOrderResponse;
 import com.sns.pojang.domain.order.dto.response.OrderResponse;
@@ -67,8 +68,8 @@ public class OrderService {
                     .build();
             // 메뉴 옵션이 있으면 아래 코드 실행
             if (selectedMenu.getSelectedMenuOptions() != null){
-                for (Long optionId : selectedMenu.getSelectedMenuOptions()){
-                    MenuOption findMenuOption = findMenuOption(optionId);
+                for (SelectedOptionRequest selectedOptionRequest : selectedMenu.getSelectedMenuOptions()){
+                    MenuOption findMenuOption = findMenuOption(selectedOptionRequest.getId());
                     findMenuOption.attachOrderMenu(orderMenu);
                 }
             }
@@ -196,8 +197,8 @@ public class OrderService {
             Menu menu = findMenu(menuRequest.getMenuId());
             int menuOptionTotal = 0;
             if (menuRequest.getSelectedMenuOptions() != null){
-                for (Long menuOptionId : menuRequest.getSelectedMenuOptions()){
-                    MenuOption menuOption = findMenuOption(menuOptionId);
+                for (SelectedOptionRequest selectedOptionRequest : menuRequest.getSelectedMenuOptions()){
+                    MenuOption menuOption = findMenuOption(selectedOptionRequest.getId());
                     log.info("옵션 금액: " + menuOption.getPrice());
                     menuOptionTotal += menuOption.getPrice();
                 }

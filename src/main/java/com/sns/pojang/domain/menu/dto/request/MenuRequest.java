@@ -16,7 +16,7 @@ public class MenuRequest {
     private String menuInfo; // 메뉴 정보
     @NotNull(message = "메뉴 가격을 입력하세요")
     private int price; // 메뉴 가격
-    private MultipartFile menuImage; // 메뉴 이미지
+    private MultipartFile image; // 메뉴 이미지
 
     public Menu toEntity(Store store, String imageUrl){
 
