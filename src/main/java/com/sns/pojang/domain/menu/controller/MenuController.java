@@ -1,9 +1,12 @@
 package com.sns.pojang.domain.menu.controller;
 
-import com.sns.pojang.domain.menu.dto.request.OptionGroupRequest;
-import com.sns.pojang.domain.menu.dto.request.OptionRequest;
+import com.sns.pojang.domain.menu.dto.request.FindMenuOptionsRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
-import com.sns.pojang.domain.menu.dto.response.*;
+import com.sns.pojang.domain.menu.dto.request.OptionGroupRequest;
+import com.sns.pojang.domain.menu.dto.response.CreateMenuResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuOptionGroupResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuOptionInfoResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.service.MenuService;
 import com.sns.pojang.global.response.SuccessResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -99,12 +102,13 @@ public class MenuController {
                 menuService.getMenuDetail(storeId, menuId)));
     }
 
-    // 메뉴 옵션 객체 조회
-    @GetMapping("/{storeId}/menu-options/{optionId}/")
-    public ResponseEntity<SuccessResponse<MenuOptionResponse>> getMenuOption(@PathVariable Long storeId,
-                                                                                  @PathVariable Long optionId){
+    // 메뉴 옵션 객체 리스트 받아오기
+    @PostMapping("/{storeId}/options")
+    public ResponseEntity<SuccessResponse<List<MenuOptionInfoResponse>>> findOptionObjects(
+            @PathVariable Long storeId,
+            @RequestBody FindMenuOptionsRequest findMenuOptionsRequest){
         return ResponseEntity.ok(SuccessResponse.read(HttpStatus.OK.value(),
                 GET_MENU_OPTION_SUCCESS.getMessage(),
-                menuService.getMenuOption(storeId, optionId)));
+                menuService.findOptionObjects(storeId, findMenuOptionsRequest)));
     }
 }

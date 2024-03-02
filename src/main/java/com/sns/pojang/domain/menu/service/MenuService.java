@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
+import com.sns.pojang.domain.menu.dto.request.FindMenuOptionsRequest;
 import com.sns.pojang.domain.menu.dto.request.OptionGroupRequest;
 import com.sns.pojang.domain.menu.dto.request.OptionRequest;
 import com.sns.pojang.domain.menu.dto.request.MenuRequest;
@@ -196,11 +197,16 @@ public class MenuService {
 
     // 메뉴 옵션 조회
     @Transactional
-    public MenuOptionResponse getMenuOption(Long storeId, Long optionId) {
+    public List<MenuOptionInfoResponse> findOptionObjects(Long storeId, FindMenuOptionsRequest findMenuOptionsRequest) {
         findStore(storeId);
-        MenuOption findMenuOption = findMenuOption(optionId);
-
-        return MenuOptionResponse.from(findMenuOption);
+        List<MenuOptionInfoResponse> menuOptionInfoResponses = new ArrayList<>();
+        if (findMenuOptionsRequest.getOptionIds() != null){
+            for (Long optionId : findMenuOptionsRequest.getOptionIds()){
+                MenuOption menuOption = findMenuOption(optionId);
+                menuOptionInfoResponses.add(MenuOptionInfoResponse.from(menuOption));
+            }
+        }
+        return menuOptionInfoResponses;
     }
 
     private Store findStore(Long storeId){
