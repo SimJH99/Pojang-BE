@@ -14,19 +14,26 @@ public class FindMyInfoResponse {
     private String nickName;
     private String email;
     private String phoneNumber;
-    private String address;
+    private String sido;
+    private String sigungu;
+    private String bname;
+    private String roadAddress;
     public static FindMyInfoResponse from(Member member){
         Address address = member.getAddress();
         String sido = address.getSido();
         String sigungu = address.getSigungu();
-        String query= address.getQuery();
+        String bname = address.getBname();
+        String roadAddress = address.getRoadAddress();
 
         return FindMyInfoResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickName(member.getNickname())
+                .sido(sido)
+                .sigungu(sigungu)
+                .bname(bname)
                 .phoneNumber(member.getPhoneNumber())
-                .address(sido + " " + sigungu + " " + query)
+                .roadAddress(roadAddress)
                 .build();
     }
 }

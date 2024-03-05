@@ -78,17 +78,25 @@ public class Member extends BaseTimeEntity {
     }
 
 //    마이페이지 수정
-    public void updateMyInfo(String nickname, String phoneNumber) {
-        this.nickname = nickname;
-        this.phoneNumber = phoneNumber;
-    }
-
-//    주소 수정
-    public void updateAddress(String sido, String sigungu, String query) {
+    public void updateMyInfo(String nickname, String phoneNumber, String sido, String sigungu, String bname, String roadAddress) {
         Address fullAddress = Address.builder()
                 .sido(sido)
                 .sigungu(sigungu)
-                .query(query)
+                .bname(bname)
+                .roadAddress(roadAddress)
+                .build();
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.address = fullAddress;
+    }
+
+//    주소 수정
+    public void updateAddress(String sido, String sigungu, String bname, String roadAddress) {
+        Address fullAddress = Address.builder()
+                .sido(sido)
+                .sigungu(sigungu)
+                .bname(bname)
+                .roadAddress(roadAddress)
                 .build();
         this.address = fullAddress;
     }
