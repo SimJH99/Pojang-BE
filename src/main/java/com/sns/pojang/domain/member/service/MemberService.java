@@ -138,7 +138,12 @@ public class MemberService {
                 (memberRepository.findByPhoneNumber(updateMyInfoRequest.getPhoneNumber()).isPresent())){
                 throw new PhoneNumberDuplicateException();
         }
-        member.updateMyInfo(updateMyInfoRequest.getNickname(), updateMyInfoRequest.getPhoneNumber());
+        member.updateMyInfo(updateMyInfoRequest.getNickname(),
+                updateMyInfoRequest.getPhoneNumber(),
+                updateMyInfoRequest.getSido(),
+                updateMyInfoRequest.getSigungu(),
+                updateMyInfoRequest.getBname(),
+                updateMyInfoRequest.getRoadAddress());
 
         return UpdateMyInfoResponse.from(member);
     }
@@ -152,7 +157,7 @@ public class MemberService {
     public FindAddressResponse updateMyAddress(UpdateAddressRequest updateAddressRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        member.updateAddress(updateAddressRequest.getSido(), updateAddressRequest.getSigungu(), updateAddressRequest.getQuery());
+        member.updateAddress(updateAddressRequest.getSido(), updateAddressRequest.getSigungu(), updateAddressRequest.getBname(), updateAddressRequest.getRoadAddress());
         return FindAddressResponse.from(member);
     }
 

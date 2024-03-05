@@ -25,7 +25,8 @@ public class CreateStoreRequest {
     private MultipartFile storeImage;
     private String sido;
     private String sigungu;
-    private String query;
+    private String bname;
+    private String roadAddress; // 도로명주소
     private String addressDetail;
     private String introduction;
 
@@ -33,7 +34,8 @@ public class CreateStoreRequest {
         Address fullAddress = Address.builder()
                 .sido(sido)
                 .sigungu(sigungu)
-                .query(query)
+                .bname(bname)
+                .roadAddress(roadAddress)
                 .addressDetail(addressDetail)
                 .build();
         return Store.builder()

@@ -22,13 +22,15 @@ public class CreateMemberRequest {
     private String phoneNumber;
     private String sido; // 시/도
     private String sigungu; // 시/군/구
-    private String query; // 도로명
+    private String bname; // 동/리
+    private String roadAddress; // 도로명 주소
 
     public Member toEntity(PasswordEncoder passwordEncoder, Role role){
         Address fullAddress = Address.builder()
                 .sido(sido)
                 .sigungu(sigungu)
-                .query(query)
+                .bname(bname)
+                .roadAddress(roadAddress)
                 .build();
         return Member.builder()
                 .email(email)

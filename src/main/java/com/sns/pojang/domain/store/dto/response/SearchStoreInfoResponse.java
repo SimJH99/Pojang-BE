@@ -28,7 +28,8 @@ public class SearchStoreInfoResponse {
         DecimalFormat df = new DecimalFormat("#.#");
         String sido = store.getAddress().getSido();
         String sigungu = store.getAddress().getSigungu();
-        String query = store.getAddress().getQuery();
+        String bname = store.getAddress().getBname();
+        String roadAddress = store.getAddress().getRoadAddress();
         String addressDetail = store.getAddress().getAddressDetail();
         return SearchStoreInfoResponse.builder()
                 .id(store.getId())
@@ -36,7 +37,7 @@ public class SearchStoreInfoResponse {
                 .likes(likes)
                 .avgRating(df.format(avgRating))
                 .imageUrl(s3Url)
-                .address(sido + " " + sigungu + " " + query + " " + addressDetail)
+                .address(roadAddress + " " + addressDetail)
                 .businessNumber(store.getBusinessNumber())
                 .category(store.getCategory())
                 .storeNumber(store.getStoreNumber())
