@@ -121,6 +121,15 @@ public class StoreService {
             @Override
             public Predicate toPredicate(Root<Store> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
+                if (searchStoreRequest.getSido() != null) {
+                    predicates.add(criteriaBuilder.like(root.get("address").get("sido"), "%" + searchStoreRequest.getSido() + "%"));
+                }
+                if (searchStoreRequest.getSigungu() != null) {
+                    predicates.add(criteriaBuilder.like(root.get("address").get("sigungu"), "%" + searchStoreRequest.getSigungu() + "%"));
+                }
+                if (searchStoreRequest.getBname() != null) {
+                    predicates.add(criteriaBuilder.like(root.get("address").get("bname"), "%" + searchStoreRequest.getBname() + "%"));
+                }
                 if (searchStoreRequest.getName() != null) {
                     predicates.add(criteriaBuilder.like(root.get("name"), "%" + searchStoreRequest.getName() + "%"));
                 }

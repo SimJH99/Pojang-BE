@@ -6,4 +6,7 @@ import lombok.Data;
 public class SearchStoreRequest {
     private String name;
     private String category;
+    private String sido;
+    private String sigungu;
+    private String bname;
 }
