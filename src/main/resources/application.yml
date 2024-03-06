@@ -29,7 +29,7 @@ spring:
         # Spring data JPA repository 와 Spirng data redis Repository가 모두 인식되어
         # redis가 이게 내 리포지토리가 맞아? 그럼 명시해줘 라는 로그 해결
         enabled: false
-      host: redis
+      host: localhost
       # host: localhost
       port: 6379
   coolsms:

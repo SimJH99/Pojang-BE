@@ -80,12 +80,20 @@ public class Store extends BaseTimeEntity {
         this.member = member;
     }
 
-    public void updateStore(String name, String category, String storeNumber, String introduction, String operationTime){
+    public void updateStore(String name, String sido, String sigungu, String bname, String roadAddress, String addressDetail, String category, String storeNumber, String introduction, String operationTime){
+        Address fullAddress = Address.builder()
+                .sido(sido)
+                .sigungu(sigungu)
+                .bname(bname)
+                .roadAddress(roadAddress)
+                .addressDetail(addressDetail)
+                .build();
         this.name = name;
         this.category = category;
         this.storeNumber = storeNumber;
         this.introduction = introduction;
         this.operationTime = operationTime;
+        this.address = fullAddress;
     }
 
     public void close() {

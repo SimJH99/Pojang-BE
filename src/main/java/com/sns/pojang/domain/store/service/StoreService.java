@@ -19,6 +19,7 @@ import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.*;
+import com.sns.pojang.domain.store.entity.Address;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Status;
 import com.sns.pojang.domain.store.entity.Store;
@@ -105,6 +106,11 @@ public class StoreService {
         validateOwner(findStore);
 
         findStore.updateStore(updateStoreRequest.getName(),
+                updateStoreRequest.getSido(),
+                updateStoreRequest.getSigungu(),
+                updateStoreRequest.getBname(),
+                updateStoreRequest.getRoadAddress(),
+                updateStoreRequest.getAddressDetail(),
                 updateStoreRequest.getCategory(),
                 updateStoreRequest.getStoreNumber(),
                 updateStoreRequest.getIntroduction(),

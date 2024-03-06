@@ -16,6 +16,11 @@ public class SearchStoreInfoResponse {
     // 평점
     private String avgRating;
     private String imageUrl;
+    private String sido;
+    private String sigungu;
+    private String bname;
+    private String addressDetail;
+    private String roadAddress;
     private String address;
     private String businessNumber;
     private String category;
@@ -29,14 +34,19 @@ public class SearchStoreInfoResponse {
         String sido = store.getAddress().getSido();
         String sigungu = store.getAddress().getSigungu();
         String bname = store.getAddress().getBname();
-        String roadAddress = store.getAddress().getRoadAddress();
         String addressDetail = store.getAddress().getAddressDetail();
+        String roadAddress = store.getAddress().getRoadAddress();
         return SearchStoreInfoResponse.builder()
                 .id(store.getId())
                 .name(store.getName())
                 .likes(likes)
                 .avgRating(df.format(avgRating))
                 .imageUrl(s3Url)
+                .sido(sido)
+                .sigungu(sigungu)
+                .bname(bname)
+                .roadAddress(roadAddress)
+                .addressDetail(addressDetail)
                 .address(roadAddress + " " + addressDetail)
                 .businessNumber(store.getBusinessNumber())
                 .category(store.getCategory())
