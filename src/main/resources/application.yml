@@ -1,4 +1,9 @@
 spring:
+  # 파일 이미지 용량 제한
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
 #    url: jdbc:mariadb://host.docker.internal:3306/pojang
@@ -29,8 +34,8 @@ spring:
         # Spring data JPA repository 와 Spirng data redis Repository가 모두 인식되어
         # redis가 이게 내 리포지토리가 맞아? 그럼 명시해줘 라는 로그 해결
         enabled: false
-      host: redis
-      # host: localhost
+#      host: redis
+      host: localhost
       port: 6379
   coolsms:
       apiKey: NCSW9W1WPRODZ9JV
