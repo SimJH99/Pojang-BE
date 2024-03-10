@@ -38,6 +38,12 @@ public class MemberController {
         this.certificationService = certificationService;
     }
 
+    // 대상그룹 상태검사
+    @GetMapping
+    public String HealthCheck() {
+        return "ok";
+    }
+
 //    일반 유저 회원가입
     @PostMapping("/sign-up/user")
     public ResponseEntity<SuccessResponse<CreateMemberResponse>> createUser(
