@@ -41,6 +41,7 @@ public class SecurityConfig {
                 // Authentication 객체 없어도 실행되는 URL 패턴
                 .antMatchers(
                         "/api/members/sign-up/*",
+                        "/api/members",
                         "/api/members/login",
                         "/api/members/send-sms",
                         "/api/members/confirm-sms",
