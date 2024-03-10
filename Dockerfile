@@ -6,6 +6,7 @@ WORKDIR /app
 COPY . .
 
 # /app/build/libs/*.jar 파일을 아래 명령어를 통해 생성
+RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
 # 새로운 work stage 시작, 기존 스테이지는 자동으로 사라진다.
