@@ -1,0 +1,38 @@
+
+name: Deploy to EC2 With Docker
+on:
+  push:
+    branches:
+    - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Docker Image
+      run: docker build -t bny1324/pojang-be:v1 .
+    - name: DockerHub Login
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Push Docker Image to DockerHub
+      run: docker push bny1324/pojang-be:v1
+    - name: EC2 SSH Login & Docker Run
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          if ! type docker > /dev/null ; then
+            curl -s https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
+          fi
+          sudo docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
+          sudo docker pull bny1324/pojang-be:v1
+          sudo docker rm -f pojang-be || true
+          sudo docker run -d --name pojang-be -p 80:8080 \
+          -e SPRING_DATASOURCE_URL=jdbc:mariadb://${{ secrets.DB_HOST }}:3306/pojang \
+          -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+          -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} bny1324/pojang-be:v1
