@@ -34,9 +34,6 @@ jobs:
             sudo sh get-docker.sh
           fi
           sudo docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
+          docker-compose down --rmi all || true
           sudo docker pull bny1324/pojang-be:v1
-          docker-compose down -d || true
-          docker-compose up -d \
-          -e SPRING_DATASOURCE_URL=jdbc:mariadb://${{ secrets.DB_HOST }}:3306/pojang \
-          -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
-          -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} bny1324/pojang-be:v1
+          docker-compose up -d
