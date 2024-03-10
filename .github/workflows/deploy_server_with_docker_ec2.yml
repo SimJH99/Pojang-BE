@@ -1,12 +1,12 @@
 
 name: Deploy to EC2 With Docker
 on:
-  push:
-    branches:
-    - main
-  # pull_request:
+  # push:
   #   branches:
   #   - main
+  pull_request:
+    branches:
+    - main
     
 jobs:
   build-and-deploy:
@@ -35,8 +35,8 @@ jobs:
           fi
           sudo docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
           sudo docker pull bny1324/pojang-be:v1
-          sudo docker rm -f pojang-be || true
-          sudo docker run -d --name pojang-be -p 80:8080 \
+          sudo docker-compose down -d || true
+          sudo docker-compose up -d \
           -e SPRING_DATASOURCE_URL=jdbc:mariadb://${{ secrets.DB_HOST }}:3306/pojang \
           -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
           -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} bny1324/pojang-be:v1
