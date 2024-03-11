@@ -14,3 +14,5 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     depends_on:
       - redis
+
+# scp test
