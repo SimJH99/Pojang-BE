@@ -1,22 +1,21 @@
 package com.sns.pojang.domain.menu.service;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
 import com.sns.pojang.domain.menu.dto.request.FindMenuOptionsRequest;
+import com.sns.pojang.domain.menu.dto.request.MenuRequest;
 import com.sns.pojang.domain.menu.dto.request.OptionGroupRequest;
 import com.sns.pojang.domain.menu.dto.request.OptionRequest;
-import com.sns.pojang.domain.menu.dto.request.MenuRequest;
-import com.sns.pojang.domain.menu.dto.response.*;
+import com.sns.pojang.domain.menu.dto.response.CreateMenuResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuOptionGroupResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuOptionInfoResponse;
+import com.sns.pojang.domain.menu.dto.response.MenuResponse;
 import com.sns.pojang.domain.menu.entity.Menu;
 import com.sns.pojang.domain.menu.entity.MenuOption;
 import com.sns.pojang.domain.menu.entity.MenuOptionGroup;
 import com.sns.pojang.domain.menu.exception.MenuIdNotEqualException;
 import com.sns.pojang.domain.menu.exception.MenuNotFoundException;
-import com.sns.pojang.domain.menu.exception.MenuOptionGroupNotFoundException;
 import com.sns.pojang.domain.menu.exception.MenuOptionNotFoundException;
 import com.sns.pojang.domain.menu.repository.MenuOptionGroupRepository;
 import com.sns.pojang.domain.menu.repository.MenuOptionRepository;
@@ -25,9 +24,9 @@ import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.StoreIdNotEqualException;
 import com.sns.pojang.domain.store.exception.StoreNotFoundException;
 import com.sns.pojang.domain.store.repository.StoreRepository;
+import com.sns.pojang.global.config.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -39,28 +38,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class MenuService {
+    private static final String FILE_TYPE = "menus";
+
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
     private final MenuOptionGroupRepository menuOptionGroupRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final MemberRepository memberRepository;
-    private final AmazonS3Client amazonS3Client;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private final S3Service s3Service;
 
     // 메뉴 등록
     @Transactional
@@ -69,8 +64,7 @@ public class MenuService {
         validateOwner(findStore);
         String imagePath = null;
         if (menuRequest.getImage() != null && !menuRequest.getImage().isEmpty()){
-            log.info("이미지 추가");
-            imagePath = saveFile(menuRequest.getImage());
+            imagePath = s3Service.uploadFile(FILE_TYPE, menuRequest.getImage());
         }
         Menu newMenu = menuRequest.toEntity(findStore, imagePath);
 
@@ -110,17 +104,12 @@ public class MenuService {
         validateStore(storeId, findMenu);
         String imagePath = null;
         if (menuRequest.getImage() != null){
-            // 기존 s3에 업로드 된 이미지 삭제
-            if (findMenu.getImageUrl() != null){
-                try {
-                    amazonS3Client.deleteObject(bucket, findMenu.getImageUrl());
-                } catch (SdkClientException e){
-                    log.error("Not able to delete from S3: " + e.getMessage(), e);
-                }
-            }
+            // 추후 기존 s3에 업로드 된 이미지 삭제 로직 구현
+
+            //
             MultipartFile menuImage = menuRequest.getImage();
             if (menuImage != null && !menuImage.isEmpty()){
-                imagePath = saveFile(menuImage);
+                imagePath = s3Service.uploadFile(FILE_TYPE, menuImage);
             }
         } else {
             // DB에 image url이 있다면 image 값 유지
@@ -176,8 +165,7 @@ public class MenuService {
         List<MenuResponse> menuResponses = new ArrayList<>();
 
         for (Menu menu : menuList){
-            URL url = amazonS3Client.getUrl(bucket, menu.getImageUrl());
-            menuResponses.add(MenuResponse.from(menu, url.toString()));
+            menuResponses.add(MenuResponse.from(menu, menu.getImageUrl()));
         }
 
         return menuResponses;
@@ -190,9 +178,7 @@ public class MenuService {
         Menu findMenu = findMenu(menuId);
         validateStore(findStore.getId(), findMenu);
 
-        URL url = amazonS3Client.getUrl(bucket, findMenu.getImageUrl());
-
-        return MenuResponse.from(findMenu, url.toString());
+        return MenuResponse.from(findMenu, findMenu.getImageUrl());
     }
 
     // 메뉴 옵션 조회
@@ -249,23 +235,4 @@ public class MenuService {
             throw new AccessDeniedException(store.getName() + "의 사장님이 아닙니다.");
         }
     }
-
-    private String saveFile(MultipartFile file){
-        String fileUrl;
-        if (file.isEmpty()){
-            return null;
-        }
-        try {
-            fileUrl = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            amazonS3Client.putObject(bucket, fileUrl, file.getInputStream(), metadata);
-        } catch (IOException e){
-            throw new IllegalArgumentException("Image is not available");
-        }
-        return fileUrl;
-    }
-
-
 }
