@@ -36,4 +36,4 @@ jobs:
           sudo docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
           sudo docker-compose down --rmi all || true
           sudo docker pull bny1324/pojang-be:v1
-          sudo docker-compose up -d
+          sudo DB_HOST=${{ secrets.DB_HOST }} DB_USERNAME=${{ secrets.DB_USERNAME }} DB_PASSWORD=${{ secrets.DB_PASSWORD }} docker-compose up -d
