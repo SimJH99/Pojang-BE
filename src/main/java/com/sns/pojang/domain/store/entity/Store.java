@@ -1,8 +1,6 @@
 package com.sns.pojang.domain.store.entity;
 
 import com.sns.pojang.domain.member.entity.Member;
-import com.sns.pojang.domain.favorite.entity.Favorite;
-import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -58,6 +54,7 @@ public class Store extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.CLOSED;
 
+    // 사장님
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;

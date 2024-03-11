@@ -9,6 +9,8 @@ import com.sns.pojang.domain.menu.exception.MenuNotFoundException;
 import com.sns.pojang.domain.menu.exception.MenuOptionNotFoundException;
 import com.sns.pojang.domain.menu.repository.MenuOptionRepository;
 import com.sns.pojang.domain.menu.repository.MenuRepository;
+import com.sns.pojang.domain.notification.domain.NotificationType;
+import com.sns.pojang.domain.notification.service.NotificationService;
 import com.sns.pojang.domain.order.dto.request.OrderRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedMenuRequest;
 import com.sns.pojang.domain.order.dto.request.SelectedOptionRequest;
@@ -49,6 +51,7 @@ public class OrderService {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
+    private final NotificationService notificationService;
 
     // 메뉴 주문
     @Transactional
@@ -80,7 +83,12 @@ public class OrderService {
             }
             orderMenu.attachOrder(order);
         }
-        return CreateOrderResponse.from(orderRepository.save(order));
+        Order newOrder = orderRepository.save(order);
+        String relatedUrl = "/api/stores/" + order.getStore().getId() + "/orders/" + order.getId();
+        notificationService.send(findStore.getMember(), newOrder,
+                NotificationType.USER_ORDER, "새로운 주문 요청입니다.", relatedUrl);
+
+        return CreateOrderResponse.from(newOrder);
     }
 
     // 고객의 주문 취소

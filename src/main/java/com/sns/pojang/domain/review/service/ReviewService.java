@@ -1,7 +1,5 @@
 package com.sns.pojang.domain.review.service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.member.entity.Member;
 import com.sns.pojang.domain.member.exception.MemberNotFoundException;
 import com.sns.pojang.domain.member.repository.MemberRepository;
@@ -16,34 +14,29 @@ import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.exception.ReviewDuplicateException;
 import com.sns.pojang.domain.review.exception.ReviewNotFoundException;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
+import com.sns.pojang.global.config.s3.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ReviewService {
+    private static final String FILE_TYPE = "reviews";
 
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
-    private final AmazonS3Client amazonS3Client;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private final S3Service s3Service;
 
     public ReviewResponse createReview(Long orderId, ReviewRequest reviewRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -57,7 +50,7 @@ public class ReviewService {
 
         String imagePath = null;
         if (reviewRequest.getImage() != null && !reviewRequest.getImage().isEmpty()){
-            imagePath = saveFile(reviewRequest.getImage());
+            imagePath = s3Service.uploadFile(FILE_TYPE, reviewRequest.getImage());
         }
 
         // 리뷰 존재 여부 체크
@@ -87,7 +80,7 @@ public class ReviewService {
 
         String imagePath = null;
         if (reviewRequest.getImage() != null && !reviewRequest.getImage().isEmpty()){
-            imagePath = saveFile(reviewRequest.getImage());
+            imagePath = s3Service.uploadFile(FILE_TYPE, reviewRequest.getImage());
         }
 
         review.updateReview(reviewRequest.getRating(), reviewRequest.getContents(), imagePath);
@@ -115,22 +108,5 @@ public class ReviewService {
     public Boolean checkReview(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         return reviewRepository.findByOrder(order).isPresent();
-    }
-
-    private String saveFile(MultipartFile file){
-        String fileUrl;
-        if (file.isEmpty()){
-            return null;
-        }
-        try {
-            fileUrl = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            amazonS3Client.putObject(bucket, fileUrl, file.getInputStream(), metadata);
-        } catch (IOException e){
-            throw new IllegalArgumentException("Image is not available");
-        }
-        return fileUrl;
     }
 }
