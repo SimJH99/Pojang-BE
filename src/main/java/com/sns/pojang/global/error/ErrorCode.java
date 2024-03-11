@@ -61,6 +61,9 @@ public enum ErrorCode {
     MENU_OPTION_GROUP_NOT_FOUND(400, "메뉴 옵션 그룹을 찾을 수 없습니다."),
     MENU_ID_NOT_EQUAL(400, "메뉴 옵션 그룹의 menuId와 입력된 menuId가 일치하지 않습니다."),
 
+    // Notification
+    NOTIFICATION_NOT_FOUND(400, "존재하지 않는 알림입니다."),
+
     //Image
     IMAGE_INVALID_VALUE(400, "사용가능한 이미지 파일이 아닙니다.");
 
