@@ -46,6 +46,7 @@ jobs:
           kubectl apply -f ./k8s/pojang-depl-serv.yml
           kubectl apply -f ./k8s/redis-depl-serv.yml
           kubectl rollout restart deployment pojang-depl
+          kubectl rollout restart deployment redis-depl
 
           
           
