@@ -1,4 +1,4 @@
-name: deploy order ordering
+name: deploy k8s-pojang
 
 on:
   push:
