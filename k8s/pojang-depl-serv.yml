@@ -17,6 +17,9 @@ spec:
       containers:
       - name: k8s-pojang
         image: bny1324/k8s-pojang:v1
+        imagePullPolicy: Always
+      # - name: pojang
+      #   image: 346903264902.dkr.ecr.ap-northeast-2.amazonaws.com/pojang:latest
         ports:
         # 이미지의 포트(spring:8080)
         - containerPort: 8080
@@ -32,7 +35,10 @@ spec:
         # k8s secret 불러오기
         env:
         - name: REDIS_HOST
-          value: redis-service
+          valueFrom:
+            secretKeyRef:
+              name: redis
+              key: host
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
