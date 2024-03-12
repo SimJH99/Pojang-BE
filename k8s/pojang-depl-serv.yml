@@ -15,7 +15,7 @@ spec:
         app: pojang
     spec:
       containers:
-      - name: k8s-pojang
+      - name: pojang
         image: 346903264902.dkr.ecr.ap-northeast-2.amazonaws.com/pojang:latest
         ports:
         # 이미지의 포트(spring:8080)
