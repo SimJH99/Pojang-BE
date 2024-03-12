@@ -17,6 +17,7 @@ spec:
       containers:
       - name: k8s-pojang
         image: bny1324/k8s-pojang:v1
+        imagePullPolicy: Always
       # - name: pojang
       #   image: 346903264902.dkr.ecr.ap-northeast-2.amazonaws.com/pojang:latest
         ports:
