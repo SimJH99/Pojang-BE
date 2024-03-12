@@ -80,7 +80,7 @@ public class MemberController {
                 VERIFY_NICKNAME_SUCCESS.getMessage()));
     }
 
-    //이메일 찾기
+    // 이메일 찾기
     @PostMapping("/find-email")
     public ResponseEntity<SuccessResponse<FindEmailResponse>> findEmail(@RequestBody FindEmailRequest findEmailRequest){
         return ResponseEntity.ok(SuccessResponse.create(HttpStatus.OK.value(),
