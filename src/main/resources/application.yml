@@ -7,17 +7,15 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
 #    url: jdbc:mariadb://host.docker.internal:3306/pojang
-    url: jdbc:mariadb://localhost:3306/pojang
-    username: root
-    password: 1234
+    url: jdbc:mariadb://${DB_HOST}/pojang
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
     hibernate:
       ddl-auto: update
-      connection:
-        characterEncoding: utf8mb4
     show_sql: true
   mail:
     host: smtp.gmail.com
