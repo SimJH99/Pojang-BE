@@ -61,8 +61,8 @@ jobs:
       - name: eks kubectl apply 
         # rollout restart : 무중단 배포 - 이미지 새로 pull
         run: |
-          kubectl delete -f ./k8s/pojang-depl-serv.yml
           kubectl apply -f ./k8s/pojang-depl-serv.yml
+          kubectl rollout restart deployment pojang-depl
 
           
           
