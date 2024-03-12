@@ -26,5 +26,5 @@ spec:
                 # ingress와 연결될 서비스명 - depl-serv에서 지정
                 name: pojang-service
                 port:
-                  number: 8080
+                  number: 80
 
