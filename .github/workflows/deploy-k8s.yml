@@ -1,9 +1,12 @@
 name: deploy k8s-pojang
 
 on:
-  push:
+  # push:
+  #   branches:
+  #   - main
+  pull_request:
     branches:
-      - deploy
+    - main
 
 jobs:
   build-and-deploy:
