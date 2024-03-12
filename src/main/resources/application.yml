@@ -35,8 +35,11 @@ spring:
         # redis가 이게 내 리포지토리가 맞아? 그럼 명시해줘 라는 로그 해결
         enabled: false
         # docker-compose에 설정된 이름
-      host: ${REDIS_HOST}
+      host: pojang.uoizyu.ng.0001.apn2.cache.amazonaws.com
       port: 6379
+  redis:
+    host: pojang.uoizyu.ng.0001.apn2.cache.amazonaws.com
+    port: 6379
   coolsms:
       apiKey: NCSW9W1WPRODZ9JV
       apiSecret: FIJRCGDMA1Y8XTJ5HY8XO3SM4N9YPJ61
