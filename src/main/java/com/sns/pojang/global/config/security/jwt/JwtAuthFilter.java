@@ -3,6 +3,7 @@ package com.sns.pojang.global.config.security.jwt;
 import com.sns.pojang.global.error.ErrorCode;
 import com.sns.pojang.global.error.ErrorResponse;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,11 @@ public class JwtAuthFilter extends GenericFilter {
             }
             // FilterChain에서 그 다음 Filtering으로 넘어가도록 하는 메서드
             chain.doFilter(request, response);
+        } catch (ExpiredJwtException e){
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            httpServletResponse.setStatus(ErrorCode.JWT_EXPIRED.getStatus());
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.getWriter().write(ErrorResponse.from(ErrorCode.JWT_EXPIRED).toString());
         } catch (AuthenticationServiceException e) {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
