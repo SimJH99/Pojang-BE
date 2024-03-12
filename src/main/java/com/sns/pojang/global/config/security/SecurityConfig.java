@@ -43,6 +43,7 @@ public class SecurityConfig {
                         "/api/members/sign-up/*",
                         "/api/members",
                         "/api/members/login",
+                        "/api/members/find-email",
                         "/api/members/send-sms",
                         "/api/members/confirm-sms",
                         "/api/mail/*",
