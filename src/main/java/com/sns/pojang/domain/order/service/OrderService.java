@@ -213,11 +213,13 @@ public class OrderService {
                 for (SelectedOptionRequest selectedOptionRequest : menuRequest.getSelectedMenuOptions()){
                     MenuOption menuOption = findMenuOption(selectedOptionRequest.getId());
                     log.info("옵션 금액: " + menuOption.getPrice());
-                    menuOptionTotal += menuOption.getPrice();
+                    menuOptionTotal += menuOption.getPrice() * menuRequest.getQuantity();
                 }
             }
             calculatedTotalPrice += menu.getPrice() * menuRequest.getQuantity() + menuOptionTotal;
         }
+        log.info("고객이 주문한 금액: " + totalPrice);
+        log.info("서버에서 계산한 금액: " + calculatedTotalPrice);
         if (calculatedTotalPrice != totalPrice){
             throw new InvalidTotalPriceException();
         }

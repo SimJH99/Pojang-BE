@@ -54,6 +54,7 @@ public class MenuController {
             @PathVariable Long storeId,
             @PathVariable Long menuId,
             @Valid @RequestBody OptionGroupRequest optionGroupRequest){
+        log.info("옵션 생성 API Start");
         return ResponseEntity.created(URI.create("/" + storeId + "/menus" + + menuId + "/option-groups"))
                 .body(SuccessResponse.create(HttpStatus.CREATED.value(),
                         CREATE_MENU_OPTION_SUCCESS.getMessage(),

@@ -75,6 +75,7 @@ public class MenuService {
     @Transactional
     public MenuOptionGroupResponse createOptions(
             Long storeId, Long menuId, OptionGroupRequest optionGroupRequest) {
+        log.info("옵션 생성 Service Start");
         Store findStore = findStore(storeId);
         validateOwner(findStore);
         Menu findMenu = findMenu(menuId);
@@ -85,9 +86,12 @@ public class MenuService {
         for (OptionRequest optionRequest : optionGroupRequest.getOptions()){
             MenuOption newMenuOption = optionRequest.toEntity();
             newMenuOption.attachOptionGroup(newOptionGroup);
+            log.info("옵션: " + newMenuOption);
         }
         newOptionGroup.attachMenu(findMenu);
+        log.info("옵션 그룹: " + newOptionGroup);
         menuOptionGroupRepository.save(newOptionGroup);
+        log.info("DB 저장 완료");
 
         return MenuOptionGroupResponse.from(newOptionGroup);
     }
