@@ -1,7 +1,6 @@
 package com.sns.pojang.domain.member.service;
 
 
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.favorite.exception.FavoriteNotFoundException;
 import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
@@ -18,12 +17,12 @@ import com.sns.pojang.domain.order.repository.OrderRepository;
 import com.sns.pojang.domain.review.dto.response.ReviewResponse;
 import com.sns.pojang.domain.review.entity.Review;
 import com.sns.pojang.domain.review.repository.ReviewRepository;
+import com.sns.pojang.global.config.s3.S3Service;
 import com.sns.pojang.global.config.security.jwt.JwtProvider;
 import com.sns.pojang.global.error.exception.EntityNotFoundException;
 import com.sns.pojang.global.utils.CertificationGenerator;
 import com.sns.pojang.global.utils.CertificationNumberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,7 +33,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,11 +53,7 @@ public class MemberService {
     private final CertificationNumberRepository certificationNumberRepository;
     private final CertificationGenerator certificationGenerator;
     private final SmsCertificationUtil smsCertificationUtil;
-
-    private final AmazonS3Client amazonS3Client;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private final S3Service s3Service;
 
     @Transactional
     public CreateMemberResponse createUser(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException{
@@ -198,8 +192,7 @@ public class MemberService {
         }
         List<FindFavoritesResponse> findFavoritesResponses= new ArrayList<>();
         for(Favorite favorite : favorites) {
-            URL url = amazonS3Client.getUrl(bucket, favorite.getStore().getImageUrl());
-            FindFavoritesResponse favoritesResponse = FindFavoritesResponse.from(favorite, url.toString());
+            FindFavoritesResponse favoritesResponse = FindFavoritesResponse.from(favorite, favorite.getStore().getImageUrl());
             findFavoritesResponses.add(favoritesResponse);
         }
         return findFavoritesResponses;
@@ -211,8 +204,7 @@ public class MemberService {
         List<Review> reviews = reviewRepository.findByMemberAndDeleteYn(member, "N");
         List<ReviewResponse> reviewResponses= new ArrayList<>();
         for(Review review : reviews) {
-            URL url = amazonS3Client.getUrl(bucket, review.getImageUrl());
-            ReviewResponse reviewResponse = ReviewResponse.from(review, url.toString());
+            ReviewResponse reviewResponse = ReviewResponse.from(review, review.getImageUrl());
             reviewResponses.add(reviewResponse);
         }
         return reviewResponses;
@@ -238,8 +230,7 @@ public class MemberService {
 
         List<OrderResponse> orderResponses = new ArrayList<>();
         for (Order order : myOrders){
-            URL url = amazonS3Client.getUrl(bucket, order.getStore().getImageUrl());
-            orderResponses.add(OrderResponse.from(order, url.toString()));
+            orderResponses.add(OrderResponse.from(order, order.getStore().getImageUrl()));
         }
 
         return orderResponses;

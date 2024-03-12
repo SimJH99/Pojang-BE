@@ -86,7 +86,8 @@ public class NotificationService {
                 (key, emitter) -> {
                     // Emitter를 EventCache에 저장
                     emitterRepository.saveEventCache(key, newNotification);
-                    sendToClient(emitter, key, NotificationResponse.from(newNotification));
+//                    sendToClient(emitter, key, NotificationResponse.from(newNotification));
+                    sendToClient(emitter, key, newNotification.getOrder().getStore().getName());
                 }
         );
     }
