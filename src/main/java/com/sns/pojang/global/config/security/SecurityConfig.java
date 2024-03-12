@@ -55,7 +55,10 @@ public class SecurityConfig {
                         "/api/orders/*/reviews/*",
                         "/api/stores/*/details",
                         "/api/stores/*/rating",
-                        "/api/stores/*/favorites"
+                        "/api/stores/*/favorites",
+                        "/subscribe",
+                        "/notifications",
+                        "/notifications/*"
                         )
                 .permitAll()
 

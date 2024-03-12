@@ -12,6 +12,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(405, "클라이언트가 사용한 HTTP 메서드가 리소스에서 허용되지 않습니다."),
     INTERNAL_SERVER_ERROR( 500, "서버에서 요청을 처리하는 동안 오류가 발생했습니다."),
     ACCESS_DENIED(403, "접근 권한이 없습니다."),
+    JWT_EXPIRED(401, "로그인이 만료 되었습니다."),
     KEY_NOT_EXIST(400, "존재하지 않는 키입니다."),
     INVALID_CERTIFICATED_NUMBER(400, "인증 번호가 다릅니다."),
 
@@ -60,6 +61,9 @@ public enum ErrorCode {
     MENU_OPTION_NOT_FOUND(400, "메뉴 옵션을 찾을 수 없습니다."),
     MENU_OPTION_GROUP_NOT_FOUND(400, "메뉴 옵션 그룹을 찾을 수 없습니다."),
     MENU_ID_NOT_EQUAL(400, "메뉴 옵션 그룹의 menuId와 입력된 menuId가 일치하지 않습니다."),
+
+    // Notification
+    NOTIFICATION_NOT_FOUND(400, "존재하지 않는 알림입니다."),
 
     //Image
     IMAGE_INVALID_VALUE(400, "사용가능한 이미지 파일이 아닙니다.");

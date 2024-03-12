@@ -1,6 +1,7 @@
 package com.sns.pojang.domain.order.entity;
 
 import com.sns.pojang.domain.menu.entity.MenuOption;
+import com.sns.pojang.global.config.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderMenuOption {
+public class OrderMenuOption extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

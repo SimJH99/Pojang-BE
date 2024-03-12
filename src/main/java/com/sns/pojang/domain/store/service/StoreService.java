@@ -1,7 +1,5 @@
 package com.sns.pojang.domain.store.service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sns.pojang.domain.favorite.entity.Favorite;
 import com.sns.pojang.domain.favorite.repository.FavoriteRepository;
 import com.sns.pojang.domain.member.entity.Member;
@@ -19,15 +17,15 @@ import com.sns.pojang.domain.store.dto.request.RegisterBusinessNumberRequest;
 import com.sns.pojang.domain.store.dto.request.SearchStoreRequest;
 import com.sns.pojang.domain.store.dto.request.UpdateStoreRequest;
 import com.sns.pojang.domain.store.dto.response.*;
-import com.sns.pojang.domain.store.entity.Address;
 import com.sns.pojang.domain.store.entity.BusinessNumber;
 import com.sns.pojang.domain.store.entity.Status;
 import com.sns.pojang.domain.store.entity.Store;
 import com.sns.pojang.domain.store.exception.*;
 import com.sns.pojang.domain.store.repository.BusinessNumberRepository;
 import com.sns.pojang.domain.store.repository.StoreRepository;
+import com.sns.pojang.global.config.s3.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -37,25 +35,23 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService {
+    private static final String FILE_TYPE = "stores";
 
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
@@ -63,10 +59,7 @@ public class StoreService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final FavoriteRepository favoriteRepository;
-    private final AmazonS3Client amazonS3Client;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private final S3Service s3Service;
 
     public BusinessNumber registerBusinessNumber(RegisterBusinessNumberRequest registerBusinessNumberRequest){
         BusinessNumber businessNumber = new BusinessNumber(registerBusinessNumberRequest.getBusinessNumber());
@@ -90,7 +83,7 @@ public class StoreService {
 
         String imagePath = null;
         if (createStoreRequest.getStoreImage() != null){
-            imagePath = saveFile(createStoreRequest.getStoreImage());
+            imagePath = s3Service.uploadFile(FILE_TYPE, createStoreRequest.getStoreImage());
         }
         Store newStore = createStoreRequest.toEntity(imagePath, findMember);
 
@@ -156,7 +149,9 @@ public class StoreService {
         int totalRating = 0;
         double avgRating = 0;
         for(Store store : storeList) {
-            URL url = amazonS3Client.getUrl(bucket, store.getImageUrl());
+
+            String imageUrl = store.getImageUrl();
+            log.info("이미지 경로: " + imageUrl);
             int countOrder = orderRepository.findByStoreAndOrderStatus(store, OrderStatus.CONFIRM).size();
             int likes = favoriteRepository.findByStoreAndFavoriteYn(store, "Y").size();
             List<Review> reviews = reviewRepository.findByStoreAndDeleteYn(store, "N");
@@ -165,7 +160,7 @@ public class StoreService {
             }
             avgRating = (double) totalRating /reviews.size();
             totalRating = 0;
-            SearchStoreResponse searchStoreResponse = SearchStoreResponse.from(store, countOrder, avgRating, likes, url.toString());
+            SearchStoreResponse searchStoreResponse = SearchStoreResponse.from(store, countOrder, avgRating, likes, imageUrl);
             searchStoreResponses.add(searchStoreResponse);
         }
         return searchStoreResponses;
@@ -187,8 +182,7 @@ public class StoreService {
         List<SearchMyStoreResponse> searchMyStoreResponses = new ArrayList<>();
 
         for (Store store : stores){
-            URL url = amazonS3Client.getUrl(bucket, store.getImageUrl());
-            searchMyStoreResponses.add(SearchMyStoreResponse.from(store, url.toString()));
+            searchMyStoreResponses.add(SearchMyStoreResponse.from(store, store.getImageUrl()));
         }
 
         return searchMyStoreResponses;
@@ -234,23 +228,6 @@ public class StoreService {
         }
     }
 
-    private String saveFile(MultipartFile file){
-        String fileUrl;
-        if (file.isEmpty()){
-            return null;
-        }
-        try {
-            fileUrl = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            amazonS3Client.putObject(bucket, fileUrl, file.getInputStream(), metadata);
-        } catch (IOException e){
-            throw new IllegalArgumentException("Image is not available");
-        }
-        return fileUrl;
-    }
-
     public List<ReviewResponse> findReviews(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         if(store.getDeleteYn().equals("Y")) {
@@ -262,8 +239,8 @@ public class StoreService {
         }
         List<ReviewResponse> reviewResponses = new ArrayList<>();
         for(Review review : reviews) {
-            URL url = amazonS3Client.getUrl(bucket, review.getImageUrl());
-            ReviewResponse reviewResponse = ReviewResponse.from(review, url.toString());
+            String imageUrl = review.getImageUrl();
+            ReviewResponse reviewResponse = ReviewResponse.from(review, imageUrl);
             reviewResponses.add(reviewResponse);
         }
         return reviewResponses;
@@ -288,8 +265,6 @@ public class StoreService {
         if(store.getDeleteYn().equals("Y")) {
             throw new StoreNotFoundException();
         }
-        // s3 url 추출
-        URL url = amazonS3Client.getUrl(bucket, store.getImageUrl());
 
         List<Favorite> favorites = favoriteRepository.findByStoreAndFavoriteYn(store, "Y");
         int count = 0;
@@ -304,8 +279,10 @@ public class StoreService {
         for(Review review : reviews) {
             totalRating += review.getRating();
         }
+        // s3 url 추출
+        String imageUrl = store.getImageUrl();
         double avgRating = (double) totalRating /reviews.size();
-        return SearchStoreInfoResponse.from(store, count, avgRating, url.toString());
+        return SearchStoreInfoResponse.from(store, count, avgRating, imageUrl);
     }
 
     @Transactional
@@ -325,6 +302,4 @@ public class StoreService {
         }
         store.close();
     }
-
-
 }
