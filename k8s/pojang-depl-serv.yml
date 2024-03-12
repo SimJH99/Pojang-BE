@@ -32,7 +32,7 @@ spec:
         # k8s secret 불러오기
         env:
         - name: REDIS_HOST
-          value: "redis-service"
+          value: redis-service
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
@@ -62,9 +62,8 @@ spec:
   # ClusterIP는 클러스터 내부에서만 접근가능한 Service를 생성
   type: ClusterIP
   ports:
-  - name: http
     # pod의 외부포트
-    port: 80
+  - port: 8080
     # 서비스와 연결해줄 pod의 내부 포트
     targetPort: 8080
     # depl의 labels과 맞추기
