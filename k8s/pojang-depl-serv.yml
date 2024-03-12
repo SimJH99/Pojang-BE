@@ -32,7 +32,10 @@ spec:
         # k8s secret 불러오기
         env:
         - name: REDIS_HOST
-          value: redis-service
+          valueFrom:
+            secretKeyRef:
+              name: redis-host
+              key: host
         - name: DB_HOST
           valueFrom:
             secretKeyRef:

@@ -36,7 +36,6 @@ spring:
         enabled: false
         # docker-compose에 설정된 이름
       host: ${REDIS_HOST}
-      # host: redis-service
       port: 6379
   coolsms:
       apiKey: NCSW9W1WPRODZ9JV
