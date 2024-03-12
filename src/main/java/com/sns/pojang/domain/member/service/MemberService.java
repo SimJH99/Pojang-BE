@@ -256,4 +256,9 @@ public class MemberService {
         return memberRepository.findByEmail(authentication.getName())
                 .orElseThrow(MemberNotFoundException::new);
     }
+
+    public FindEmailResponse findEmail(FindEmailRequest findEmailRequest) {
+        Member member = memberRepository.findByPhoneNumber(findEmailRequest.getPhoneNumber()).orElseThrow(MemberNotFoundException::new);
+        return FindEmailResponse.from(member);
+    }
 }
