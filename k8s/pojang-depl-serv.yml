@@ -31,6 +31,8 @@ spec:
             memory: "250Mi"
         # k8s secret 불러오기
         env:
+        - name: REDIS_HOST
+          value: "redis-service"
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
