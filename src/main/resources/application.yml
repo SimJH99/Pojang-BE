@@ -7,9 +7,9 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
 #    url: jdbc:mariadb://host.docker.internal:3306/pojang
-    url: jdbc:mariadb://localhost:3306/pojang
-    username: root
-    password: 1234
+    url: jdbc:mariadb://${DB_HOST}/pojang
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MariaDBDialect
@@ -35,7 +35,8 @@ spring:
         # redis가 이게 내 리포지토리가 맞아? 그럼 명시해줘 라는 로그 해결
         enabled: false
         # docker-compose에 설정된 이름
-      host: redis
+      # host: ${REDIS_HOST}
+      host: redis-service
       port: 6379
   coolsms:
       apiKey: NCSW9W1WPRODZ9JV

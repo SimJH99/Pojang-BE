@@ -1,0 +1,30 @@
+# ingress-controller 설치 명령어
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/aws/deploy.yaml
+
+apiVersion: networking.k8s.io/v1 
+kind: Ingress
+metadata:
+  name: pojang-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx # ingress-controller가 nginx로 되어있어서 바꾸지말기
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls: # https 인증서
+  # 해당 host로 인증서를 발급
+  - hosts:
+    - "server.bellwin.shop"
+    secretName: pojang-com-tls
+  rules:
+    - host: server.bellwin.shop
+      http:
+        paths: 
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                # ingress와 연결될 서비스명 - depl-serv에서 지정
+                name: pojang-service
+                port:
+                  number: 80
+
