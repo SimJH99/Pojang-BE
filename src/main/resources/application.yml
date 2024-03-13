@@ -18,7 +18,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show_sql: true
   mail:
     host: smtp.gmail.com
@@ -39,7 +39,7 @@ spring:
         enabled: false
         # docker-compose에 설정된 이름
 #       host: redis
-#       host: localhost
+#      host: localhost
       host: ${REDIS_HOST}
       port: 6379
   coolsms:
