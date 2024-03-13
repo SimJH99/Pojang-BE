@@ -53,7 +53,6 @@ public class MemberService {
     private final CertificationNumberRepository certificationNumberRepository;
     private final CertificationGenerator certificationGenerator;
     private final SmsCertificationUtil smsCertificationUtil;
-    private final S3Service s3Service;
 
     @Transactional
     public CreateMemberResponse createUser(CreateMemberRequest createMemberRequest) throws EmailDuplicateException, NicknameDuplicateException{
