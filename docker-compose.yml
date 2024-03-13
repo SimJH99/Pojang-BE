@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+  # 이메일 인증
   redis:
     image: redis
     ports:
