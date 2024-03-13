@@ -4,7 +4,6 @@ kind: Deployment
 metadata:
   name: pojang-depl
 spec:
-  # minReadySeconds: 30
   # pod 개수
   replicas: 2
   selector:
@@ -49,15 +48,22 @@ spec:
             secretKeyRef: 
               name: pojang-db-secret
               key: DB_PASSWORD
-        readinessProbe:
-          httpGet:
-            path: /api/members
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 3
+        # 컨테이너 상태 확인 
+        # readinessProbe:
+        #   httpGet:
+        #     # healthcheck 경로
+        #     path: /api/members
+        #     port: 8080
+        #   # 컨테이너 시작 후 지연
+        #   initialDelaySeconds: 10
+        #   # 확인 반복 주기
+        #   periodSeconds: 10
+        #   # 요청이 완료되어야 하는 시간
+        #   timeoutSeconds: 1
+        #   # 연속 성공 횟수
+        #   successThreshold: 1
+        #   # 연속 실패 횟수
+        #   failureThreshold: 3
       imagePullSecrets:
         - name: docker-secret
 ---
