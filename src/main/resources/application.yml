@@ -41,6 +41,7 @@ spring:
 #       host: redis
 #       host: localhost
         # k8s용
+#      host: localhost
       host: ${REDIS_HOST}
       port: 6379
   coolsms:

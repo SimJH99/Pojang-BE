@@ -34,10 +34,10 @@ public class NotificationController {
     /**
      * 읽지 않은 알림 조회
      */
-    @GetMapping("/notifications")
-    public ResponseEntity<NotificationsResponse> findUnReadNotifications(){
-        return ResponseEntity.ok().body(notificationService.findUnReadNotifications());
-    }
+//    @GetMapping("/notifications")
+//    public ResponseEntity<NotificationsResponse> findUnReadNotifications(){
+//        return ResponseEntity.ok().body(notificationService.findUnReadNotifications());
+//    }
 
     /**
      * 알림 읽음 처리

@@ -56,7 +56,7 @@ public class NotificationService {
 
         // Sse 연결이 이뤄진 후, 데이터가 하나도 전송되지 않았는데 SseEmitter의 유효시간이 끝나면 503 에러가 발생함.
         // 따라서, 최초 연결 시 더미 데이터를 보내줌
-        sendToClient(sseEmitter, emitterId, "EventStream Created. [userId = " + findMember.getId() + "]");
+        connect(sseEmitter, emitterId, "EventStream Created. [userId = " + findMember.getId() + "]");
 
         // 클라이언트가 미수신한 이벤트(알림) 목록이 존재할 경우(lastEventId값이 있는 경우)
         // 저장된 데이터 캐시에서 유실된 데이터들을 다시 전송함.
@@ -65,7 +65,7 @@ public class NotificationService {
                     emitterRepository.findAllEventCacheStartWithByMemberId(String.valueOf(findMember.getId()));
             events.entrySet().stream()
                     .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-                    .forEach(entry -> sendToClient(sseEmitter, entry.getKey(), entry.getValue()));
+                    .forEach(entry -> connect(sseEmitter, entry.getKey(), entry.getValue()));
         }
         log.info(sseEmitter.toString());
         return sseEmitter;
@@ -86,8 +86,11 @@ public class NotificationService {
                 (key, emitter) -> {
                     // Emitter를 EventCache에 저장
                     emitterRepository.saveEventCache(key, newNotification);
-//                    sendToClient(emitter, key, NotificationResponse.from(newNotification));
-                    sendToClient(emitter, key, newNotification.getOrder().getStore().getName());
+                    if (newNotification.getNotificationType() == NotificationType.USER_ORDER){
+                        sendToOwner(emitter, key, NotificationResponse.from(newNotification));
+                    } else {
+                        sendToMember(emitter, key, NotificationResponse.from(newNotification));
+                    }
                 }
         );
     }
@@ -99,20 +102,20 @@ public class NotificationService {
         notification.read();
     }
 
-    @Transactional
-    // 읽지 않은 알림 수 표시
-    public NotificationsResponse findUnReadNotifications(){
-        Member findReceiver = findMember();
-        List<NotificationResponse> responses = notificationRepository.findByReceiver(findReceiver).stream()
-                .map(NotificationResponse::from)
-                .collect(Collectors.toList());
-
-        long unreadCount = responses.stream()
-                .filter(notification -> !notification.getIsRead())
-                .count();
-
-        return NotificationsResponse.of(responses, unreadCount);
-    }
+//    @Transactional
+//    // 읽지 않은 알림 수 표시
+//    public NotificationsResponse findUnReadNotifications(){
+//        Member findReceiver = findMember();
+//        List<NotificationResponse> responses = notificationRepository.findByReceiver(findReceiver).stream()
+//                .map(NotificationResponse::from)
+//                .collect(Collectors.toList());
+//
+//        long unreadCount = responses.stream()
+//                .filter(notification -> !notification.getIsRead())
+//                .count();
+//
+//        return NotificationsResponse.of(responses, unreadCount);
+//    }
 
     // 알림 생성
     private Notification createNotification(Member receiver, Order order, NotificationType notificationType,
@@ -127,13 +130,39 @@ public class NotificationService {
     }
 
     // Client에 데이터 전송
-    private void sendToClient(SseEmitter emitter, String emitterId, Object data){
-        log.info("Client에게 알림 데이터 전송 시작!");
+    private void connect(SseEmitter emitter, String emitterId, Object data){
         try {
             emitter.send(SseEmitter.event()
                     .id(emitterId)
+                    .name("connect")
                     .data(data));
-            log.info("Client에게 알림 데이터 전송 성공!");
+            log.info("Connection 성공!");
+        } catch (IOException e){
+            emitterRepository.deleteById(emitterId);
+            log.error("SSE 연결 오류!", e);
+        }
+    }
+
+    private void sendToOwner(SseEmitter emitter, String emitterId, Object data){
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(emitterId)
+                    .name("sendToOwner")
+                    .data(data));
+            log.info("Owner에게 주문 접수 알림 성공");
+        } catch (IOException e){
+            emitterRepository.deleteById(emitterId);
+            log.error("SSE 연결 오류!", e);
+        }
+    }
+
+    private void sendToMember(SseEmitter emitter, String emitterId, Object data){
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(emitterId)
+                    .name("sendToMember")
+                    .data(data));
+            log.info("회원에게 알림 데이터 전송 성공!");
         } catch (IOException e){
             emitterRepository.deleteById(emitterId);
             log.error("SSE 연결 오류!", e);
