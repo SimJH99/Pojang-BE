@@ -37,15 +37,12 @@ spring:
         # Spring data JPA repository 와 Spirng data redis Repository가 모두 인식되어
         # redis가 이게 내 리포지토리가 맞아? 그럼 명시해줘 라는 로그 해결
         enabled: false
-        # docker-compose에 설정된 이름
+        # docker-compose용
 #       host: redis
       host: localhost
-#      host: ${REDIS_HOST}
       port: 6379
-  coolsms:
-      apiKey: NCSW9W1WPRODZ9JV
-      apiSecret: FIJRCGDMA1Y8XTJ5HY8XO3SM4N9YPJ61
-      sender: 010-6717-1351
+      # k8s용
+#      host: ${REDIS_HOST}
 jwt:
   expiration: 30 # 30분
   secretKey: mySecret
