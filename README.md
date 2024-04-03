@@ -26,8 +26,7 @@
 <br/>
 
 # 💪 기술 스택
-> ## 🛠 개발환경
-> 
+## 🛠 개발환경 
 >  ![Java11](https://img.shields.io/badge/Java11-007396.svg?&style=for-the-badge&logo=Java&logoColor=white)
 >  ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F.svg?&style=for-the-badge&logo=SpringBoot&logoColor=white)
 >  ![Spring security](https://img.shields.io/badge/SpringSecurity-6DB33F.svg?&style=for-the-badge&logo=SpringSecurity&logoColor=white)
@@ -35,8 +34,10 @@
 >  ![MariaDB](https://img.shields.io/badge/MariaDB-003545.svg?&style=for-the-badge&logo=MariaDB&logoColor=white)
 >  ![vuedotjs](https://img.shields.io/badge/Vue-4FC08D.svg?&style=for-the-badge&logo=Vuedotjs&logoColor=white)
 >  ![tailwindcss](https://img.shields.io/badge/tailwind-06B6D4.svg?&style=for-the-badge&logo=tailwindcss&logoColor=white)
-> 
->## 🔊 협업 툴
+
+</br>
+
+## 🔊 협업 툴
 >  ![github](https://img.shields.io/badge/Github-181717.svg?&style=for-the-badge&logo=github&logoColor=white)
 >  ![Notion](https://img.shields.io/badge/Notion-000000.svg?&style=for-the-badge&logo=Notion&logoColor=white)
 >  ![Slack](https://img.shields.io/badge/Slack-4A154B.svg?&style=for-the-badge&logo=Slack&logoColor=white)
@@ -44,6 +45,90 @@
 >  ![visualstudiocode](https://img.shields.io/badge/VScode-007ACC.svg?&style=for-the-badge&logo=visualstudiocode&logoColor=white)
 >  ![intellijidea](https://img.shields.io/badge/IntelliJidea-000000.svg?&style=for-the-badge&logo=intellijidea&logoColor=white)
 <br/>
+
+# 📝 기능 테스트(GIF)
+<details>
+<summary><h2>😀 회원(Member)</h2></summary>
+<div markdown="1">
+<p align="center">
+  <h4>회원가입(이메일 인증 & 카카오 주소 API 연동)</h4>
+  <img src="assets/gif/sign-up.gif">
+</p>
+
+<p align="center">
+  <h4>로그인</h4>
+  <img src="assets/gif/sign-in.gif">
+</p>
+
+  
+</div>
+</details>
+
+<details>
+<summary><h2>🧾 장바구니 & 주문</h2></summary>
+<div markdown="1">
+
+<p align="center">
+  <h4>주문등록 & 주문 접수 알림</h4>
+  <img src="assets/gif/order_notification.gif">
+</p>
+
+</div>
+</details>
+
+<details>
+<summary><h2>🏪 가게 & 찜 & 리뷰</h2></summary>
+<div markdown="1">
+
+<p align="center">
+  <h4>검색 및 찜</h4>
+  <img src="assets/gif/search_like.gif">
+</p>
+
+<p align="center">
+  <h4>매장 등록</h4>
+  <img src="assets/gif/register_store.gif">
+</p>
+
+<p align="center">
+  <h4>주문상태 변경 및 리뷰등록</h4>
+  <img src="assets/gif/change_order_status_and_register_review.gif">
+</p>
+
+<p align="center">
+  <h4>리뷰조회</h4>
+  <img src="assets/gif/search_review.gif">
+</p>
+
+</div>
+</details>
+
+</br>
+
+# 📈 ERD 모델링
+[![포장의 민족](assets/images/erd.png)](https://www.erdcloud.com/d/xroTBFytvBCr9fm5S)
+<br/>
+`사진 클릭시 이동`
+
+</br>
+
+# 📝 API명세서
+[![📂API DOCS](assets/images/apis.png)](https://robust-skunk-0f9.notion.site/API-0f59651871d44b36a32874c9f8b4f0e0?pvs=4)
+<br/>
+`사진 클릭시 이동`
+
+<br/>
+
+# 📈 Architecture
+
+## 📍Back-End
+<img src= "assets/images/backend_architecture.png" width="100%" height="100%">
+
+## 📍Front-End
+<img src= "assets/images/frontend_architecture.png" width="100%" height="100%">
+
+<br/>
+
 
 # 🚩 Git 브랜치 전략
 <p align="center">
@@ -152,18 +237,6 @@
 
 </div>
 </details>
-<br/>
-
-# 📈 ERD 모델링
-[![포장의 민족](assets/images/erd.png)](https://www.erdcloud.com/d/xroTBFytvBCr9fm5S)
-<br/>
-`사진 클릭시 이동`
-
-# 📝 API명세서
-[![📂API DOCS](assets/images/apis.png)](https://robust-skunk-0f9.notion.site/API-0f59651871d44b36a32874c9f8b4f0e0?pvs=4)
-<br/>
-`사진 클릭시 이동`
-
 <br/>
 
 # 📝 중점 기술 명세
@@ -294,65 +367,6 @@
 | 기술 영역 | 설명 |
 | --- | --- |
 | Backend | 1. 탈퇴 시 부정 이용 방지 등을 위하여 탈퇴일로부터 30일 이내에 재가입이 불가능하도록 한다.</br>ㅇ 30일 동안 회원정보를 보관하기 위해 회원 탈퇴 시 member테이블에 DeleteY로 변경한다.</br>ㅇ스케쥴러로 30일이 지나면 DeleteY인 회원의 튜플을 삭제한다.</br>ㅇ 30일의 기준은 DeleteY로 변경 후 반영된 updated_time을 기준으로 한다.</br>ㅇ회원 삭제 시 연관된 테이블의 튜플을 모두 제거한다.</br> |
-
-</div>
-</details>
-
-<br/>
-
-# 테스트 결과
-<details>
-<summary><h2>😀 회원(Member)</h2></summary>
-<div markdown="1">
-<p align="center">
-  <h4>회원가입(이메일 인증 & 카카오 주소 API 연동)</h4>
-  <img src="assets/gif/sign-up.gif">
-</p>
-
-<p align="center">
-  <h4>로그인</h4>
-  <img src="assets/gif/sign-in.gif">
-</p>
-
-  
-</div>
-</details>
-
-<details>
-<summary><h2>🧾 장바구니 & 주문</h2></summary>
-<div markdown="1">
-
-<p align="center">
-  <h4>주문등록 & 주문 접수 알림</h4>
-  <img src="assets/gif/order_notification.gif">
-</p>
-
-</div>
-</details>
-
-<details>
-<summary><h2>🏪 가게 & 찜 & 리뷰</h2></summary>
-<div markdown="1">
-
-<p align="center">
-  <h4>검색 및 찜</h4>
-  <img src="assets/gif/search_like.gif">
-</p>
-
-<p align="center">
-  <h4>매장 등록</h4>
-  <img src="assets/gif/register_store.gif">
-</p>
-
-<p align="center">
-  <h4>주문상태 변경 및 리뷰등록</h4>
-  <img src="assets/gif/change_order_status_and_register_review.gif">
-</p>
-
-<p align="center">
-  <h4>리뷰조회</h4>
-  <img src="assets/gif/search_review.gif">
-</p>
 
 </div>
 </details>
