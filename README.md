@@ -323,7 +323,7 @@
 <div markdown="1">
 <p align="center">
   <h4>회원가입</h4>
-  <img src="assets/gif/sign_up.gif">
+  <img src="assets/gif/sign-up.gif">
 </p>
 
 <p align="center">
